@@ -1,0 +1,11 @@
+# CB
+api/vendor
+uploads
+
+# ext
+build
+ext
+touch
+
+# ide
+nbproject

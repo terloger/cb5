@@ -1,0 +1,87 @@
+// COLOR PALETTE
+
+$cb-dark-background: #3e4752;
+$cb-light-background: #ececec;
+$cb-tile-background: #ffffff;
+
+$cb-blue-color: #2e6eaf;
+$cb-red-color: #d93043;
+$cb-green-color: #81c81e;
+$cb-yellow-color: #c9c54e;
+$cb-light-blue-color: saturate(lighten($cb-blue-color, 53%), 70%);
+
+$cb-button-color: #727477;
+
+$cb-font-light-color: #a0a7b8;
+$cb-font-color: #878ea2;
+$cb-font-dark-color: $cb-dark-background;
+
+//Proxima Nova is preferred font, but it is not a free font.
+$cb-font-family: "Proxima Nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+$cb-font-size-small-content: 10px;
+$cb-font-size-content: 12px;
+$cb-font-size-small-title: 14px;
+$cb-font-size-medium-title: 18px;
+$cb-font-size-large-title: 20px;
+$cb-font-size-xlarge-title: 28px;
+
+$cb-font-regular: 400;
+$cb-font-semibold: 500;
+$cb-font-bold: 800;
+
+// GENERAL APP STYLE
+
+$base-color: $cb-yellow-color;
+$color: $cb-font-dark-color;
+$font-family: $cb-font-family;
+$body-background-color: $cb-light-background;
+
+// PANEL
+
+$panel-body-color: $cb-font-dark-color;
+$panel-body-background-color: $cb-light-background;
+
+// TOOLBAR
+
+$toolbar-background-color: $cb-light-background;
+
+// GRID
+
+$grid-cell-inner-padding: 15px;
+$grid-header-padding: 15px;
+$grid-grouped-header-padding: 15px;
+
+$grid-column-header-font-weight: $cb-font-bold;
+$grid-row-cell-font-weight: $cb-font-semibold;
+
+$grid-row-cell-color: $cb-font-color;
+$grid-column-header-color: $cb-font-dark-color;
+
+$grid-grouped-header-border-width: 0;
+
+$grid-grouped-header-background-color: $cb-light-blue-color;
+
+// BUTTON
+// since only small (default) buttons are used, only small button styles are defined here
+
+$button-small-border-radius: 3px;
+$button-default-border-color: $cb-button-color;
+$button-toolbar-border-color: $button-default-border-color;
+
+$button-default-background-color: $cb-button-color;
+$button-toolbar-background-color: $button-default-background-color;
+
+$button-default-color: white;
+$button-toolbar-color: $button-default-color;
+
+$button-small-font-size: $cb-font-size-content;
+$button-small-font-weight: $cb-font-bold;
+
+// MENU
+
+$menu-text-color: $cb-font-dark-color;
+
+// BORDERS
+
+$light-grey-borders: $cb-font-color;
