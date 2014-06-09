@@ -1,5 +1,7 @@
 # CB
 api/vendor
+api/composer.lock
+backup
 uploads
 
 # ext

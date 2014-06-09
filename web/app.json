@@ -112,7 +112,7 @@
             "bundle": true
         },
         {
-            "path": "http://cb.lan/api/",
+            "path": "/api/",
             "remote": true
         }
     ],

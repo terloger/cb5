@@ -14,9 +14,25 @@ Ext.define('CB.view.main.MainController', {
         'location/:id': 'onLocation'
     },
     
+    config: {
+        listen: {
+            controller: {
+                'cb-map': {
+                    markerclick: 'onMapMarkerClick'
+                }
+            }
+        }
+    },
+    
     destroy: function () {
         Ext.destroyMembers(this, 'menu');
         this.callParent();
+    },
+    
+    onTabChange: function (view, tab) {
+        if (tab.route) {
+            this.redirectTo(tab.route);
+        }
     },
     
     onMenuClick: function (e) {
@@ -34,28 +50,67 @@ Ext.define('CB.view.main.MainController', {
         this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
     },
     
-    onTabChange: function (view, tab) {
-        this.redirectTo(tab.route);
+    onMapMarkerClick: function(marker, location, e) {
+        this.redirectTo('location/' + location.get('id'));
     },
     
+    /**
+     * Routes
+     */
+    
     onHome: function() {
-        this.getView().setActiveItem(this.lookupReference('cb-home'));
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
+        if (tab) {
+            this.redirectTo('home');
+        }
     },
     
     onMap: function() {
-        this.getView().setActiveItem(this.lookupReference('cb-map'));
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-map'));
+        if (tab) {
+            this.redirectTo('map');
+        }
     },
     
     onUser: function() {
-        this.getView().setActiveItem(this.lookupReference('cb-user'));
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-user'));
+        if (tab) {
+            this.redirectTo('user');
+        }
     },
     
     onLocations: function() {
-        this.getView().setActiveItem(this.lookupReference('cb-locations'));
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-locations'));
+        if (tab) {
+            this.redirectTo('locations');
+        }
     },
     
     onLocation: function(id) {
-        this.getView().setActiveItem(this.lookupReference('cb-location'));
+        var view = this.lookupReference('cb-location'),
+            viewModel = view.getViewModel(),
+            location = this.getStore('Locations').getById(id),
+            tab;
+    
+        if (!location) {
+            return;
+        }
+        
+        id = parseInt(id);
+        view.getViewModel().setData(location.data);
+        
+        /*
+        viewModel.linkTo('record', {
+            reference: 'Location',
+            id: id
+        });
+        */
+        
+        tab = this.getView().setActiveTab(view);
+        if (tab) {
+            this.redirectTo('location/' + id);
+        }
+        
     }
     
 });

@@ -2,7 +2,7 @@
  * User view
  */
 Ext.define('CB.view.user.User', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     
     xtype: 'cb-user',
     

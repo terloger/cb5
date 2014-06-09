@@ -2,9 +2,15 @@
  * Single location view
  */
 Ext.define('CB.view.location.Location', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     
     xtype: 'cb-location',
+    
+    controller: 'cb-location',
+    
+    viewModel: {
+        type: 'cb-location'
+    },
     
     layout: {
         type: 'fit'
@@ -12,6 +18,25 @@ Ext.define('CB.view.location.Location', {
     
     title: 'Location',
     
-    html: 'single location'
+    tbar: {
+        ui: 'header',
+        plugins: 'responsive',
+        responsiveConfig: {
+            tall: {
+                height: 66
+            },
+            wide: {
+                height: 96
+            }
+        },
+        items: [{
+            xtype: 'tbtext',
+            reference: 'title',
+            cls: 'title',
+            bind: {
+                text: '{name}'
+            }
+        }]
+    }
     
 });

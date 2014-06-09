@@ -34,7 +34,7 @@ Ext.define('CB.view.map.Map', {
                 height: 96
             }
         },
-        items: [{
+        items: ['->',{
             xtype: 'button',
             text: 'Filter',
             glyph: 'xe646@climbuddy',
@@ -45,7 +45,7 @@ Ext.define('CB.view.map.Map', {
                     single: true
                 }
             }
-        },'->',{
+        },{
             xtype: 'textfield',
             name: 'search'
         },{

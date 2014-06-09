@@ -20,6 +20,15 @@ Ext.define('CB.view.map.MapController', {
         lastCenter: null
     },
     
+    /**
+     * Core
+     */
+    
+    destroy: function () {
+        Ext.destroyMembers(this, 'filterMenu');
+        this.callParent();
+    },
+    
     onAfterRender: function() {
         // no google api available
         if (typeof google === 'undefined') {
@@ -176,21 +185,21 @@ Ext.define('CB.view.map.MapController', {
     onMarkerClick: function(e, marker) {
         var location = marker.getLocation();
         if (location) {
-            console.log('onMarkerClick', location);
+            this.fireEvent('markerclick', marker, location, e);
         }
     },
     
     onMarkerRightClick: function(e, marker) {
         var location = marker.getLocation();
         if (location) {
-            console.log('onMarkerRightClick', location);
+            this.fireEvent('markerrightclick', marker, location, e);
         }
     },
     
     onMarkerDragEnd: function(e, marker) {
         var location = marker.getLocation();
         if (location) {
-            console.log('onMarkerDragEnd', location);
+            this.fireEvent('markerdragend', marker, location, e);
         }
     },
     
@@ -232,4 +241,5 @@ Ext.define('CB.view.map.MapController', {
     onSearch: function(btn, e) {
         console.log('search');
     }
+    
 });

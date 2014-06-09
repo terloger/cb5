@@ -14,4 +14,5 @@ Ext.define('CB.view.map.MapModel', {
             source: 'LocationTypes'
         }
     }
+    
 });

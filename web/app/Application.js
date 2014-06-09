@@ -62,7 +62,9 @@ Ext.define('CB.Application', {
     },
     
     launch: function () {
-        console.log(CB.init);
+        CB.api.Location.read(482, function(result) {
+            console.log('result', result);
+        }, this);
     }
     
 });

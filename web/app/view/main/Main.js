@@ -170,6 +170,14 @@ Ext.define('CB.view.main.Main', {
         glyph: 'xe603@climbuddy',
         route: 'map'
     },{
+        title: 'Location',
+        xtype: 'cb-location',
+        reference: 'cb-location',
+        glyph: 'xe605@climbuddy',
+        tabConfig: {
+            hidden: true
+        }
+    },{
         title: 'Locations',
         xtype: 'cb-locations',
         reference: 'cb-locations',

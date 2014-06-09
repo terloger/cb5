@@ -1,0 +1,10 @@
+# production
+#<Limit PUT DELETE>
+#order deny,allow
+#allow from all
+#</Limit>
+
+RewriteEngine on
+RewriteRule ^docs/(.*)$ - [L]
+RewriteRule ^index.php$ - [L]
+RewriteRule ^(.*)$ index.php [L,QSA]

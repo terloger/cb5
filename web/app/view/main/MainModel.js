@@ -9,6 +9,17 @@ Ext.define('CB.view.main.MainModel', {
     data: {
         name: 'Climbuddy',
         version: '1.0'
+    },
+    
+    session: Ext.create('Ext.data.Session'),
+    
+    stores: {
+        Locations: {
+            source: 'Locations'
+        },
+        LocationTypes: {
+            source: 'LocationTypes'
+        }
     }
     
 });
