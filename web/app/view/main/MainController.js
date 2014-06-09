@@ -99,12 +99,10 @@ Ext.define('CB.view.main.MainController', {
         id = parseInt(id);
         view.getViewModel().setData(location.data);
         
-        /*
         viewModel.linkTo('record', {
             reference: 'Location',
             id: id
         });
-        */
         
         tab = this.getView().setActiveTab(view);
         if (tab) {

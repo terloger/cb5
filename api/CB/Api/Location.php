@@ -23,8 +23,10 @@ class Location extends AbstractController
      * @access public
      * @return array
      */
-	public function read($id = null)
+	public function read($data = null)
 	{
+        $id = isset($data['id']) ? (int)$data['id'] : null;
+        
         try
         {
             if (!is_null($id))

@@ -11,7 +11,8 @@ Ext.define('CB.Application', {
     glyphFontFamily: 'climbuddy',
     
     requires: [
-        'Ext.direct.RemotingProvider'
+        'Ext.direct.RemotingProvider',
+        'Ext.MessageBox'
     ],
     
     views: [
@@ -45,7 +46,7 @@ Ext.define('CB.Application', {
         // handle api errors
         Ext.direct.Manager.on({
             exception: function(e) {
-                Ext.MessageBox.show({
+                Ext.Msg.show({
                     title: 'Server Exception',
                     msg: e.message,
                     buttons: Ext.MessageBox.OK,
@@ -62,9 +63,6 @@ Ext.define('CB.Application', {
     },
     
     launch: function () {
-        CB.api.Location.read(482, function(result) {
-            console.log('result', result);
-        }, this);
     }
     
 });

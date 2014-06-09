@@ -34,7 +34,7 @@ Ext.define('CB.view.location.Location', {
             reference: 'title',
             cls: 'title',
             bind: {
-                text: '{name}'
+                text: '{record.name}'
             }
         }]
     }
