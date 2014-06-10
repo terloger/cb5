@@ -9,10 +9,7 @@ Ext.define('CB.model.Base', {
         proxy: {
             type: 'direct',
             api: {
-                create  : 'CB.api.{entityName}.save',
-                read    : 'CB.api.{entityName}.read',
-                update  : 'CB.api.{entityName}.save',
-                destroy : 'CB.api.{entityName}.destroy'
+                read: 'CB.api.{entityName}.read'
             },
             reader: {
                 type: 'json'

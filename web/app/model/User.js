@@ -12,4 +12,5 @@ Ext.define('CB.model.User', {
         {name: 'permission', type: 'int'},
         {name: 'created', type: 'date'}
     ]
+    
 });

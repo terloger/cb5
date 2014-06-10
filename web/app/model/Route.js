@@ -12,4 +12,5 @@ Ext.define('CB.model.Route', {
         {name: 'created', type: 'date'},
         {name: 'fileId', type: 'int'}
     ]
+    
 });

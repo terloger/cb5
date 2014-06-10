@@ -10,4 +10,5 @@ Ext.define('CB.model.Layer', {
         {name: 'data', type: 'string'},
         {name: 'created', type: 'date'}
     ]
+    
 });

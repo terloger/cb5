@@ -7,4 +7,5 @@ Ext.define('CB.model.GradeType', {
         {name: 'name', type: 'string'},
         {name: 'type', type: 'string'}
     ]
+    
 });

@@ -14,4 +14,5 @@ Ext.define('CB.model.Grade', {
     getType: function() {
         return Ext.StoreManager.lookup('gradeTypes').getById(this.get('typeId'));
     }
+    
 });

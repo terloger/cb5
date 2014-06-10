@@ -9,4 +9,5 @@ Ext.define('CB.model.Sector', {
         {name: 'name', type: 'string'},
         {name: 'created', type: 'date'}
     ]
+    
 });

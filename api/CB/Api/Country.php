@@ -18,7 +18,7 @@ class Country extends AbstractController
 {
 
     /**
-     * Read grades
+     * Read countries
      *
      * @access public
      * @return array

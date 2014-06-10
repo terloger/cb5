@@ -20,17 +20,6 @@ Ext.define('CB.model.File', {
         type: 'direct',
         api: {
             destroy : 'CB.api.Location.removeFile'
-        },
-        reader: {
-            type: 'json',
-            idProperty: 'id',
-            rootProperty: 'data',
-            successProperty: 'success',
-            messageProperty: 'message'
-        },
-        writer: {
-            type: 'json',
-            writeAllFields: true
         }
     },
 

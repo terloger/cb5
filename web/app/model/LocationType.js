@@ -8,4 +8,5 @@ Ext.define('CB.model.LocationType', {
         {name: 'name', type: 'string'},
         {name: 'type', type: 'string'}
     ]
+    
 });

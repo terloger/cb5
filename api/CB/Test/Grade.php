@@ -8,13 +8,13 @@
 namespace CB\Test;
 
 /**
- * Grades test class.
+ * GradeType test class.
  *
  * @author Bojan Hribernik <bojan.hribernik@gmail.com>
  * @version 1.0
  * @package CB\Test
  */
-class Grade extends AbstractTest
+class GradeType extends AbstractTest
 {
 
     /**
@@ -26,7 +26,7 @@ class Grade extends AbstractTest
     public function test1Import()
     {
         /*
-        $result = $this->getApiController('Grade')->import();
+        $result = $this->getApiController('GradeType')->import();
 
         $this->assertTrue($result['success'], 'got grades');
          *
@@ -41,7 +41,7 @@ class Grade extends AbstractTest
      */
     public function test2Read()
     {
-        $result = $this->getApiController('Grade')->read();
+        $result = $this->getApiController('GradeType')->read();
 
         $this->assertTrue($result['success'], 'got grades');
     }

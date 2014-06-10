@@ -14,21 +14,21 @@ namespace CB\Api;
  * @version 1.0
  * @package CB\Api
  */
-class Grade extends AbstractController
+class GradeType extends AbstractController
 {
 
     /**
-     * Read grades
+     * Read GradeTypes and Grades
      *
      * @access public
      * @return array
      */
     public function read()
     {
-        $grades = array();
+        $gradeTypes = array();
         try
         {
-            $grades = [];
+            $gradeTypes = [];
             foreach ($this->getEntityManager()->createQuery('SELECT gt, g FROM \CB\Entity\GradeType gt LEFT JOIN gt.grades g ORDER BY g.score')->getResult() as $GradeType)
             {
                 $gradeType = $GradeType->getValues();
@@ -36,14 +36,14 @@ class Grade extends AbstractController
                 {
                     $gradeType['grades'][] = $Grade->getValues();
                 }
-                $grades[] = $gradeType;
+                $gradeTypes[] = $gradeType;
             }
         }
         catch (\Exception $e)
         {
             return $this->error($e->getMessage());
         }
-        return $this->success('Successfully read grades.', $grades);
+        return $this->success('Successfully read grades.', $gradeTypes);
     }
 
     /**

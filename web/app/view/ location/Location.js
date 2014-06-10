@@ -4,6 +4,10 @@
 Ext.define('CB.view.location.Location', {
     extend: 'Ext.panel.Panel',
     
+    requires: [
+        'CB.paper.Panel'
+    ],
+    
     xtype: 'cb-location',
     
     controller: 'cb-location',
@@ -41,6 +45,9 @@ Ext.define('CB.view.location.Location', {
         }]
     },
     
-    items: []
+    items: [{
+        xtype: 'cb-paper',
+        reference: 'cb-paper'
+    }]
     
 });

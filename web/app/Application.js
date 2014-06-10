@@ -12,7 +12,8 @@ Ext.define('CB.Application', {
     
     requires: [
         'Ext.direct.RemotingProvider',
-        'Ext.MessageBox'
+        'Ext.MessageBox',
+        'CB.Config'
     ],
     
     views: [
@@ -22,9 +23,6 @@ Ext.define('CB.Application', {
         'location.Location',
         'locations.Locations',
         'user.User'
-    ],
-    
-    controllers: [
     ],
     
     init: function() {
@@ -42,6 +40,9 @@ Ext.define('CB.Application', {
                 });
             }
         });
+        
+        // initialize config
+        CB.Config.init(CB.init.Config);
         
         // load stores
         //this.getStore('Countries').loadRawData(CB.init.Countries);

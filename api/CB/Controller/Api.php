@@ -67,12 +67,12 @@ class Api extends AbstractController
         // initial data
         $user = (null !== $User = $this->getService('User')->getSession()) ? $User->getValues() : null;
         $config = $this->getApiController('Config')->read()['data'];
-        $grades = $this->getApiController('Grade')->read()['data'];
+        /*
         $countries = $this->getApiController('Country')->read()['data'];
         $locations = $this->getApiController('Location')->read()['data'];
         $locationTypes = $this->getApiController('LocationType')->read()['data'];
-        
-        //dump($grades);dump($locations);die;
+        $gradeTypes = $this->getApiController('GradeTypes')->read()['data'];
+        */
 
         // send javascript headers
         header('Content-Type: text/javascript');
@@ -82,10 +82,12 @@ class Api extends AbstractController
         $response .= 'CB.init.API=' . json_encode($api) . ';';
         $response .= 'CB.init.User=' . json_encode($user) . ';';
         $response .= 'CB.init.Config=' . json_encode($config) . ';';
-        $response .= 'CB.init.Grades=' . json_encode($grades) . ';';
+        /*
         $response .= 'CB.init.Countries=' . json_encode($countries) . ';';
         $response .= 'CB.init.Locations=' . json_encode($locations) . ';';
         $response .= 'CB.init.LocationTypes=' . json_encode($locationTypes) . ';';
+        $response .= 'CB.init.GradeTypes=' . json_encode($gradeTypes) . ';';
+        */
         echo $response;
         exit;
         die;

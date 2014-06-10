@@ -15,6 +15,14 @@ Ext.define('CB.view.main.MainModel', {
             model: 'Location',
             session: true,
             autoLoad: true
+        },
+        locationTypes: {
+            model: 'LocationType',
+            autoLoad: true
+        },
+        grades: {
+            model: 'GradeType',
+            autoLoad: true
         }
     }
     

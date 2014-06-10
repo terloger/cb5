@@ -49,4 +49,5 @@ Ext.define('CB.model.Location', {
             writeAllFields: true
         }
     }
+    
 });

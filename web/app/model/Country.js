@@ -8,4 +8,5 @@ Ext.define('CB.model.Country', {
         {name: 'name', type: 'string'},
         {name: 'iso', type: 'string'}
     ]
+    
 });
