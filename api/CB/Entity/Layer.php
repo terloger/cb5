@@ -26,6 +26,11 @@ class Layer extends AbstractEntity
     protected $id;
 
     /**
+     * @Column(name="file_id", type="integer")
+     */
+    protected $fileId;
+    
+    /**
      * @Column(name="route_id", type="integer")
      */
     protected $routeId;
@@ -71,6 +76,11 @@ class Layer extends AbstractEntity
     {
         return $this->id;
     }
+    
+    public function getFileId()
+    {
+        return $this->fileId;
+    }
 
     public function getRouteId()
     {
@@ -106,6 +116,8 @@ class Layer extends AbstractEntity
     {
         return array(
             'id'        => $this->id,
+            'fileId'    => $this->fileId,
+            'routeId'   => $this->routeId,
             'data'      => $this->data,
             'created'   => $this->created->format('Y-m-d H:i:s'),
         );

@@ -12,6 +12,8 @@ Ext.define('CB.view.location.Location', {
         type: 'cb-location'
     },
     
+    session: {},
+    
     layout: {
         type: 'fit'
     },
@@ -34,9 +36,11 @@ Ext.define('CB.view.location.Location', {
             reference: 'title',
             cls: 'title',
             bind: {
-                text: '{record.name}'
+                text: '{location.name}'
             }
         }]
-    }
+    },
+    
+    items: []
     
 });

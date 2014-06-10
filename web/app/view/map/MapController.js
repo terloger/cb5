@@ -73,17 +73,33 @@ Ext.define('CB.view.map.MapController', {
      */
     
     onMapReady: function() {
-        this.getStore('Locations').each(function(location){
-            var hasFiles = location.files().getCount() > 0,
-                latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
-                type = location.types().getAt(0),
-                icon = type ? type.get('type') : 'default',
-                drop = true;
-            
-            if (hasFiles) {
-                this.addMarker(latLng, location, icon, drop);
-            }
-        }, this);
+        var me = this,
+            store = me.getView().getViewModel().getParent().getStore('locations'),
+            showMarkers = function() {
+                store.each(function(location){
+                    var hasFiles = location.files().getCount() > 0,
+                        latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
+                        type = location.types().getAt(0),
+                        icon = type ? type.get('type') : 'default',
+                        drop = true;
+                        
+                    if (hasFiles) {
+                        this.addMarker(latLng, location, icon, drop);
+                    }
+                }, this);
+            };
+        
+        if (store.isLoaded()) {
+            showMarkers.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: showMarkers,
+                    scope: this,
+                    single: true
+                }
+            });
+        }
     },
     
     onMapClick: function(e) {

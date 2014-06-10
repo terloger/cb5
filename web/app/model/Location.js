@@ -9,9 +9,6 @@ Ext.define('CB.model.Location', {
         'CB.model.Route',
         'CB.model.File'
     ],
-
-    idProperty: 'id',
-    clientIdProperty: 'clientId',
     
     config: {
         marker: null

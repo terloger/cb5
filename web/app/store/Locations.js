@@ -5,5 +5,5 @@ Ext.define('CB.store.Locations', {
     
     model: 'CB.model.Location',
     
-    autoLoad: false
+    autoLoad: true
 });

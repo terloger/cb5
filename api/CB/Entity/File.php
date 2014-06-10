@@ -23,6 +23,11 @@ class File extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+    
+    /**
+     * @Column(name="location_id", type="integer")
+     */
+    protected $locationId;
 
     /**
      * @Column(type="string")
@@ -80,6 +85,11 @@ class File extends AbstractEntity
     {
         return $this->id;
     }
+    
+    public function getLocationId()
+    {
+        return $this->locationId;
+    }
 
     public function getName()
     {
@@ -125,6 +135,7 @@ class File extends AbstractEntity
     {
         return [
             'id'         => $this->id,
+            'locationId' => $this->locationId,
             'name'       => $this->name,
             'fileName'   => $this->fileName,
             'extension'  => $this->extension,

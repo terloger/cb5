@@ -23,6 +23,11 @@ class Grade extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+    
+    /**
+     * @Column(name="type_id", type="integer")
+     */
+    protected $typeId;
 
     /**
      * @Column(type="integer")
@@ -47,6 +52,11 @@ class Grade extends AbstractEntity
     {
         return $this->id;
     }
+    
+    public function getTypeId()
+    {
+        return $this->typeId;
+    }
 
     public function getScore()
     {
@@ -66,9 +76,10 @@ class Grade extends AbstractEntity
     public function getValues()
     {
         return [
-            'id'    => $this->id,
-            'score' => $this->score,
-            'grade' => $this->grade,
+            'id'     => $this->id,
+            'typeId' => $this->typeId,
+            'score'  => $this->score,
+            'grade'  => $this->grade,
         ];
     }
 

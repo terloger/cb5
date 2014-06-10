@@ -1194,6 +1194,8 @@ Ext.Boot.loadSync([
 Ext.Loader.addClassPathMappings({
   "CB": "../../app",
   "CB.view.location.Location": "../../app/view/ location/Location.js",
+  "CB.view.location.LocationController": "../../app/view/ location/LocationController.js",
+  "CB.view.location.LocationModel": "../../app/view/ location/LocationModel.js",
   "CB.view.locations.Locations": "../../app/view/ locations/Locations.js",
   "Ext": "../../../ext/src",
   "Ext-more": "../../../ext/overrides/Ext-more.js",
@@ -1305,6 +1307,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.store.Sectors": [],
   "CB.view.home.Home": [],
   "CB.view.location.Location": [],
+  "CB.view.location.LocationController": [],
+  "CB.view.location.LocationModel": [],
   "CB.view.locations.Locations": [],
   "CB.view.main.Main": [],
   "CB.view.main.MainController": [],
@@ -2372,9 +2376,7 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.store.Grades": [],
   "CB.store.Layers": [],
   "CB.store.LocationTypes": [],
-  "CB.store.Locations": [
-    "store.Locations"
-  ],
+  "CB.store.Locations": [],
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
   "CB.view.home.Home": [
@@ -2382,6 +2384,12 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.location.Location": [
     "widget.cb-location"
+  ],
+  "CB.view.location.LocationController": [
+    "controller.cb-location"
+  ],
+  "CB.view.location.LocationModel": [
+    "viewmodel.cb-location"
   ],
   "CB.view.locations.Locations": [
     "widget.cb-locations"

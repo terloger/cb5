@@ -24,6 +24,11 @@ class Route extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+    
+    /**
+     * @Column(name="location_id", type="integer")
+     */
+    protected $locationId;
 
     /**
      * @Column(type="integer")
@@ -94,6 +99,11 @@ class Route extends AbstractEntity
     {
         return $this->id;
     }
+    
+    public function getLocationId()
+    {
+        return $this->locationId;
+    }
 
     public function getPos()
     {
@@ -138,11 +148,12 @@ class Route extends AbstractEntity
     public function getValues()
     {
         return [
-            'id'      => $this->id,
-            'pos'     => $this->pos,
-            'name'    => $this->name,
-            'fileId'  => $this->fileId,
-            'created' => $this->created->format('Y-m-d H:i:s'),
+            'id'         => $this->id,
+            'locationId' => $this->locationId,
+            'pos'        => $this->pos,
+            'name'       => $this->name,
+            'fileId'     => $this->fileId,
+            'created'    => $this->created->format('Y-m-d H:i:s'),
         ];
     }
 

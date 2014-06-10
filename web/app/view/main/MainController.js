@@ -6,17 +6,19 @@ Ext.define('CB.view.main.MainController', {
 
     alias: 'controller.cb-main',
     
-    routes: {
-        'home': 'onHome',
-        'map': 'onMap',
-        'user': 'onUser',
-        'locations': 'onLocations',
-        'location/:id': 'onLocation'
-    },
-    
     config: {
+        routes: {
+            'home': 'onHome',
+            'map': 'onMap',
+            'user': 'onUser',
+            'locations': 'onLocations',
+            'location/:id': 'onLocation'
+        },
         listen: {
             controller: {
+                '#' : {
+                    unmatchedroute : 'onUnmatchedRoute'
+                },
                 'cb-map': {
                     markerclick: 'onMapMarkerClick'
                 }
@@ -58,6 +60,10 @@ Ext.define('CB.view.main.MainController', {
      * Routes
      */
     
+    onUnmatchedRoute : function(hash) {
+        console.log('onUnmatchedRoute');
+    },
+    
     onHome: function() {
         var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
         if (tab) {
@@ -87,27 +93,43 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onLocation: function(id) {
-        var view = this.lookupReference('cb-location'),
-            viewModel = view.getViewModel(),
-            location = this.getStore('Locations').getById(id),
-            tab;
+        var mainView = this.getView(),
+            locationView = this.lookupReference('cb-location'),
+            locationViewModel = locationView.getViewModel(),
+            locationViewCtrl = locationView.getController(),
+            store = this.getStore('locations'),
+            storeLoaded = store.isLoaded(),
+            showLocation = function() {
+                var location = store.getById(id);
+                if (location) {
+                    locationViewModel.bind({bindTo: '{location}', single: true}, function(location){
+                        locationViewCtrl.showLocation(location);
+                        if (storeLoaded && mainView.setActiveTab(locationView)) {
+                            this.redirectTo('location/' + id);
+                        }
+                    }, this);
+                    locationViewModel.linkTo('location', location);
+                } else {
+                    locationViewModel.set('location.name', 'Oooops, location #' + id + ' does not exist.');
+                }
+            };
     
-        if (!location) {
-            return;
+        if (storeLoaded) {
+            showLocation.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: showLocation,
+                    single: true,
+                    scope: this
+                }
+            });
+            
+            if (mainView.setActiveTab(locationView)) {
+                this.redirectTo('location/' + id);
+            }
         }
         
-        id = parseInt(id);
-        view.getViewModel().setData(location.data);
-        
-        viewModel.linkTo('record', {
-            reference: 'Location',
-            id: id
-        });
-        
-        tab = this.getView().setActiveTab(view);
-        if (tab) {
-            this.redirectTo('location/' + id);
-        }
         
     }
     

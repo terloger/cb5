@@ -12,8 +12,10 @@ Ext.define('CB.view.main.Main', {
         type: 'cb-main'
     },
     
+    session: true,
+    
     reference: 'cb-main',
-
+    
     ui: 'navigation',
 
     tabBarHeaderPosition: 1,

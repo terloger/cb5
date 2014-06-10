@@ -26,18 +26,6 @@ Ext.define('CB.Application', {
     
     controllers: [
     ],
-
-    stores: [
-        'Locations',
-        'LocationTypes',
-        'Routes',
-        'Sectors',
-        'Files',
-        'Layers',
-        'Countries',
-        'Grades',
-        'GradeTypes'
-    ],
     
     init: function() {
         // initialize direct provider
@@ -56,10 +44,10 @@ Ext.define('CB.Application', {
         });
         
         // load stores
-        this.getStore('Countries').loadRawData(CB.init.Countries);
-        this.getStore('GradeTypes').loadRawData(CB.init.Grades);
-        this.getStore('Locations').loadRawData(CB.init.Locations);
-        this.getStore('LocationTypes').loadRawData(CB.init.LocationTypes);
+        //this.getStore('Countries').loadRawData(CB.init.Countries);
+        //this.getStore('GradeTypes').loadRawData(CB.init.Grades);
+        //this.getStore('Locations').loadRawData(CB.init.Locations);
+        //this.getStore('LocationTypes').loadRawData(CB.init.LocationTypes);
     },
     
     launch: function () {

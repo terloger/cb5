@@ -47,73 +47,85 @@ class Location extends AbstractController
     /**
      * Read all locations
      * 
+     * We need to process data manually, so that we have more control over what is being returned to the client.
+     * 
      * @access private
      * @return array
      */
     private function readAll()
     {
-        $locations = array();
-        try
+        $em = $this->getEntityManager();
+        
+        // fetch all routes
+        $routes = [];
+        $Routes = $em->createQuery('SELECT r, rg FROM \CB\Entity\Route r LEFT JOIN r.grades rg ORDER BY r.pos')->getResult();
+        foreach ($Routes as $Route)
         {
-            $routes = [];
-            foreach ($this->getEntityManager()->createQuery('SELECT r, rg FROM \CB\Entity\Route r LEFT JOIN r.grades rg ORDER BY r.pos')->getResult() as $Route)
+            $route = $Route->getValues();
+            foreach ($Route->getGrades() as $Grade)
             {
-                $route = $Route->getValues();
-                foreach ($Route->getGrades() as $Grade)
-                {
-                    $route['grades'][] = array_merge($Grade->getValues(), [
-                        'typeId' => $Grade->getType()->getId()
-                    ]);
-                }
-                $routes[$Route->getLocation()->getId()][] = $route;
+                $route['grades'][] = $Grade->getValues();
             }
-
-            $files = [];
-            foreach ($this->getEntityManager()->createQuery('SELECT f, fl FROM \CB\Entity\File f LEFT JOIN f.layers fl')->getResult() as $File)
-            {
-                $file = $File->getValues();
-                foreach ($File->getLayers() as $Layer)
-                {
-                    $file['layers'][] = array_merge($Layer->getValues(), [
-                        'fileId'  => $File->getId(),
-                        'routeId' => $Layer->getRoute()->getId(),
-                    ]);
-                }
-                $files[$File->getLocation()->getId()][] = $file;
-            }
-
-            $locations = [];
-            foreach ($this->getEntityManager()->createQuery('SELECT l, c, t FROM \CB\Entity\Location l LEFT JOIN l.country c LEFT JOIN l.types t')->getResult() as $Location)
-            {
-                $location = $Location->getValues();
-                $location['country'] = $Location->getCountry()->getValues();
-                foreach ($Location->getTypes() as $LocationType)
-                {
-                    $location['types'][] = $LocationType->getValues();
-                }
-                if (isset($routes[$Location->getId()]))
-                {
-                    $location['routes'] = $routes[$Location->getId()];
-                }
-                if (isset($files[$Location->getId()]))
-                {
-                    $location['files'] = $files[$Location->getId()];
-                }
-
-                $locations[] = $location;
-            }
+            $routes[$Route->getLocation()->getId()][] = $route;
         }
-        catch (\Exception $e)
+
+        // fetch all files
+        $files = [];
+        $Files = $em->createQuery('SELECT f, fl FROM \CB\Entity\File f LEFT JOIN f.layers fl')->getResult();
+        foreach ($Files as $File)
         {
-            //dump($e);die;
-            return $this->error($e->getMessage());
+            $file = $File->getValues();
+            foreach ($File->getLayers() as $Layer)
+            {
+                $file['layers'][] = $Layer->getValues();    
+            }
+            $files[$File->getLocation()->getId()][] = $file;
+        }
+
+        // fetch all locations
+        $locations = [];
+        $Locations = $em->createQuery('SELECT l, c, t FROM \CB\Entity\Location l LEFT JOIN l.country c LEFT JOIN l.types t')->getResult();
+        foreach ($Locations as $Location)
+        {
+            // build location data
+            $location = $Location->getValues();
+            
+            // apply location country
+            $location['country'] = array_merge($Location->getCountry()->getValues(), [
+                'locationId' => $Location->getId()
+            ]);
+            
+            // apply location types
+            foreach ($Location->getTypes() as $LocationType)
+            {
+                $location['types'][] = array_merge($LocationType->getValues(), [
+                    'locationId' => $Location->getId()
+                ]);
+            }
+            
+            // aplly location routes
+            if (isset($routes[$Location->getId()]))
+            {
+                $location['routes'] = $routes[$Location->getId()];
+            }
+            
+            // apply location files
+            if (isset($files[$Location->getId()]))
+            {
+                $location['files'] = $files[$Location->getId()];
+            }
+
+            // add location to collection
+            $locations[] = $location;
         }
         
         return $locations;
     }
     
     /**
-     * Read all locations
+     * Read location by ID
+     * 
+     * We need to process data manually, so that we have more control over what is being returned to the client.
      * 
      * @param integer $id Location ID
      * @access private
@@ -143,9 +155,7 @@ class Location extends AbstractController
             $route = $Route->getValues();
             foreach ($Route->getGrades() as $Grade)
             {
-                $route['grades'][] = array_merge($Grade->getValues(), [
-                    'typeId' => $Grade->getType()->getId()
-                ]);
+                $route['grades'][] = $Grade->getValues();
             }
             $routes[$Route->getLocation()->getId()][] = $route;
         }
@@ -160,25 +170,34 @@ class Location extends AbstractController
             $file = $File->getValues();
             foreach ($File->getLayers() as $Layer)
             {
-                $file['layers'][] = array_merge($Layer->getValues(), [
-                    'fileId'  => $File->getId(),
-                    'routeId' => $Layer->getRoute()->getId(),
-                ]);
+                $file['layers'][] = $Layer->getValues();
             }
             $files[$File->getLocation()->getId()][] = $file;
         }
 
         // build location data
         $location = $Location->getValues();
-        $location['country'] = $Location->getCountry()->getValues();
+        
+        // apply location country
+        $location['country'] = array_merge($Location->getCountry()->getValues(), [
+            'locationId' => $Location->getId()
+        ]);
+        
+        // apply location types
         foreach ($Location->getTypes() as $LocationType)
         {
-            $location['types'][] = $LocationType->getValues();
+            $location['types'][] = array_merge($LocationType->getValues(), [
+                'locationId' => $Location->getId()
+            ]);
         }
+        
+        // apply location routes
         if (isset($routes[$Location->getId()]))
         {
             $location['routes'] = $routes[$Location->getId()];
         }
+        
+        // apply location files
         if (isset($files[$Location->getId()]))
         {
             $location['files'] = $files[$Location->getId()];
