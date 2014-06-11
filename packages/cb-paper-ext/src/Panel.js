@@ -78,9 +78,15 @@ Ext.define('CB.paper.Panel', {
             mousedown: this.onMouseDown,
             mousemove: this.onMouseMove,
             mouseup: this.onMouseUp,
+            swipe: function(e, node, options) {
+                console.log('swipe', e.distance, e.duration);
+                if (e.distance > 300 && e.duration < 300) {
+                    console.log('switch image');
+                }
+            },
             scope: this
         });
-
+        
         // fix mouseup when out of window
         Ext.getDoc().on({
             mouseup: this.onMouseUp,
@@ -174,7 +180,7 @@ Ext.define('CB.paper.Panel', {
         // get mouse position within image
         var mx = e.getX() - this.getImage().getX();
         var my = e.getY() - this.getImage().getY();
-        console.log(mx, my);
+        //console.log(mx, my);
         
         // get mouse position within image after resize
         var nx = mx * ratio;
@@ -198,7 +204,7 @@ Ext.define('CB.paper.Panel', {
         var path = this.path;
         var matrix = new paper.Matrix();
         var box = this.getCanvas().getBox();
-        matrix.scale(ratio, ratio, new paper.Point(e.getX(), e.getY() - box.y));
+        matrix.scale(ratio, ratio, new paper.Point(e.getX() - box.x, e.getY() - box.y));
         path.transform(matrix);
         paper.view.draw();
     },
@@ -220,7 +226,7 @@ Ext.define('CB.paper.Panel', {
             paper.view.scrollBy(point);
             */
            
-            console.log(dx);
+            //console.log(dx);
            
             var path = this.path;
             var matrix = new paper.Matrix();
