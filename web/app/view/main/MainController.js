@@ -27,8 +27,61 @@ Ext.define('CB.view.main.MainController', {
     },
     
     destroy: function () {
-        Ext.destroyMembers(this, 'menu');
+        Ext.destroyMembers(this, 'navigationMenu', 'collapseButton');
         this.callParent();
+    },
+    
+    onHeaderAfterRender: function(header) {
+        var collapseGlyph = 'xe61b@climbuddy',
+            expandGlyph = 'xe61c@climbuddy',
+            collapseText = 'Collapse menu',
+            expandText = '',
+            btn;
+        
+        this.collapseButton = btn = Ext.create('Ext.button.Button', {
+            renderTo: header.el,
+            cls: 'cb-collapser',
+            handler: 'onCollapseClick',
+            glyph: header.isCollapsed ? expandGlyph : collapseGlyph,
+            text: header.isCollapsed ? expandText : collapseText,
+            collapseGlyph: collapseGlyph,
+            expandGlyph: expandGlyph,
+            collapseText: collapseText,
+            expandText: expandText,
+            height: 38,
+            plugins: 'responsive',
+            responsiveConfig: {
+                tall: {
+                    visible: false
+                },
+                wide: {
+                    visible: true
+                }
+            }
+        });
+    },
+    
+    onCollapseClick: function() {
+        var header = this.getView().getHeader(),
+            btn = this.collapseButton,
+            el = header.getEl();
+    
+        if (header.isCollapsed) {
+            header.isCollapsed = false;
+            header.setWidth(198);
+            header.removeCls(header.collapsedCls);
+            btn.setGlyph(btn.collapseGlyph);
+            btn.setText(btn.collapseText);
+        } else {
+            header.isCollapsed = true;
+            header.originalWidth = header.getWidth();
+            header.setWidth(68);
+            header.addCls(header.collapsedCls);
+            btn.setGlyph(btn.expandGlyph);
+            btn.setText(btn.expandText);
+        }
+        
+        this.getView().saveState();
     },
     
     onTabChange: function (view, tab) {
@@ -38,14 +91,11 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onMenuClick: function (e) {
-        var menu = this.menu;
-
-        if (!menu) {
-            menu = this.getView().navigationMenu;
-            this.menu = menu = Ext.create('Ext.menu.Menu', menu);
+        if (!this.navigationMenu) {
+            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
         }
 
-        menu.showAt(e.getXY());
+        this.navigationMenu.showAt(e.getXY());
     },
     
     onMenuItemClick: function (menu, item) {
@@ -54,24 +104,6 @@ Ext.define('CB.view.main.MainController', {
     
     onMapMarkerClick: function(marker, location, e) {
         this.redirectTo('location/' + location.get('id'));
-    },
-    
-    onCollapseClick: function() {
-        var header = this.getView().getHeader(),
-            el = header.getEl();
-    
-        if (header.isCollapsed) {
-            header.isCollapsed = false;
-            header.setWidth(198);
-            header.removeCls('collapsed');
-        } else {
-            header.isCollapsed = true;
-            header.originalWidth = header.getWidth();
-            header.setWidth(68);
-            header.addCls('collapsed');
-        }
-        
-        this.getView().saveState();
     },
     
     /**

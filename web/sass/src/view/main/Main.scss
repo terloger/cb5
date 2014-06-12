@@ -93,6 +93,31 @@
     }
 }
 
+.cb-collapser {
+    background: none !important;
+    border: none;
+    z-index: 999999;
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    
+    opacity: 0.3;
+    
+    &.x-btn-over {
+        opacity: 1;
+    }
+    
+    .x-btn-inner {
+        font-family: 'Proxima Nova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: 600;
+        line-height: 20px;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
 .x-tab-inner-navigation {
     white-space: normal;
 

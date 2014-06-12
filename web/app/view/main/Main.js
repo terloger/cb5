@@ -23,11 +23,12 @@ Ext.define('CB.view.main.Main', {
     
     applyState: function(state) {
         if (state) {
-            console.log(this.getWidth());
             if (state.header && state.header.isCollapsed) {
-                this.header.isCollapsed = true;
-                this.header.width = 68;
-                this.header.cls += ' collapsed';
+                Ext.apply(this.header, {
+                    isCollapsed: true,
+                    width: 68,
+                    cls: this.header.cls + ' ' + this.header.collapsedCls
+                });
             }
         }
     },
@@ -49,6 +50,7 @@ Ext.define('CB.view.main.Main', {
 
     header: {
         cls: 'cb-navigation',
+        collapsedCls: 'collapsed',
         glyph: 'xe600@climbuddy',
         width: 198,
         layout: {
@@ -58,6 +60,9 @@ Ext.define('CB.view.main.Main', {
             text: 'CLIMBuddy',
             textAlign: 'center',
             flex: 0
+        },
+        listeners: {
+            afterrender: 'onHeaderAfterRender'
         },
         tools: [{
             type: 'gear',
@@ -74,25 +79,9 @@ Ext.define('CB.view.main.Main', {
                     visible: false
                 }
             }
-        },{
-            xtype: 'button',
-            glyph: 'xe61b@climbuddy',
-            width: 40,
-            height: 40,
-            iconAlign: 'left',
-            handler: 'onCollapseClick',
-            plugins: 'responsive',
-            responsiveConfig: {
-                tall: {
-                    visible: false
-                },
-                wide: {
-                    visible: true
-                }
-            }
         }]
     },
-
+    
     tabBar: {
         flex: 1,
         layout: {
@@ -132,6 +121,31 @@ Ext.define('CB.view.main.Main', {
         scope: 'controller'
     },
 
+    navigationMenu: {
+        xtype: 'menu',
+        cls: 'cb-navigation-menu',
+        items: [{
+            text: 'Home',
+            glyph: 'xe602@climbuddy',
+            height: 50
+        },{
+            text: 'Map',
+            glyph: 'xe603@climbuddy',
+            height: 50
+        },{
+            text: 'Locations',
+            glyph: 'xe605@climbuddy',
+            height: 50
+        },{
+            text: 'Sign In',
+            glyph: 'xe60f@climbuddy',
+            height: 50
+        }],
+        listeners: {
+            click: 'onMenuItemClick'
+        }
+    },
+    
     defaults: {
         tabConfig: {
             plugins: 'responsive',
@@ -154,30 +168,6 @@ Ext.define('CB.view.main.Main', {
                     visible: true
                 }
             }
-        }
-    },
-    
-    navigationMenu: {
-        cls: 'cb-navigation-menu',
-        items: [{
-            text: 'Home',
-            glyph: 'xe602@climbuddy',
-            height: 50
-        },{
-            text: 'Map',
-            glyph: 'xe603@climbuddy',
-            height: 50
-        },{
-            text: 'Locations',
-            glyph: 'xe605@climbuddy',
-            height: 50
-        },{
-            text: 'Sign In',
-            glyph: 'xe60f@climbuddy',
-            height: 50
-        }],
-        listeners: {
-            click: 'onMenuItemClick'
         }
     },
     
