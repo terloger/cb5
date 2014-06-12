@@ -78,14 +78,15 @@ Ext.define('CB.paper.Panel', {
             mousedown: this.onMouseDown,
             mousemove: this.onMouseMove,
             mouseup: this.onMouseUp,
-            swipe: function(e, node, options) {
-                console.log('swipe', e.distance, e.duration);
-                if (e.distance > 300 && e.duration < 300) {
-                    console.log('switch image');
-                }
-            },
             scope: this
         });
+        
+        if (Ext.supports.Touch) {
+            this.getCanvas().on({
+                swipe: this.onSwipe,
+                scope: this
+            });
+        }
         
         // fix mouseup when out of window
         Ext.getDoc().on({
@@ -100,6 +101,61 @@ Ext.define('CB.paper.Panel', {
         this.mixins.tools.constructor.call(this, {
             tools: ['hand']
         });
+    },
+    
+    onSwipe: function(e, node, options) {
+        console.log('swipe', e.distance, e.duration, e.direction);
+        var location = this.getLocation(),
+            files = location.files(),
+            current, next;
+    
+        // must have at least two files
+        if (files.getCount() < 2) {
+            console.log('no files');
+            return;
+        }
+        
+        // check to see if proper swipe
+        if (e.distance < 200 || e.duration > 300) {
+            if (e.distance < 200) console.log('too short distance');
+            if (e.duration > 300) console.log('too long duration');
+            return;
+        }
+        
+        // get current position
+        current = files.indexOf(this.getFile());
+        
+        // show prev/next
+        if (e.direction === 'left') {
+            next = current - 1;
+        } else {
+            next = current + 1;
+        }
+        
+        // show first
+        if (next === files.getCount()) {
+            next = 0;
+        }
+        
+        // show last
+        if (next < 0) {
+            next = files.getCount() - 1;
+        }
+        
+        console.log(current, next);
+        
+        // set file
+        this.setFile(files.getAt(next));
+    },
+    
+    onResize: function(w, h, oldW, oldH) {
+        this.callParent(arguments);
+        console.log('resize');
+        if (this.getCanvas()) {
+            this.getCanvas().setWidth(w);
+            this.getCanvas().setHeight(h);
+            paper.view.viewSize = new paper.Size(w, h);
+        }
     },
     
     applyLocation: function(location) {
@@ -137,21 +193,20 @@ Ext.define('CB.paper.Panel', {
             // reset scale
             this.setScale(1);
             
+            // reset position
+            this.getImage().setX(0);
+            this.getImage().setY(0);
+            
             // store image size
             this.setImageWidth(image.width);
             this.setImageHeight(image.height);
             
-            var box = this.getImage().getBox();
-            
-            var json = '["Path",{"selected":true,"applyMatrix":true,"segments":[[{"x":426,"y":464,"selected":true},{"x":0,"y":0,"selected":true},{"x":19.42704,"y":0,"selected":true}],[{"x":420,"y":400,"selected":true},{"x":0,"y":0.99565,"selected":true},{"x":0,"y":-0.66667,"selected":true}],[{"x":420,"y":398,"selected":true},{"x":-0.24759,"y":0.61898,"selected":true},{"x":2.66399,"y":-6.65997,"selected":true}],[{"x":428,"y":377,"selected":true},{"x":-3.04145,"y":6.0829,"selected":true},{"x":1.11598,"y":-2.23196,"selected":true}],[{"x":419,"y":308,"selected":true},{"x":1.71993,"y":3.43986,"selected":true},{"x":-6.02225,"y":-12.04449,"selected":true}],[{"x":366,"y":260,"selected":true},{"x":4.12968,"y":16.51871,"selected":true},{"x":-1.91312,"y":-7.65248,"selected":true}],[{"x":358,"y":240,"selected":true},{"x":3.41291,"y":6.82582,"selected":true},{"x":-7.55775,"y":-15.11551,"selected":true}],[{"x":392,"y":193,"selected":true},{"x":-4.34589,"y":13.03768,"selected":true},{"x":5.63708,"y":-16.91125,"selected":true}],[{"x":390,"y":120,"selected":true},{"x":-0.49633,"y":0.99267,"selected":true},{"x":3.1773,"y":-6.3546,"selected":true}],[{"x":396,"y":99,"selected":true},{"x":0,"y":7.68949,"selected":true},{"x":0,"y":0,"selected":true}]],"strokeColor":[0,0,0]}]';
-            var data = Ext.decode(json);
-            var path2 = this.path2 = new paper.Path.Line(json);
-            
+            /*
             var path = this.path = new paper.Path.Line(new paper.Point(100,100), new paper.Point(200,200));
             path.strokeWidth = 3; 
             path.strokeColor = 'red';
-            
             paper.view.draw();
+            */
             
         }, this));
 
@@ -201,12 +256,14 @@ Ext.define('CB.paper.Panel', {
         
         this.applyTransform();
         
+        /*
         var path = this.path;
         var matrix = new paper.Matrix();
         var box = this.getCanvas().getBox();
         matrix.scale(ratio, ratio, new paper.Point(e.getX() - box.x, e.getY() - box.y));
         path.transform(matrix);
         paper.view.draw();
+        */
     },
     
     onMouseDown: function(e, t) {
@@ -218,21 +275,14 @@ Ext.define('CB.paper.Panel', {
             
             var dx = e.getX() - this.mouseMoveXY[0];
             var dy = e.getY() - this.mouseMoveXY[1];
-            
+
             /*
-            console.log(dx, dy);
-                    
-            var point = new paper.Point(-dx, -dy);
-            paper.view.scrollBy(point);
-            */
-           
-            //console.log(dx);
-           
             var path = this.path;
             var matrix = new paper.Matrix();
             matrix.translate(dx, dy);
             path.transform(matrix);
             paper.view.draw();
+            */
             
             var translateX = this.getTranslateX() + dx;
             var translateY = this.getTranslateY() + dy;
