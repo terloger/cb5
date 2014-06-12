@@ -25,15 +25,7 @@ Ext.define('CB.view.map.Map', {
     
     tbar: {
         ui: 'header',
-        plugins: 'responsive',
-        responsiveConfig: {
-            tall: {
-                height: 66
-            },
-            wide: {
-                height: 96
-            }
-        },
+        height: 72,
         items: ['->',{
             xtype: 'button',
             text: 'Filter',

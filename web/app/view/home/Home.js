@@ -16,15 +16,7 @@ Ext.define('CB.view.home.Home', {
     
     tbar: {
         ui: 'header',
-        plugins: 'responsive',
-        responsiveConfig: {
-            tall: {
-                height: 66
-            },
-            wide: {
-                height: 96
-            }
-        },
+        height: 72,
         items: [{
             xtype: 'tbtext',
             text: 'Wellcome to CLIMBuddy beta',

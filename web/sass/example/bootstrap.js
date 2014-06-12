@@ -1193,6 +1193,8 @@ Ext.Boot.loadSync([
 
 Ext.Loader.addClassPathMappings({
   "CB": "../../app",
+  "CB.paper": "../../../packages/cb-paper-core/src",
+  "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
   "CB.view.location.Location": "../../app/view/ location/Location.js",
   "CB.view.location.LocationController": "../../app/view/ location/LocationController.js",
   "CB.view.location.LocationModel": "../../app/view/ location/LocationModel.js",
@@ -1285,6 +1287,7 @@ Ext.Loader.addClassPathMappings({
 });
 Ext.ClassManager.addNameAlternateMappings({
   "CB.Application": [],
+  "CB.Config": [],
   "CB.model.Base": [],
   "CB.model.Country": [],
   "CB.model.File": [],
@@ -1296,6 +1299,24 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
+  "CB.paper.Animate": [],
+  "CB.paper.Canvas": [],
+  "CB.paper.File": [],
+  "CB.paper.History": [],
+  "CB.paper.Icon": [],
+  "CB.paper.Image": [],
+  "CB.paper.Keyboard": [],
+  "CB.paper.Layer": [],
+  "CB.paper.Location": [],
+  "CB.paper.MouseWheel": [],
+  "CB.paper.Panel": [],
+  "CB.paper.Path": [],
+  "CB.paper.Route": [],
+  "CB.paper.Selection": [],
+  "CB.paper.Tools": [],
+  "CB.paper.tool.Hand": [],
+  "CB.paper.tool.Move": [],
+  "CB.paper.tool.Pen": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -2359,6 +2380,7 @@ Ext.ClassManager.addNameAlternateMappings({
 });
 Ext.ClassManager.addNameAliasMappings({
   "CB.Application": [],
+  "CB.Config": [],
   "CB.model.Base": [],
   "CB.model.Country": [],
   "CB.model.File": [],
@@ -2370,6 +2392,26 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
+  "CB.paper.Animate": [],
+  "CB.paper.Canvas": [],
+  "CB.paper.File": [],
+  "CB.paper.History": [],
+  "CB.paper.Icon": [],
+  "CB.paper.Image": [],
+  "CB.paper.Keyboard": [],
+  "CB.paper.Layer": [],
+  "CB.paper.Location": [],
+  "CB.paper.MouseWheel": [],
+  "CB.paper.Panel": [
+    "widget.cb-paper"
+  ],
+  "CB.paper.Path": [],
+  "CB.paper.Route": [],
+  "CB.paper.Selection": [],
+  "CB.paper.Tools": [],
+  "CB.paper.tool.Hand": [],
+  "CB.paper.tool.Move": [],
+  "CB.paper.tool.Pen": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -3747,6 +3789,8 @@ Ext.ClassManager.addNameAliasMappings({
   "ExtThemeNeptune.toolbar.Paging": [],
   "ExtThemeNeptune.toolbar.Toolbar": []
 });
+Ext.setVersion("cb-paper-core", "1.0.0");
+Ext.setVersion("cb-paper-ext", "1.0.0");
 Ext.setVersion("ext", "5.0.0.970");
 Ext.setVersion("ext-theme-base", "5.0.0");
 Ext.setVersion("ext-theme-crisp", "5.0.0");

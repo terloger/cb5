@@ -33,6 +33,24 @@ Ext.define('CB.view.main.Main', {
             textAlign: 'center',
             flex: 0
         },
+        listeners: {
+            click: function() {
+                /*
+                if (this.collapsed) {
+                    this.collapsed = false;
+                    this.setWidth(this.originalWidth);
+                    this.getEl().down('.x-title-text').show();
+                    this.getEl().select('.x-tab-inner').show();
+                } else {
+                    this.collapsed = true;
+                    this.originalWidth = this.getWidth();
+                    this.setWidth(72);
+                    this.getEl().down('.x-title-text').hide();
+                    this.getEl().select('.x-tab-inner').hide();
+                }
+                */
+            }
+        },
         tools: [{
             type: 'gear',
             plugins: 'responsive',

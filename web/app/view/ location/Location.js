@@ -26,15 +26,7 @@ Ext.define('CB.view.location.Location', {
     
     tbar: {
         ui: 'header',
-        plugins: 'responsive',
-        responsiveConfig: {
-            tall: {
-                height: 66
-            },
-            wide: {
-                height: 96
-            }
-        },
+        height: 72,
         items: [{
             xtype: 'tbtext',
             reference: 'title',
