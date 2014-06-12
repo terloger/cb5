@@ -34,7 +34,7 @@ Ext.define('CB.view.map.Map', {
         },{
             xtype: 'textfield',
             name: 'search',
-            margin: '0 0 0 0'
+            margin: '0 -1 0 0'
         },{
             xtype: 'button',
             handler: 'onSearch',
@@ -50,7 +50,7 @@ Ext.define('CB.view.map.Map', {
             menu: [],
             listeners: {
                 click: {
-                    fn: 'createFilterMenu',
+                    fn: 'onFilterButtonClick',
                     single: true
                 }
             }
@@ -61,6 +61,40 @@ Ext.define('CB.view.map.Map', {
         afterrender: 'onAfterRender',
         resize: 'onResize',
         scope: 'controller'
+    },
+    
+    mapMenu: {
+        xtype: 'menu',
+        items: [{
+            text: 'Refresh',
+            handler: 'refreshMap',
+            glyph: 'xe61d@climbuddy'
+        },'-',{
+            text: 'Add location',
+            handler: 'addLocation',
+            glyph: 'xe618@climbuddy'
+        }]
+    },
+    
+    markerMenu: {
+        xtype: 'menu',
+        items: [{
+            text: 'Open location',
+            handler: 'openLocation',
+            glyph: 'xe605@climbuddy'
+        },'-',{
+            text: 'Edit location',
+            handler: 'editLocation',
+            glyph: 'xe627@climbuddy'
+        },{
+            text: 'Move location',
+            handler: 'moveLocation',
+            glyph: 'xe63a@climbuddy'
+        },'-',{
+            text: 'Delete location',
+            handler: 'deleteLocation',
+            glyph: 'xe61e@climbuddy'
+        }]
     }
     
 });

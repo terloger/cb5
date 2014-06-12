@@ -9,6 +9,7 @@ Ext.define('CB.view.map.MapController', {
     config: {
         map: null,
         markers: null,
+        overlay: null,
         weatherLayer: null,
         markerClusterer: null,
         mapType: 'roadmap',
@@ -25,7 +26,7 @@ Ext.define('CB.view.map.MapController', {
      */
     
     destroy: function () {
-        Ext.destroyMembers(this, 'filterMenu');
+        Ext.destroyMembers(this, 'filterMenu', 'mapMenu', 'markerMenu');
         this.callParent();
     },
     
@@ -69,8 +70,36 @@ Ext.define('CB.view.map.MapController', {
     },
     
     /**
+     * Location
+     */
+    
+    addLocation: function() {
+        console.log('add location');
+    },
+    
+    openLocation: function() {
+        console.log('open location');
+    },
+    
+    editLocation: function() {
+        console.log('edit location');
+    },
+    
+    moveLocation: function() {
+        console.log('move location');
+    },
+    
+    deleteLocation: function() {
+        console.log('delete location');
+    },
+    
+    /**
      * Map
      */
+    
+    refreshMap: function() {
+        console.log('refresh map');
+    },
     
     onMapReady: function() {
         var me = this,
@@ -89,6 +118,7 @@ Ext.define('CB.view.map.MapController', {
                 }, this);
             };
         
+        // show markers immediately or on store load
         if (store.isLoaded()) {
             showMarkers.apply(this);
         } else {
@@ -100,27 +130,41 @@ Ext.define('CB.view.map.MapController', {
                 }
             });
         }
+        
+        // create map overlay
+        this.setOverlay(new google.maps.OverlayView());
+        this.getOverlay().setMap(this.getMap());
+        this.getOverlay().draw = function(){
+            if (!this.ready) {
+                this.ready = true;
+                google.maps.event.trigger(this, 'ready');
+            }
+        };
     },
     
     onMapClick: function(e) {
-        console.log('onMapClick');
+        //console.log('onMapClick');
     },
     
     onMapRightClick: function(e) {
-        console.log('onMapRightClick');
+        if (!this.mapMenu) {
+            this.mapMenu = this.getView().add(this.getView().mapMenu);
+        }
+        
+        this.mapMenu.showAt(this.getLatLngLocalXY(e.latLng));
     },
     
     onMapZoomChanged: function() {
-        console.log('onMapZoomChanged');
+        //console.log('onMapZoomChanged');
     },
     
     onMapTypeIdChanged: function() {
-        console.log('onMapTypeIdChanged');
+        //console.log('onMapTypeIdChanged');
     },
     
     onMapDragEnd: function() {
         this.setLastCenter(this.getMap().getCenter());
-        console.log('onMapDragEnd');
+        //console.log('onMapDragEnd');
     },
     
     getMapTypeId: function() {
@@ -135,6 +179,19 @@ Ext.define('CB.view.map.MapController', {
             case 'terrain':
                 return google.maps.MapTypeId.TERRAIN;
         }
+    },
+    
+    getLatLngXY: function(latLng) {
+        if (!latLng) return [0,0];
+        var pixel = this.getOverlay().getProjection().fromLatLngToContainerPixel(latLng),
+            box = this.getView().body.getBox();
+        return [pixel.x + box.x, pixel.y + box.y];
+    },
+    
+    getLatLngLocalXY: function(latLng) {
+        if (!latLng) return [0,0];
+        var pixel = this.getOverlay().getProjection().fromLatLngToContainerPixel(latLng);
+        return [pixel.x, pixel.y];
     },
     
     /**
@@ -210,6 +267,16 @@ Ext.define('CB.view.map.MapController', {
         if (location) {
             this.fireEvent('markerrightclick', marker, location, e);
         }
+        
+        if (!this.markerMenu) {
+            this.markerMenu = this.getView().add(this.getView().markerMenu);
+        }
+        
+        this.markerMenu.marker = marker;
+        this.markerMenu.location = location;
+        this.markerMenu.event = e;
+        
+        this.markerMenu.showAt(this.getLatLngLocalXY(e.latLng));
     },
     
     onMarkerDragEnd: function(e, marker) {
@@ -223,12 +290,14 @@ Ext.define('CB.view.map.MapController', {
      * Toolbar
      */
     
-    createFilterMenu: function(btn, e) {
+    onFilterButtonClick: function(btn, e) {
         var menu = this.filterMenu,
-            viewModel = this.getView().getViewModel();
+            view = this.getView(),
+            viewModel = view.getViewModel();
 
         if (!menu) {
             menu = {
+                xtype: 'menu',
                 items: [],
                 listeners: {
                     click: this.onFilterMenuClick
@@ -243,11 +312,11 @@ Ext.define('CB.view.map.MapController', {
                 });
             }, this);
             
-            this.filterMenu = menu = Ext.create('Ext.menu.Menu', menu);
+            this.filterMenu = menu = view.add(menu);
             
             btn.setMenu(menu);
         }
-
+        
         btn.showMenu();
     },
     

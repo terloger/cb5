@@ -40,6 +40,21 @@ Ext.define('CB.view.locations.Locations', {
             text: 'Description',
             dataIndex: 'description',
             flex: 1
+        },{
+            text: 'Routes',
+            renderer: function(value, meta, location) {
+                return location.routes().getCount();
+            }
+        },{
+            text: 'Files',
+            renderer: function(value, meta, location) {
+                return location.files().getCount();
+            }
+        },{
+            text: 'Country',
+            renderer: function(value, meta, location) {
+                return location.getCountry().get('name');
+            }
         }]
     }]
 

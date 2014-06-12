@@ -25,6 +25,11 @@ class Location extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+    
+    /**
+     * @Column(name="country_id", type="integer")
+     */
+    protected $countryId;
 
     /**
      * @Column(type="string")
@@ -106,6 +111,11 @@ class Location extends AbstractEntity
     {
         return $this->id;
     }
+    
+    public function getCountryId()
+    {
+        return $this->countryId;
+    }
 
     public function getName()
     {
@@ -161,6 +171,7 @@ class Location extends AbstractEntity
     {
         return [
             'id'          => $this->id,
+            'countryId'   => $this->countryId,
             'name'        => $this->name,
             'description' => $this->description,
             'lat'         => $this->lat,

@@ -15,6 +15,7 @@ Ext.define('CB.model.Location', {
     },
 
     fields: [
+        {name: 'countryId', reference: 'Country', unique: true},
         {name: 'name', type: 'string'},
         {name: 'description', type: 'string'},
         {name: 'lat', type: 'float'},
@@ -45,8 +46,7 @@ Ext.define('CB.model.Location', {
             messageProperty: 'message'
         },
         writer: {
-            type: 'json',
-            writeAllFields: true
+            type: 'json'
         }
     }
     
