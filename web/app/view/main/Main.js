@@ -17,6 +17,31 @@ Ext.define('CB.view.main.Main', {
     reference: 'cb-main',
     
     ui: 'navigation',
+    
+    stateful: true,
+    stateId: 'CB.view.main.Main',
+    
+    applyState: function(state) {
+        if (state) {
+            console.log(this.getWidth());
+            if (state.header && state.header.isCollapsed) {
+                this.header.isCollapsed = true;
+                this.header.width = 68;
+                this.header.cls += ' collapsed';
+            }
+        }
+    },
+
+    getState: function() {
+        var header = this.getHeader(),
+            state = {
+                header: {
+                    isCollapsed: header.isCollapsed
+                }
+            };
+        
+        return state;
+    },
 
     tabBarHeaderPosition: 1,
     titleRotation: 0,
@@ -25,6 +50,7 @@ Ext.define('CB.view.main.Main', {
     header: {
         cls: 'cb-navigation',
         glyph: 'xe600@climbuddy',
+        width: 198,
         layout: {
             align: 'stretchmax'
         },
@@ -33,40 +59,102 @@ Ext.define('CB.view.main.Main', {
             textAlign: 'center',
             flex: 0
         },
-        listeners: {
-            click: function() {
-                /*
-                if (this.collapsed) {
-                    this.collapsed = false;
-                    this.setWidth(this.originalWidth);
-                    this.getEl().down('.x-title-text').show();
-                    this.getEl().select('.x-tab-inner').show();
-                } else {
-                    this.collapsed = true;
-                    this.originalWidth = this.getWidth();
-                    this.setWidth(72);
-                    this.getEl().down('.x-title-text').hide();
-                    this.getEl().select('.x-tab-inner').hide();
-                }
-                */
-            }
-        },
         tools: [{
             type: 'gear',
-            plugins: 'responsive',
-            width: 120,
-            height: 95,
+            width: 96,
+            height: 72,
             margin: '0 0 0 0',
             handler: 'onMenuClick',
+            plugins: 'responsive',
             responsiveConfig: {
-                'width < 600 && tall': {
+                'width < 566 && tall': {
                     visible: true
                 },
-                'width >= 600': {
+                'width >= 566': {
                     visible: false
                 }
             }
+        },{
+            xtype: 'button',
+            glyph: 'xe61b@climbuddy',
+            width: 40,
+            height: 40,
+            iconAlign: 'left',
+            handler: 'onCollapseClick',
+            plugins: 'responsive',
+            responsiveConfig: {
+                tall: {
+                    visible: false
+                },
+                wide: {
+                    visible: true
+                }
+            }
         }]
+    },
+
+    tabBar: {
+        flex: 1,
+        layout: {
+            align: 'stretch',
+            overflowHandler: 'none'
+        }
+    },
+
+    responsiveConfig: {
+        tall: {
+            collapsed: false,
+            headerPosition: 'top'
+        },
+        wide: {
+            collapsed: true,
+            headerPosition: 'left'
+        }
+    },
+    
+    setCollapsed: function(collapsed) {
+        var header = this.getHeader(),
+            el = header.el;
+    
+        if (!el) {
+            return;
+        }
+        
+        if (collapsed && header.isCollapsed) {
+            el.addCls('collapsed');
+        } else {
+            el.removeCls('collapsed');
+        }
+    },
+    
+    listeners: {
+        tabchange: 'onTabChange',
+        scope: 'controller'
+    },
+
+    defaults: {
+        tabConfig: {
+            plugins: 'responsive',
+            responsiveConfig: {
+                wide: {
+                    iconAlign: 'left',
+                    textAlign: 'left',
+                    flex: 0,
+                    height: 58
+                },
+                tall: {
+                    iconAlign: 'top',
+                    textAlign: 'center',
+                    flex: 1
+                },
+                'width < 566 && tall': {
+                    visible: false
+                },
+                'width >= 566': {
+                    visible: true
+                }
+            }
+        }
     },
     
     navigationMenu: {
@@ -92,57 +180,8 @@ Ext.define('CB.view.main.Main', {
             click: 'onMenuItemClick'
         }
     },
-
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
-        }
-    },
-
-    responsiveConfig: {
-        tall: {
-            headerPosition: 'top'
-        },
-        wide: {
-            headerPosition: 'left'
-        }
-    },
-    
-    listeners: {
-        tabchange: 'onTabChange',
-        scope: 'controller'
-    },
-
-    defaults: {
-        tabConfig: {
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left',
-                    flex: 0
-                },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    flex: 1
-                },
-                'width < 600 && tall': {
-                    visible: false
-                },
-                'width >= 600': {
-                    visible: true
-                }
-            }
-        }
-    },
     
     items: [{
-        // This page has a hidden tab so we can only get here during initialization. This
-        // allows us to avoid rendering an initial activeTab only to change it immediately
-        // by routing
         xtype: 'panel',
         tabConfig: {
             hidden: true
@@ -169,6 +208,7 @@ Ext.define('CB.view.main.Main', {
                     iconAlign: 'left',
                     textAlign: 'left',
                     flex: 0,
+                    height: 58,
                     style: {
                         'box-shadow': 'inset 0px 5px 4px -2px rgba(0, 0, 0, 0.35)'
                     }
@@ -181,10 +221,10 @@ Ext.define('CB.view.main.Main', {
                         'box-shadow': 'none'
                     }
                 },
-                'width < 600 && tall': {
+                'width < 566 && tall': {
                     visible: false
                 },
-                'width >= 600': {
+                'width >= 566': {
                     visible: true
                 }
             },

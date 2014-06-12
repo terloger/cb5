@@ -56,6 +56,24 @@ Ext.define('CB.view.main.MainController', {
         this.redirectTo('location/' + location.get('id'));
     },
     
+    onCollapseClick: function() {
+        var header = this.getView().getHeader(),
+            el = header.getEl();
+    
+        if (header.isCollapsed) {
+            header.isCollapsed = false;
+            header.setWidth(198);
+            header.removeCls('collapsed');
+        } else {
+            header.isCollapsed = true;
+            header.originalWidth = header.getWidth();
+            header.setWidth(68);
+            header.addCls('collapsed');
+        }
+        
+        this.getView().saveState();
+    },
+    
     /**
      * Routes
      */

@@ -9,7 +9,7 @@ Ext.define('CB.view.location.LocationController', {
     
     
     showLocation: function(location) {
-        console.log('showLocation', location);
+        //console.log('showLocation', location);
         this.lookupReference('cb-paper').setLocation(location);
     }
 });

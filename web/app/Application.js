@@ -11,6 +11,7 @@ Ext.define('CB.Application', {
     glyphFontFamily: 'climbuddy',
     
     requires: [
+        'Ext.state.CookieProvider',
         'Ext.direct.RemotingProvider',
         'Ext.MessageBox',
         'CB.Config'
@@ -32,6 +33,11 @@ Ext.define('CB.Application', {
     ],
     
     init: function() {
+        // initialize state provider
+        Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider', {
+            expires: new Date(new Date().getTime()+(1000*60*60*24*30))
+        }));
+        
         // initialize direct provider
         Ext.direct.Manager.addProvider(CB.init.API);
         
