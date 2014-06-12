@@ -26,91 +26,12 @@ Ext.define('CB.view.main.MainController', {
         }
     },
     
-    destroy: function () {
-        Ext.destroyMembers(this, 'navigationMenu', 'collapseButton');
-        this.callParent();
-    },
-    
-    onHeaderAfterRender: function(header) {
-        var collapseGlyph = 'xe61b@climbuddy',
-            expandGlyph = 'xe61c@climbuddy',
-            collapseText = 'Collapse menu',
-            expandText = '',
-            btn;
-        
-        this.collapseButton = btn = Ext.create('Ext.button.Button', {
-            renderTo: header.el,
-            cls: 'cb-collapser',
-            handler: 'onCollapseClick',
-            glyph: header.isCollapsed ? expandGlyph : collapseGlyph,
-            text: header.isCollapsed ? expandText : collapseText,
-            collapseGlyph: collapseGlyph,
-            expandGlyph: expandGlyph,
-            collapseText: collapseText,
-            expandText: expandText,
-            height: 38,
-            plugins: 'responsive',
-            responsiveConfig: {
-                tall: {
-                    visible: false
-                },
-                wide: {
-                    visible: true
-                }
-            }
-        });
-    },
-    
-    onCollapseClick: function() {
-        var header = this.getView().getHeader(),
-            btn = this.collapseButton,
-            el = header.getEl();
-    
-        if (header.isCollapsed) {
-            header.isCollapsed = false;
-            header.setWidth(198);
-            header.removeCls(header.collapsedCls);
-            btn.setGlyph(btn.collapseGlyph);
-            btn.setText(btn.collapseText);
-        } else {
-            header.isCollapsed = true;
-            header.originalWidth = header.getWidth();
-            header.setWidth(68);
-            header.addCls(header.collapsedCls);
-            btn.setGlyph(btn.expandGlyph);
-            btn.setText(btn.expandText);
-        }
-        
-        this.getView().saveState();
-    },
-    
-    onTabChange: function (view, tab) {
-        if (tab.route) {
-            this.redirectTo(tab.route);
-        }
-    },
-    
-    onMenuClick: function (e) {
-        if (!this.navigationMenu) {
-            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
-        }
-
-        this.navigationMenu.showAt(e.getXY());
-    },
-    
-    onMenuItemClick: function (menu, item) {
-        this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
-    },
-    
-    onMapMarkerClick: function(marker, location, e) {
-        this.redirectTo('location/' + location.get('id'));
-    },
-    
     /**
      * Routes
      */
     
     onUnmatchedRoute : function(hash) {
+        console.log('unmatched');
         var view = this.getView(),
             tab, header, title;
         
@@ -122,6 +43,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onHome: function() {
+        console.log('onHome');
         var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
         if (tab) {
             this.redirectTo('home');
@@ -129,6 +51,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onMap: function() {
+        console.log('onMap');
         var tab = this.getView().setActiveTab(this.lookupReference('cb-map'));
         if (tab) {
             this.redirectTo('map');
@@ -136,6 +59,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onUser: function() {
+        console.log('onUser');
         var tab = this.getView().setActiveTab(this.lookupReference('cb-user'));
         if (tab) {
             this.redirectTo('user');
@@ -143,6 +67,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onLocations: function() {
+        console.log('onLocations');
         var tab = this.getView().setActiveTab(this.lookupReference('cb-locations'));
         if (tab) {
             this.redirectTo('locations');
@@ -150,6 +75,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     onLocation: function(id) {
+        console.log('onLocation');
         var mainView = this.getView(),
             locationView = this.lookupReference('cb-location'),
             locationViewModel = locationView.getViewModel(),
@@ -186,8 +112,92 @@ Ext.define('CB.view.main.MainController', {
                 this.redirectTo('location/' + id);
             }
         }
+    },
+    
+    destroy: function () {
+        Ext.destroyMembers(this, 'navigationMenu', 'collapseButton');
+        this.callParent();
+    },
+    
+    onHeaderAfterRender: function(header) {
+        console.log('onHeaderAfterRender');
+        var collapseGlyph = 'xe61b@climbuddy',
+            expandGlyph = 'xe61c@climbuddy',
+            collapseText = 'Collapse menu',
+            expandText = '',
+            btn;
         
+        this.collapseButton = btn = Ext.create('Ext.button.Button', {
+            renderTo: header.el,
+            cls: 'cb-collapser',
+            handler: 'onCollapseClick',
+            glyph: header.isCollapsed ? expandGlyph : collapseGlyph,
+            text: header.isCollapsed ? expandText : collapseText,
+            collapseGlyph: collapseGlyph,
+            expandGlyph: expandGlyph,
+            collapseText: collapseText,
+            expandText: expandText,
+            height: 38,
+            plugins: 'responsive',
+            responsiveConfig: {
+                tall: {
+                    visible: false
+                },
+                wide: {
+                    visible: true
+                }
+            }
+        });
+    },
+    
+    onCollapseClick: function() {
+        console.log('onCollapseClick');
+        var header = this.getView().getHeader(),
+            btn = this.collapseButton,
+            el = header.getEl();
+    
+        if (header.isCollapsed) {
+            header.isCollapsed = false;
+            header.setWidth(198);
+            header.removeCls(header.collapsedCls);
+            btn.setGlyph(btn.collapseGlyph);
+            btn.setText(btn.collapseText);
+        } else {
+            header.isCollapsed = true;
+            header.originalWidth = header.getWidth();
+            header.setWidth(68);
+            header.addCls(header.collapsedCls);
+            btn.setGlyph(btn.expandGlyph);
+            btn.setText(btn.expandText);
+        }
         
+        this.getView().saveState();
+    },
+    
+    onTabChange: function (view, tab) {
+        console.log('onTabChange');
+        if (tab.route) {
+            this.redirectTo(tab.route);
+        }
+    },
+    
+    onMenuClick: function (e) {
+        console.log('onMenuClick');
+        if (!this.navigationMenu) {
+            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
+        }
+
+        this.navigationMenu.showAt(e.getXY());
+    },
+    
+    onMenuItemClick: function (menu, item) {
+        console.log('onMenuItemClick');
+        this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
+    },
+    
+    onMapMarkerClick: function(marker, location, e) {
+        console.log('onMapMarkerClick');
+        this.redirectTo('location/' + location.get('id'));
     }
     
 });

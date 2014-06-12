@@ -6,10 +6,8 @@ Ext.define('CB.view.location.LocationController', {
 
     alias: 'controller.cb-location',
     
-    
-    
     showLocation: function(location) {
-        //console.log('showLocation', location);
+        console.log('showLocation', location);
         this.lookupReference('cb-paper').setLocation(location);
     }
 });
