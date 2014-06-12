@@ -224,7 +224,8 @@ Ext.define('CB.view.map.MapController', {
      */
     
     createFilterMenu: function(btn, e) {
-        var menu = this.filterMenu;
+        var menu = this.filterMenu,
+            viewModel = this.getView().getViewModel();
 
         if (!menu) {
             menu = {
@@ -233,7 +234,7 @@ Ext.define('CB.view.map.MapController', {
                     click: this.onFilterMenuClick
                 }
             };
-            this.getStore('LocationTypes').each(function(type){
+            viewModel.getParent().getStore('locationTypes').each(function(type){
                 menu.items.push({
                     xtype: 'menucheckitem',
                     text: type.get('name'),

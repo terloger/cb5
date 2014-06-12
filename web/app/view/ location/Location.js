@@ -5,7 +5,8 @@ Ext.define('CB.view.location.Location', {
     extend: 'Ext.panel.Panel',
     
     requires: [
-        'CB.paper.Panel'
+        'CB.paper.Panel',
+        'CB.view.Spinner'
     ],
     
     xtype: 'cb-location',
@@ -16,7 +17,7 @@ Ext.define('CB.view.location.Location', {
         type: 'cb-location'
     },
     
-    session: {},
+    session: true,
     
     layout: {
         type: 'fit'
@@ -27,7 +28,9 @@ Ext.define('CB.view.location.Location', {
     tbar: {
         ui: 'header',
         height: 72,
-        items: [{
+        items: [/*{
+            xtype: 'cb-spinner'
+        },*/{
             xtype: 'tbtext',
             reference: 'title',
             cls: 'title',

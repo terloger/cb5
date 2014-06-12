@@ -28,7 +28,6 @@ Ext.define('CB.view.user.User', {
     items: [{
         xtype: 'form',
         frame: true,
-        border: true,
         width: 370,
         bodyPadding: 20,
         defaultType: 'textfield',

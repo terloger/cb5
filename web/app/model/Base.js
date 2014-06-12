@@ -12,7 +12,8 @@ Ext.define('CB.model.Base', {
                 read: 'CB.api.{entityName}.read'
             },
             reader: {
-                type: 'json'
+                type: 'json',
+                rootProperty: 'data'
             }
         }
     }

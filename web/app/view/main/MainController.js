@@ -61,7 +61,14 @@ Ext.define('CB.view.main.MainController', {
      */
     
     onUnmatchedRoute : function(hash) {
-        console.log('onUnmatchedRoute');
+        var view = this.getView(),
+            tab, header, title;
+        
+        view.setActiveTab(0);
+        tab = view.getActiveTab();
+        header = tab.down('toolbar[ui=header]');
+        title = header.down('tbtext[cls=title]');
+        title.setText('Unable to find #' + hash);
     },
     
     onHome: function() {

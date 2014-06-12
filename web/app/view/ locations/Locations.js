@@ -30,6 +30,7 @@ Ext.define('CB.view.locations.Locations', {
     
     items: [{
         xtype: 'grid',
+        frame: true,
         bind: '{locations}',
         columns: [{
             text: 'Name',

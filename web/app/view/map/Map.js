@@ -26,7 +26,24 @@ Ext.define('CB.view.map.Map', {
     tbar: {
         ui: 'header',
         height: 72,
-        items: ['->',{
+        items: [{
+            xtype: 'tbtext',
+            text: 'Search locations: ',
+            cls: 'title',
+            margin: '0 5 0 0'
+        },{
+            xtype: 'textfield',
+            name: 'search',
+            margin: '0 0 0 0'
+        },{
+            xtype: 'button',
+            handler: 'onSearch',
+            glyph: 'xe63d@climbuddy',
+            style: {
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0
+            }
+        },{
             xtype: 'button',
             text: 'Filter',
             glyph: 'xe646@climbuddy',
@@ -37,13 +54,6 @@ Ext.define('CB.view.map.Map', {
                     single: true
                 }
             }
-        },{
-            xtype: 'textfield',
-            name: 'search'
-        },{
-            xtype: 'button',
-            handler: 'onSearch',
-            glyph: 'xe63d@climbuddy'
         }]
     },
     

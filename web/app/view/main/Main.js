@@ -143,9 +143,18 @@ Ext.define('CB.view.main.Main', {
         // This page has a hidden tab so we can only get here during initialization. This
         // allows us to avoid rendering an initial activeTab only to change it immediately
         // by routing
-        xtype: 'component',
+        xtype: 'panel',
         tabConfig: {
             hidden: true
+        },
+        tbar: {
+            ui: 'header',
+            height: 72,
+            items: [{
+                xtype: 'tbtext',
+                text: '',
+                cls: 'title'
+            }]
         }
     },{
         title: 'Home',
