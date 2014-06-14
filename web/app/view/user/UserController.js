@@ -12,7 +12,8 @@ Ext.define('CB.view.user.UserController', {
         
         CB.api.User.login(user, function(response) {
             if (response.success) {
-                this.getView().getViewModel().set('user', Ext.create('CB.model.User', response.data));
+                // set user on main view model
+                this.getView().getViewModel().getParent().set('user', Ext.create('CB.model.User', response.data));
             } else {
                 console.log(response.message);
             }

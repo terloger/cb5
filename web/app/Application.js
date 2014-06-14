@@ -22,6 +22,7 @@ Ext.define('CB.Application', {
         'home.Home',
         'map.Map',
         'location.Location',
+        'location.Add',
         'locations.Locations',
         'user.User'
     ],
@@ -38,6 +39,8 @@ Ext.define('CB.Application', {
             expires: new Date(new Date().getTime()+(1000*60*60*24*30))
         }));
         
+        console.log(CB.init);
+        
         // initialize direct provider
         Ext.direct.Manager.addProvider(CB.init.API);
         
@@ -50,7 +53,7 @@ Ext.define('CB.Application', {
     },
     
     launch: function() {
-        Ext.getBody().mask('Loading ...');
+        Ext.getBody().mask('Loading application ...');
     },
     
     onDataReady: function() {
@@ -61,6 +64,18 @@ Ext.define('CB.Application', {
         });
         
         Ext.getBody().unmask();
+        
+        /*
+        var intro = Ext.get('cb-intro');
+        if (intro) {
+            intro.fadeOut({
+                opacity: 0,
+                easing: 'easeOut',
+                duration: 200,
+                remove: true
+            });
+        }
+        */
         
         // fire application event
         this.fireEvent('dataready');

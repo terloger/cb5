@@ -13,7 +13,11 @@ Ext.define('CB.view.user.User', {
     
     controller: 'cb-user',
     
-    title: 'Sign In',
+    viewModel: {
+        type: 'cb-user'
+    },
+    
+    title: 'User',
     
     bind: {
         title: '{user.username}'
@@ -38,6 +42,9 @@ Ext.define('CB.view.user.User', {
         xtype: 'form',
         frame: true,
         width: 400,
+        bind: {
+            hidden: '{user}'
+        },
         bodyPadding: 20,
         defaultType: 'textfield',
         defaults: {

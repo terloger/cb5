@@ -184,10 +184,31 @@ Ext.define('CB.view.main.Main', {
             height: 72,
             items: [{
                 xtype: 'tbtext',
-                text: '',
+                text: 'Loading application ...',
                 cls: 'title'
             }]
-        }
+        }/*,
+        items: [{
+            xtype: 'container',
+            plugins: 'responsive',
+            setImage: function(image) {
+                if (['big', 'medium', 'small'].indexOf(image) < 0) {
+                    image = 'medium';
+                }
+                this.update('<img id="cb-intro" src="resources/intro_' + image + '.jpg" />');
+            },
+            responsiveConfig: {
+                'width >= 1920 || width > 1280': {
+                    image: 'big'
+                },
+                'width <= 1280 && width > 640': {
+                    image: 'medium'
+                },
+                'width <= 640': {
+                    image: 'small'
+                }
+            }
+        }]*/
     },{
         title: 'Home',
         xtype: 'cb-home',

@@ -12,7 +12,8 @@ Ext.define('CB.view.main.MainController', {
             'map': 'onMap',
             'user': 'onUser',
             'locations': 'onLocations',
-            'location/:id': 'onLocation'
+            'location/:id': 'onLocation',
+            'add-location': 'onLocationAdd'
         },
         listen: {
             controller: {
@@ -40,8 +41,8 @@ Ext.define('CB.view.main.MainController', {
      * Routes
      */
     
-    onUnmatchedRoute : function(hash) {
-        console.log('unmatched');
+    onUnmatchedRoute: function(hash) {
+        console.log('onUnmatchedRoute');
         var view = this.getView(),
             tab, header, title;
         
@@ -122,6 +123,17 @@ Ext.define('CB.view.main.MainController', {
                 this.redirectTo('location/' + id);
             }
         }
+    },
+    
+    onLocationAdd: function() {
+        console.log('onLocationAdd');
+        var user = this.getView().getViewModel().get('user');
+        if (!user) {
+            this.redirectTo('home');
+            return;
+        }
+        
+        console.log(user);
     },
     
     destroy: function () {

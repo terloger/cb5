@@ -3,7 +3,7 @@
  */
 Ext.define('CB.view.map.MapController', {
     extend: 'Ext.app.ViewController',
-
+    
     alias: 'controller.cb-map',
     
     config: {
@@ -74,7 +74,23 @@ Ext.define('CB.view.map.MapController', {
      */
     
     addLocation: function() {
-        console.log('add location');
+        var mapView = this.getView(),
+            mainView = mapView.up('tabpanel'),
+            addLocationView = Ext.create('CB.view.location.Add', {
+                route: '#location/add',
+                tabConfig: {
+                    hidden: true
+                }
+            });
+    
+        console.log(mapView);
+        console.log(mainView);
+        console.log(addLocationView);
+        
+        mainView.add(addLocationView);
+        mainView.setActiveTab(addLocationView);
+        
+        //console.log('add location');
     },
     
     openLocation: function() {
@@ -184,17 +200,38 @@ Ext.define('CB.view.map.MapController', {
     },
     
     getLatLngXY: function(latLng) {
-        console.log('getLatLngXY');
         if (!latLng) return [0,0];
-        var pixel = this.getOverlay().getProjection().fromLatLngToContainerPixel(latLng),
-            box = this.getView().body.getBox();
+        
+        var overlay = this.getOverlay(),
+            projection,
+            pixel,
+            box;
+        
+        if (!overlay.ready) {
+            return [0,0];
+        }
+    
+        projection = overlay.getProjection();
+        pixel = projection.fromLatLngToContainerPixel(latLng);
+        box = this.getView().body.getBox();
+
         return [pixel.x + box.x, pixel.y + box.y];
     },
     
     getLatLngLocalXY: function(latLng) {
-        console.log('getLatLngLocalXY');
         if (!latLng) return [0,0];
-        var pixel = this.getOverlay().getProjection().fromLatLngToContainerPixel(latLng);
+        
+        var overlay = this.getOverlay(),
+            projection,
+            pixel;
+    
+        if (!overlay.ready) {
+            return [0,0];
+        }
+        
+        projection = overlay.getProjection();
+        pixel = projection.fromLatLngToContainerPixel(latLng);
+        
         return [pixel.x, pixel.y];
     },
     

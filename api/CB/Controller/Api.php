@@ -64,31 +64,41 @@ class Api extends AbstractController
             'actions'   => $actions
         );
 
-        // initial data
-        //$user = (null !== $User = $this->getService('User')->getSession()) ? $User->getValues() : null;
-        $user = $this->getApiController('User')->readSession()['data'];
-        $config = $this->getApiController('Config')->read()['data'];
-        /*
-        $countries = $this->getApiController('Country')->read()['data'];
-        $locations = $this->getApiController('Location')->read()['data'];
-        $locationTypes = $this->getApiController('LocationType')->read()['data'];
-        $gradeTypes = $this->getApiController('GradeTypes')->read()['data'];
-        */
-
         // send javascript headers
         header('Content-Type: text/javascript');
 
-        // build response
+        // init api
         $response  = 'Ext.ns("CB.init");';
         $response .= 'CB.init.API=' . json_encode($api) . ';';
-        $response .= 'CB.init.User=' . json_encode($user) . ';';
-        $response .= 'CB.init.Config=' . json_encode($config) . ';';
+        
+        // init config
+        $config = $this->getApiController('Config')->read();
+        if ($config['success'])
+        {
+            $response .= 'CB.init.Config=' . json_encode($config['data']) . ';';
+        }
+        
+        // init session user
+        $user = $this->getApiController('User')->readSession();
+        if ($user['success'])
+        {
+            $response .= 'CB.init.User=' . json_encode($user['data']) . ';';
+        }
+        
         /*
+        $countries = $this->getApiController('Country')->read()['data'];
         $response .= 'CB.init.Countries=' . json_encode($countries) . ';';
+        
+        $locations = $this->getApiController('Location')->read()['data'];
         $response .= 'CB.init.Locations=' . json_encode($locations) . ';';
+        
+        $locationTypes = $this->getApiController('LocationType')->read()['data'];
         $response .= 'CB.init.LocationTypes=' . json_encode($locationTypes) . ';';
+        
+        $gradeTypes = $this->getApiController('GradeTypes')->read()['data'];
         $response .= 'CB.init.GradeTypes=' . json_encode($gradeTypes) . ';';
         */
+        
         echo $response;
         exit;
         die;
