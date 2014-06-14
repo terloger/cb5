@@ -65,7 +65,8 @@ class Api extends AbstractController
         );
 
         // initial data
-        $user = (null !== $User = $this->getService('User')->getSession()) ? $User->getValues() : null;
+        //$user = (null !== $User = $this->getService('User')->getSession()) ? $User->getValues() : null;
+        $user = $this->getApiController('User')->readSession()['data'];
         $config = $this->getApiController('Config')->read()['data'];
         /*
         $countries = $this->getApiController('Country')->read()['data'];

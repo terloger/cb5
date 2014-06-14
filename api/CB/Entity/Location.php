@@ -27,6 +27,11 @@ class Location extends AbstractEntity
     protected $id;
     
     /**
+     * @Column(name="user_id", type="integer")
+     */
+    protected $userId;
+    
+    /**
      * @Column(name="country_id", type="integer")
      */
     protected $countryId;
@@ -112,6 +117,11 @@ class Location extends AbstractEntity
         return $this->id;
     }
     
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+    
     public function getCountryId()
     {
         return $this->countryId;
@@ -171,6 +181,7 @@ class Location extends AbstractEntity
     {
         return [
             'id'          => $this->id,
+            'userId'      => $this->userId,
             'countryId'   => $this->countryId,
             'name'        => $this->name,
             'description' => $this->description,

@@ -26,6 +26,16 @@ Ext.define('CB.view.main.MainController', {
         }
     },
     
+    init: function() {
+        // initialize config
+        CB.Config.init(CB.init.Config);
+
+        // initialize user
+        if (CB.init.User) {
+            this.getView().getViewModel().set('user', Ext.create('CB.model.User', CB.init.User));
+        }
+    },
+    
     /**
      * Routes
      */

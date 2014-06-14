@@ -47,14 +47,6 @@ Ext.define('CB.Application', {
             exception: this.onDirectException,
             scope: this
         });
-        
-        // initialize config
-        CB.Config.init(CB.init.Config);
-        
-        // initialize user
-        if (CB.init.User) {
-            CB.User = Ext.create('CB.model.User', CB.init.User);
-        }
     },
     
     launch: function() {

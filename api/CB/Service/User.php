@@ -95,7 +95,7 @@ class User extends AbstractService
         $query = $this->getEntityManager()->createQuery('SELECT u from \CB\Entity\User u WHERE u.username = :username AND u.password = :password');
         $query->setParameters(array(
             'username' => $username,
-            'password' => $password
+            'password' => md5($password)
         ));
 
         try

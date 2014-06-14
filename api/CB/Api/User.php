@@ -16,6 +16,27 @@ namespace CB\Api;
  */
 class User extends AbstractController
 {
+    /**
+     * Read session user
+     * 
+     * @return array
+     */
+    public function readSession()
+    {
+        try
+        {
+            $User = $this->getService('User')->getSession();
+            if ($User)
+            {
+                return $this->success('Got user.', $User->getValues());
+            }
+        }
+        catch (\CB\Exception $e)
+        {
+            return $this->error($e->getMessage());
+        }
+        return $this->error();
+    }
 
     /**
      * Login!

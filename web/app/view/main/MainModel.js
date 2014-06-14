@@ -5,7 +5,8 @@ Ext.define('CB.view.main.MainModel', {
     extend: 'Ext.app.ViewModel',
     
     requires: [
-        'CB.model.Location'
+        'CB.model.Location',
+        'CB.model.User'
     ],
 
     alias: 'viewmodel.cb-main',

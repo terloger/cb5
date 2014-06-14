@@ -118,6 +118,9 @@ Ext.define('CB.view.main.Main', {
     
     listeners: {
         tabchange: 'onTabChange',
+        beforerender: function() {
+            console.log('before');
+        },
         scope: 'controller'
     },
 
@@ -243,7 +246,6 @@ Ext.define('CB.view.main.Main', {
         glyph: 'xe605@climbuddy',
         route: 'locations'
     },{
-        title: 'Sign In',
         xtype: 'cb-user',
         reference: 'cb-user',
         glyph: 'xe60f@climbuddy',

@@ -11,7 +11,13 @@ Ext.define('CB.view.user.User', {
     
     xtype: 'cb-user',
     
-    title: 'User',
+    controller: 'cb-user',
+    
+    title: 'Sign In',
+    
+    bind: {
+        title: '{user.username}'
+    },
     
     tbar: {
         ui: 'header',
@@ -19,6 +25,9 @@ Ext.define('CB.view.user.User', {
         items: [{
             xtype: 'tbtext',
             text: 'Sign In',
+            bind: {
+                text: 'Wellcome {user.username}'
+            },
             cls: 'title'
         }]
     },
@@ -37,21 +46,23 @@ Ext.define('CB.view.user.User', {
         items: [{
             allowBlank: false,
             fieldLabel: 'User ID',
-            name: 'user',
+            name: 'username',
             emptyText: 'user id'
         }, {
             allowBlank: false,
             fieldLabel: 'Password',
-            name: 'pass',
+            name: 'password',
             emptyText: 'password',
             inputType: 'password'
         }, {
-            xtype:'checkbox',
+            xtype: 'checkbox',
             fieldLabel: 'Remember me',
-            name: 'remember'
+            name: 'autologin'
         }],
         buttons: [{
-            text:'Sign In'
+            formBind: true,
+            text: 'Sign In',
+            handler: 'login'
         }]
     }]
     
