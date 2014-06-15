@@ -6,18 +6,11 @@ Ext.define('CB.view.user.UserController', {
 
     alias: 'controller.cb-user',
     
-    login: function(btn, e) {
-        var user = btn.up('form').getValues();
-        console.log(user);
-        
-        CB.api.User.login(user, function(response) {
-            if (response.success) {
-                // set user on main view model
-                this.getView().getViewModel().getParent().set('user', Ext.create('CB.model.User', response.data));
-            } else {
-                console.log(response.message);
-            }
-        }, this);
+    onDeactivate: function() {
+        var loginView = this.getView().down('cb-user-login');
+        if (loginView) {
+            loginView.reset();
+        }
     }
     
 });

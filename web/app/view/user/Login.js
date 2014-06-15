@@ -34,24 +34,40 @@ Ext.define('CB.view.user.Login', {
         allowBlank: false,
         fieldLabel: 'User ID',
         name: 'username',
-        emptyText: 'user id'
+        emptyText: 'user id',
+        value: 'HriBB'
     }, {
         allowBlank: false,
         fieldLabel: 'Password',
         name: 'password',
         emptyText: 'password',
-        inputType: 'password'
+        inputType: 'password',
+        value: 'jebiga'
     }, {
         xtype: 'checkbox',
         fieldLabel: 'Remember me',
         name: 'autologin'
+    },{
+        xtype: 'displayfield',
+        bind: {
+            value: '{error}'
+        },
+        fieldStyle: {
+            color: 'red'
+        }
     }],
 
     buttons: {
         maxWidth: 400,
         margin: '0 0 0 20',
         items: [{
-            formBind: true,
+            xtype: 'cb-spinner',
+            hidden: true,
+            bind: {
+                hidden: '{!loading}'
+            }
+        },{
+            //formBind: true,
             text: 'Sign In',
             handler: 'login'
         }]

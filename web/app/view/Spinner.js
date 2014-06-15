@@ -8,7 +8,7 @@ Ext.define('CB.view.Spinner', {
     
     cls: 'cb-spinner',
     
-    width: 40,
-    height: 40
+    width: 28,
+    height: 28
     
 });

@@ -23,16 +23,29 @@ Ext.define('CB.view.user.Home', {
                 text: 'Wellcome {user.username}'
             }
         },'->',{
+            xtype: 'cb-spinner',
+            hidden: true,
+            bind: {
+                hidden: '{!loading}'
+            }
+        },{
             xtype: 'button',
             text: 'Sign Out',
-            glyph: 'xe60b@climbuddy'
+            glyph: 'xe60b@climbuddy',
+            handler: 'onLogoutClick'
         }]
     },
     
     items: [{
         xtype: 'panel',
         bodyPadding: 20,
-        html: 'User page'
+        setHtml: function(user) {
+            var data = JSON.stringify(JSON.parse(Ext.encode(user.data)),null,2);
+            this.update('<pre>' + data + '</pre>');
+        },
+        bind: {
+            html: '{user}'
+        }
     }]
     
 });

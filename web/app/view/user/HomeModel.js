@@ -4,6 +4,10 @@
 Ext.define('CB.view.user.HomeModel', {
     extend: 'Ext.app.ViewModel',
 
-    alias: 'viewmodel.cb-user-home'
+    alias: 'viewmodel.cb-user-home',
+    
+    data: {
+        loading: false
+    }
     
 });

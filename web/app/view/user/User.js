@@ -24,18 +24,33 @@ Ext.define('CB.view.user.User', {
         title: '{user.username}'
     },
     
+    listeners: {
+        hide: 'onDeactivate',
+        scope: 'controller'
+    },
+    
     initComponent: function() {
         this.callParent();
         
         if (!CB.init.User) {
-            this.add({
-                xtype: 'cb-user-login'
-            });
+            this.showLogin();
         } else {
-            this.add({
-                xtype: 'cb-user-home'
-            });
+            this.showHome();
         }
+    },
+    
+    showLogin: function() {
+        this.removeAll();
+        this.add({
+            xtype: 'cb-user-login'
+        });
+    },
+    
+    showHome: function() {
+        this.removeAll();
+        this.add({
+            xtype: 'cb-user-home'
+        });
     }
     
 });
