@@ -1195,10 +1195,6 @@ Ext.Loader.addClassPathMappings({
   "CB": "../../app",
   "CB.paper": "../../../packages/cb-paper-core/src",
   "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
-  "CB.view.location.Location": "../../app/view/ location/Location.js",
-  "CB.view.location.LocationController": "../../app/view/ location/LocationController.js",
-  "CB.view.location.LocationModel": "../../app/view/ location/LocationModel.js",
-  "CB.view.locations.Locations": "../../app/view/ locations/Locations.js",
   "Ext": "../../../ext/src",
   "Ext-more": "../../../ext/overrides/Ext-more.js",
   "Ext.AbstractManager": "../../../ext/packages/sencha-core/src/AbstractManager.js",
@@ -1326,7 +1322,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.store.Locations": [],
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
+  "CB.view.Spinner": [],
   "CB.view.home.Home": [],
+  "CB.view.location.Edit": [],
+  "CB.view.location.EditController": [],
+  "CB.view.location.EditModel": [],
   "CB.view.location.Location": [],
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
@@ -1337,7 +1337,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.map.Map": [],
   "CB.view.map.MapController": [],
   "CB.view.map.MapModel": [],
+  "CB.view.user.Home": [],
+  "CB.view.user.HomeController": [],
+  "CB.view.user.HomeModel": [],
+  "CB.view.user.Login": [],
+  "CB.view.user.LoginController": [],
+  "CB.view.user.LoginModel": [],
   "CB.view.user.User": [],
+  "CB.view.user.UserController": [],
+  "CB.view.user.UserModel": [],
   "Ext.AbstractManager": [],
   "Ext.Action": [],
   "Ext.Ajax": [],
@@ -2421,8 +2429,20 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.store.Locations": [],
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
+  "CB.view.Spinner": [
+    "widget.widget.cb-spinner"
+  ],
   "CB.view.home.Home": [
     "widget.cb-home"
+  ],
+  "CB.view.location.Edit": [
+    "widget.cb-location-edit"
+  ],
+  "CB.view.location.EditController": [
+    "controller.cb-location-edit"
+  ],
+  "CB.view.location.EditModel": [
+    "viewmodel.cb-location-edit"
   ],
   "CB.view.location.Location": [
     "widget.cb-location"
@@ -2454,8 +2474,32 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.map.MapModel": [
     "viewmodel.cb-map"
   ],
+  "CB.view.user.Home": [
+    "widget.cb-user-home"
+  ],
+  "CB.view.user.HomeController": [
+    "controller.cb-user-home"
+  ],
+  "CB.view.user.HomeModel": [
+    "viewmodel.cb-user-home"
+  ],
+  "CB.view.user.Login": [
+    "widget.cb-user-login"
+  ],
+  "CB.view.user.LoginController": [
+    "controller.cb-user-login"
+  ],
+  "CB.view.user.LoginModel": [
+    "viewmodel.cb-user-login"
+  ],
   "CB.view.user.User": [
     "widget.cb-user"
+  ],
+  "CB.view.user.UserController": [
+    "controller.cb-user"
+  ],
+  "CB.view.user.UserModel": [
+    "viewmodel.cb-user"
   ],
   "Ext.AbstractManager": [],
   "Ext.Action": [],

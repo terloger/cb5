@@ -74,9 +74,9 @@ $button-toolbar-background-color-pressed: darken($cb-blue-color, 14%);
 
 // GRID
 
-$grid-cell-inner-padding: 15px;
-$grid-header-padding: 15px;
-$grid-grouped-header-padding: 15px;
+$grid-cell-inner-padding: 8px 14px;
+$grid-header-padding: 8px 14px;
+$grid-grouped-header-padding: 8px 14px;
 
 $grid-column-header-font-weight: $cb-font-bold;
 $grid-row-cell-font-weight: $cb-font-semibold;
