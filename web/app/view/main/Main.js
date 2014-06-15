@@ -118,9 +118,6 @@ Ext.define('CB.view.main.Main', {
     
     listeners: {
         tabchange: 'onTabChange',
-        beforerender: function() {
-            console.log('before');
-        },
         scope: 'controller'
     },
 

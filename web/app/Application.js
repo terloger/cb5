@@ -24,7 +24,9 @@ Ext.define('CB.Application', {
         'location.Location',
         'location.Add',
         'locations.Locations',
-        'user.User'
+        'user.User',
+        'user.Login',
+        'user.Home'
     ],
     
     waitFor: [
@@ -38,8 +40,6 @@ Ext.define('CB.Application', {
         Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider', {
             expires: new Date(new Date().getTime()+(1000*60*60*24*30))
         }));
-        
-        console.log(CB.init);
         
         // initialize direct provider
         Ext.direct.Manager.addProvider(CB.init.API);
