@@ -7,6 +7,9 @@ Ext.define('CB.view.map.MapController', {
     alias: 'controller.cb-map',
     
     config: {
+        /**
+         * Map
+         */
         map: null,
         markers: null,
         overlay: null,
@@ -18,7 +21,13 @@ Ext.define('CB.view.map.MapController', {
             lat: 46.088472,
             lng: 14.644775
         },
-        lastCenter: null
+        lastCenter: null,
+        /**
+         * Menus
+         */
+        mapMenu: null,
+        markerMenu: null,
+        filterMenu: null
     },
     
     /**
@@ -26,7 +35,10 @@ Ext.define('CB.view.map.MapController', {
      */
     
     destroy: function () {
-        Ext.destroyMembers(this, 'filterMenu', 'mapMenu', 'markerMenu');
+        if (this.getMapMenu())    this.getMapMenu().destroy();
+        if (this.getMarkerMenu()) this.getMarkerMenu().destroy();
+        if (this.getFilterMenu()) this.getFilterMenu().destroy();
+        
         this.callParent();
     },
     
@@ -74,31 +86,28 @@ Ext.define('CB.view.map.MapController', {
      */
     
     addLocation: function() {
-        var mapView = this.getView(),
-            mainView = mapView.up('tabpanel'),
-            addLocationView = Ext.create('CB.view.location.Add', {
-                route: '#location/add',
-                tabConfig: {
-                    hidden: true
-                }
-            });
-    
-        console.log(mapView);
-        console.log(mainView);
-        console.log(addLocationView);
-        
-        mainView.add(addLocationView);
-        mainView.setActiveTab(addLocationView);
-        
-        //console.log('add location');
+        console.log('addLocation');
+        this.redirectTo('location/add');
     },
     
     openLocation: function() {
-        console.log('open location');
+        var location = this.getMarkerMenu().getLocation();
+        
+        if (!location) {
+            return;
+        }
+        
+        this.redirectTo('location/' + location.get('id'));
     },
     
     editLocation: function() {
-        console.log('edit location');
+        var location = this.getMarkerMenu().getLocation();
+        
+        if (!location) {
+            return;
+        }
+        
+        this.redirectTo('location/edit/' + location.get('id'));
     },
     
     moveLocation: function() {
@@ -163,12 +172,14 @@ Ext.define('CB.view.map.MapController', {
     },
     
     onMapRightClick: function(e) {
-        console.log('onMapRightClick');
-        if (!this.mapMenu) {
-            this.mapMenu = this.getView().add(this.getView().mapMenu);
+        var menu = this.getMapMenu();
+        
+        if (!menu) {
+            menu = this.getView().add(this.getView().getMapMenu());
+            this.setMapMenu(menu);
         }
         
-        this.mapMenu.showAt(this.getLatLngLocalXY(e.latLng));
+        menu.showAt(this.getLatLngLocalXY(e.latLng));
     },
     
     onMapZoomChanged: function() {
@@ -305,21 +316,23 @@ Ext.define('CB.view.map.MapController', {
     },
     
     onMarkerRightClick: function(e, marker) {
-        console.log('onMarkerRightClick');
-        var location = marker.getLocation();
-        if (location) {
-            this.fireEvent('markerrightclick', marker, location, e);
+        var location = marker.getLocation(),
+            menu = this.getMarkerMenu();
+    
+        if (!marker || !location) {
+            return;
         }
         
-        if (!this.markerMenu) {
-            this.markerMenu = this.getView().add(this.getView().markerMenu);
+        if (!menu) {
+            menu = this.getView().add(this.getView().getMarkerMenu());
+            this.setMarkerMenu(menu);
         }
         
-        this.markerMenu.marker = marker;
-        this.markerMenu.location = location;
-        this.markerMenu.event = e;
+        menu.setMarker(marker);
+        menu.setLocation(location);
+        menu.setEvent(e);
         
-        this.markerMenu.showAt(this.getLatLngLocalXY(e.latLng));
+        menu.showAt(this.getLatLngLocalXY(e.latLng));
     },
     
     onMarkerDragEnd: function(e, marker) {
@@ -336,7 +349,7 @@ Ext.define('CB.view.map.MapController', {
     
     onFilterButtonClick: function(btn, e) {
         console.log('onFilterButtonClick');
-        var menu = this.filterMenu,
+        var menu = this.getFilterMenu(),
             view = this.getView(),
             viewModel = view.getViewModel();
 
@@ -358,9 +371,9 @@ Ext.define('CB.view.map.MapController', {
                 });
             }, this);
             
-            this.filterMenu = menu = view.add(menu);
-            
+            menu = view.add(menu);
             btn.setMenu(menu);
+            this.setFilterMenu(menu);
         }
         
         btn.showMenu();

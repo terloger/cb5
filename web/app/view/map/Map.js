@@ -23,6 +23,47 @@ Ext.define('CB.view.map.Map', {
     
     title: 'Map',
     
+    config: {
+        mapMenu: {
+            xtype: 'menu',
+            items: [{
+                text: 'Refresh',
+                handler: 'refreshMap',
+                glyph: 'xe61d@climbuddy'
+            },'-',{
+                text: 'Add location',
+                handler: 'addLocation',
+                glyph: 'xe618@climbuddy'
+            }]
+        },
+        markerMenu: {
+            xtype: 'menu',
+            items: [{
+                text: 'Open location',
+                handler: 'openLocation',
+                glyph: 'xe605@climbuddy'
+            },'-',{
+                text: 'Edit location',
+                handler: 'editLocation',
+                glyph: 'xe627@climbuddy'
+            },{
+                text: 'Move location',
+                handler: 'moveLocation',
+                glyph: 'xe63a@climbuddy'
+            },'-',{
+                text: 'Delete location',
+                handler: 'deleteLocation',
+                glyph: 'xe61e@climbuddy'
+            }],
+            getMarker: function() { return this.marker; },
+            setMarker: function(marker) { this.marker = marker; },
+            getLocation: function() { return this.location; },
+            setLocation: function(location) { this.location = location; },
+            getEvent: function() { return this.event; },
+            setEvent: function(event) { this.event = event; }
+        }
+    },
+    
     tbar: {
         ui: 'header',
         height: 72,
@@ -61,40 +102,6 @@ Ext.define('CB.view.map.Map', {
         afterrender: 'onAfterRender',
         resize: 'onResize',
         scope: 'controller'
-    },
-    
-    mapMenu: {
-        xtype: 'menu',
-        items: [{
-            text: 'Refresh',
-            handler: 'refreshMap',
-            glyph: 'xe61d@climbuddy'
-        },'-',{
-            text: 'Add location',
-            handler: 'addLocation',
-            glyph: 'xe618@climbuddy'
-        }]
-    },
-    
-    markerMenu: {
-        xtype: 'menu',
-        items: [{
-            text: 'Open location',
-            handler: 'openLocation',
-            glyph: 'xe605@climbuddy'
-        },'-',{
-            text: 'Edit location',
-            handler: 'editLocation',
-            glyph: 'xe627@climbuddy'
-        },{
-            text: 'Move location',
-            handler: 'moveLocation',
-            glyph: 'xe63a@climbuddy'
-        },'-',{
-            text: 'Delete location',
-            handler: 'deleteLocation',
-            glyph: 'xe61e@climbuddy'
-        }]
     }
     
 });

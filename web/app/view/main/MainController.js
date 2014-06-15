@@ -6,26 +6,40 @@ Ext.define('CB.view.main.MainController', {
 
     alias: 'controller.cb-main',
     
-    config: {
-        routes: {
-            'home': 'onHome',
-            'map': 'onMap',
-            'user': 'onUser',
-            'locations': 'onLocations',
-            'location/:id': 'onLocation',
-            'add-location': 'onLocationAdd'
+    routes: {
+        'home': 'onHome',
+        'map': 'onMap',
+        'user': 'onUser',
+        'locations': 'onLocations',
+        'location/add': 'onLocationEdit',
+        'location/edit/:id': {
+            action: 'onLocationEdit',
+            conditions: {
+                ':id': '([0-9]+)'
+            }
         },
-        listen: {
-            controller: {
-                '#' : {
-                    unmatchedroute : 'onUnmatchedRoute'
-                },
-                'cb-map': {
-                    markerclick: 'onMapMarkerClick'
-                }
+        'location/:id': {
+            action: 'onLocation',
+            conditions: {
+                ':id': '([0-9]+)'
             }
         }
     },
+    
+    listen: {
+        controller: {
+            '#' : {
+                unmatchedroute : 'onUnmatchedRoute'
+            },
+            'cb-map': {
+                markerclick: 'onMapMarkerClick'
+            }
+        }
+    },
+    
+    /**
+     * Core
+     */
     
     init: function() {
         // initialize config
@@ -35,6 +49,11 @@ Ext.define('CB.view.main.MainController', {
         if (CB.init.User) {
             this.getView().getViewModel().set('user', Ext.create('CB.model.User', CB.init.User));
         }
+    },
+    
+    destroy: function () {
+        Ext.destroyMembers(this, 'addLocationView', 'navigationMenu', 'collapseButton');
+        this.callParent();
     },
     
     /**
@@ -125,21 +144,61 @@ Ext.define('CB.view.main.MainController', {
         }
     },
     
-    onLocationAdd: function() {
-        console.log('onLocationAdd');
-        var user = this.getView().getViewModel().get('user');
+    onLocationEdit: function(id) {
+        console.log('onLocationEdit', id);
+        var mainView = this.getView(),
+            editLocationView = this.editLocationView,
+            store = this.getStore('locations'),
+            storeLoaded = store.isLoaded(),
+            user = mainView.getViewModel().get('user'),
+            location,
+            editLocation = function() {
+                if (id) {
+                    location = store.getById(id);
+                } else {
+                    location = Ext.create('CB.model.Location');
+                }
+                
+                if (!location) {
+                    this.redirectTo('home');
+                    return;
+                }
+                
+                if (!editLocationView) {
+                    this.editLocationView = editLocationView = Ext.create('CB.view.location.Edit', {
+                        tabConfig: {
+                            hidden: true
+                        }
+                    });
+                    mainView.add(editLocationView);
+                }
+                
+                mainView.setActiveTab(editLocationView);
+                
+                editLocationView.getViewModel().set('location', location);
+            };
+    
         if (!user) {
             this.redirectTo('home');
             return;
         }
         
-        console.log(user);
+        if (storeLoaded) {
+            editLocation.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: editLocation,
+                    single: true,
+                    scope: this
+                }
+            });
+        }
     },
     
-    destroy: function () {
-        Ext.destroyMembers(this, 'navigationMenu', 'collapseButton');
-        this.callParent();
-    },
+    /**
+     * Listeners
+     */
     
     onHeaderAfterRender: function(header) {
         console.log('onHeaderAfterRender');
@@ -206,7 +265,7 @@ Ext.define('CB.view.main.MainController', {
     onMenuClick: function (e) {
         console.log('onMenuClick');
         if (!this.navigationMenu) {
-            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
+            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().getNavigationMenu());
         }
 
         this.navigationMenu.showAt(e.getXY());

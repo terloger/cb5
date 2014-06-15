@@ -11,28 +11,27 @@ Ext.define('CB.view.main.MainModel', {
 
     alias: 'viewmodel.cb-main',
     
-    config: {
-        data: {
-            user: null
+    data: {
+        user: null
+    },
+    
+    stores: {
+        countries: {
+            model: 'Country',
+            autoLoad: true
         },
-        stores: {
-            countries: {
-                model: 'Country',
-                autoLoad: true
-            },
-            locationTypes: {
-                model: 'LocationType',
-                autoLoad: true
-            },
-            gradeTypes: {
-                model: 'GradeType',
-                autoLoad: true
-            },
-            locations: {
-                model: 'Location',
-                session: true,
-                autoLoad: true
-            }
+        locationTypes: {
+            model: 'LocationType',
+            autoLoad: true
+        },
+        gradeTypes: {
+            model: 'GradeType',
+            autoLoad: true
+        },
+        locations: {
+            model: 'Location',
+            session: true,
+            autoLoad: true
         }
     }
     

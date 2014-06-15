@@ -3159,7 +3159,7 @@ var Item = Base.extend(Callback, {
 	},
 
 	getTransformContent: '#getApplyMatrix',
-	setTransformContent: '#setApplyMatrix',
+	setTransformContent: '#setApplyMatrix'
 }, {
 	getProject: function() {
 		return this._project;

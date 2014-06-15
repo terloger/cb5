@@ -4,13 +4,12 @@ $cb-dark-background: #3e4752;
 $cb-light-background: #ffffff;
 $cb-tile-background: #ffffff;
 
-$cb-blue-color: #2e6eaf;
-$cb-red-color: #d93043;
-$cb-green-color: #81c81e;
+$cb-blue-color: #00AAB5;
+$cb-red-color: #F41C54;
+$cb-green-color: #A8BF12;
 $cb-yellow-color: #c9c54e;
+$cb-orange-color: #FF9F00;
 $cb-light-blue-color: saturate(lighten($cb-blue-color, 53%), 70%);
-
-$cb-button-color: #727477;
 
 $cb-font-light-color: #a0a7b8;
 $cb-font-color: #878ea2;
@@ -32,7 +31,6 @@ $cb-font-bold: 800;
 
 // GENERAL APP STYLE
 
-$base-color: $cb-yellow-color;
 $color: $cb-font-dark-color;
 $font-family: $cb-font-family;
 $body-background-color: $cb-light-background;
@@ -45,6 +43,34 @@ $panel-body-background-color: $cb-light-background;
 // TOOLBAR
 
 $toolbar-background-color: $cb-light-background;
+
+// MENU
+
+$menu-text-color: $cb-font-dark-color;
+
+// BORDERS
+
+$light-grey-borders: $cb-font-color;
+
+// BUTTON
+
+$button-small-border-radius: 3px;
+$button-small-font-size: $cb-font-size-content;
+$button-small-font-weight: $cb-font-bold;
+
+/*
+$button-default-color: #fff;
+$button-default-border-color: darken($cb-blue-color, 8%);
+$button-default-background-color: darken($cb-blue-color, 0%);
+$button-default-background-color-over: darken($cb-blue-color, 8%);
+$button-default-background-color-pressed: darken($cb-blue-color, 14%);
+
+$button-toolbar-color: $button-default-color;
+$button-toolbar-border-color: darken($cb-blue-color, 8%);
+$button-toolbar-background-color: darken($cb-blue-color, 0%);
+$button-toolbar-background-color-over: darken($cb-blue-color, 8%);
+$button-toolbar-background-color-pressed: darken($cb-blue-color, 14%);
+*/
 
 // GRID
 
@@ -61,27 +87,3 @@ $grid-column-header-color: $cb-font-dark-color;
 $grid-grouped-header-border-width: 0;
 
 $grid-grouped-header-background-color: $cb-light-blue-color;
-
-// BUTTON
-// since only small (default) buttons are used, only small button styles are defined here
-
-$button-small-border-radius: 3px;
-$button-default-border-color: $cb-button-color;
-$button-toolbar-border-color: $button-default-border-color;
-
-$button-default-background-color: $cb-button-color;
-$button-toolbar-background-color: $button-default-background-color;
-
-$button-default-color: white;
-$button-toolbar-color: $button-default-color;
-
-$button-small-font-size: $cb-font-size-content;
-$button-small-font-weight: $cb-font-bold;
-
-// MENU
-
-$menu-text-color: $cb-font-dark-color;
-
-// BORDERS
-
-$light-grey-borders: $cb-font-color;
