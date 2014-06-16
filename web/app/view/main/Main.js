@@ -20,29 +20,6 @@ Ext.define('CB.view.main.Main', {
     
     stateful: true,
     stateId: 'CB.view.main.Main',
-    
-    applyState: function(state) {
-        if (state) {
-            if (state.header && state.header.isCollapsed) {
-                Ext.apply(this.header, {
-                    isCollapsed: true,
-                    width: 68,
-                    cls: this.header.cls + ' ' + this.header.collapsedCls
-                });
-            }
-        }
-    },
-
-    getState: function() {
-        var header = this.getHeader(),
-            state = {
-                header: {
-                    isCollapsed: header.isCollapsed
-                }
-            };
-        
-        return state;
-    },
 
     tabBarHeaderPosition: 1,
     titleRotation: 0,
@@ -69,7 +46,7 @@ Ext.define('CB.view.main.Main', {
             width: 96,
             height: 72,
             margin: '0 0 0 0',
-            handler: 'onMenuClick',
+            handler: 'showNavigationMenu',
             plugins: 'responsive',
             responsiveConfig: {
                 'width < 566 && tall': {
@@ -82,45 +59,6 @@ Ext.define('CB.view.main.Main', {
         }]
     },
     
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
-        }
-    },
-
-    responsiveConfig: {
-        tall: {
-            collapsed: false,
-            headerPosition: 'top'
-        },
-        wide: {
-            collapsed: true,
-            headerPosition: 'left'
-        }
-    },
-    
-    setCollapsed: function(collapsed) {
-        var header = this.getHeader(),
-            el = header.el;
-    
-        if (!el) {
-            return;
-        }
-        
-        if (collapsed && header.isCollapsed) {
-            el.addCls('collapsed');
-        } else {
-            el.removeCls('collapsed');
-        }
-    },
-    
-    listeners: {
-        tabchange: 'onTabChange',
-        scope: 'controller'
-    },
-
     navigationMenu: {
         xtype: 'menu',
         cls: 'cb-navigation-menu',
@@ -142,8 +80,32 @@ Ext.define('CB.view.main.Main', {
             height: 50
         }],
         listeners: {
-            click: 'onMenuItemClick'
+            click: 'onNavigationMenuClick'
         }
+    },
+    
+    tabBar: {
+        flex: 1,
+        layout: {
+            align: 'stretch',
+            overflowHandler: 'none'
+        }
+    },
+
+    responsiveConfig: {
+        tall: {
+            collapsed: false,
+            headerPosition: 'top'
+        },
+        wide: {
+            collapsed: true,
+            headerPosition: 'left'
+        }
+    },
+    
+    listeners: {
+        tabchange: 'onTabChange',
+        scope: 'controller'
     },
     
     defaults: {
@@ -268,6 +230,44 @@ Ext.define('CB.view.main.Main', {
         reference: 'cb-user',
         glyph: 'xe60f@climbuddy',
         route: 'user'
-    }]
+    }],
+
+    setCollapsed: function(collapsed) {
+        var header = this.getHeader(),
+            el = header.el;
+    
+        if (!el) {
+            return;
+        }
+        
+        if (collapsed && header.isCollapsed) {
+            el.addCls('collapsed');
+        } else {
+            el.removeCls('collapsed');
+        }
+    },
+    
+    applyState: function(state) {
+        if (state) {
+            if (state.header && state.header.isCollapsed) {
+                Ext.apply(this.header, {
+                    isCollapsed: true,
+                    width: 68,
+                    cls: this.header.cls + ' ' + this.header.collapsedCls
+                });
+            }
+        }
+    },
+
+    getState: function() {
+        var header = this.getHeader(),
+            state = {
+                header: {
+                    isCollapsed: header.isCollapsed
+                }
+            };
+        
+        return state;
+    }
     
 });

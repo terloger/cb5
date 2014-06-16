@@ -7,13 +7,13 @@ Ext.define('CB.view.main.MainController', {
     alias: 'controller.cb-main',
     
     routes: {
-        'home': 'onHome',
-        'map': 'onMap',
-        'user': 'onUser',
-        'locations': 'onLocations',
-        'location/add': 'onLocationAdd',
+        'home': 'showHome',
+        'map': 'showMap',
+        'user': 'showUser',
+        'locations': 'showLocations',
+        'location/add': 'showLocationAdd',
         'location/:id': {
-            action: 'onLocation',
+            action: 'showLocation',
             conditions: {
                 ':id': '([0-9]+)'
             }
@@ -24,9 +24,6 @@ Ext.define('CB.view.main.MainController', {
         controller: {
             '#' : {
                 unmatchedroute : 'onUnmatchedRoute'
-            },
-            'cb-map': {
-                markerclick: 'onMapMarkerClick'
             }
         }
     },
@@ -50,141 +47,12 @@ Ext.define('CB.view.main.MainController', {
         this.callParent();
     },
     
-    /**
-     * Routes
-     */
-    
-    onUnmatchedRoute: function(hash) {
-        console.log('onUnmatchedRoute');
-        var view = this.getView(),
-            tab, header, title;
-        
-        view.setActiveTab(0);
-        tab = view.getActiveTab();
-        header = tab.down('toolbar[ui=header]');
-        title = header.down('tbtext[cls=title]');
-        title.setText('Unable to find #' + hash);
-    },
-    
-    onHome: function() {
-        console.log('onHome');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
-        if (tab) {
-            this.redirectTo('home');
+    onTabChange: function (view, tab) {
+        console.log('onTabChange');
+        if (tab.route) {
+            this.redirectTo(tab.route);
         }
     },
-    
-    onMap: function() {
-        console.log('onMap');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-map'));
-        if (tab) {
-            this.redirectTo('map');
-        }
-    },
-    
-    onUser: function() {
-        console.log('onUser');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-user'));
-        if (tab) {
-            this.redirectTo('user');
-        }
-    },
-    
-    onLocations: function() {
-        console.log('onLocations');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-locations'));
-        if (tab) {
-            this.redirectTo('locations');
-        }
-    },
-    
-    onLocation: function(id) {
-        console.log('onLocation');
-        var mainView = this.getView(),
-            locationView = this.lookupReference('cb-location'),
-            locationViewModel = locationView.getViewModel(),
-            locationViewCtrl = locationView.getController(),
-            store = this.getStore('locations'),
-            storeLoaded = store.isLoaded(),
-            showLocation = function() {
-                var location = store.getById(id);
-                if (location) {
-                    locationViewModel.bind({bindTo: '{location}', single: true}, function(location){
-                        locationViewCtrl.showLocation(location);
-                        if (storeLoaded && mainView.setActiveTab(locationView)) {
-                            this.redirectTo('location/' + id);
-                        }
-                    }, this);
-                    locationViewModel.linkTo('location', location);
-                } else {
-                    locationViewModel.set('location.name', 'Oooops, location #' + id + ' does not exist.');
-                }
-            };
-    
-        if (storeLoaded) {
-            showLocation.apply(this);
-        } else {
-            store.on({
-                load: {
-                    fn: showLocation,
-                    single: true,
-                    scope: this
-                }
-            });
-            
-            if (mainView.setActiveTab(locationView)) {
-                this.redirectTo('location/' + id);
-            }
-        }
-    },
-    
-    onLocationAdd: function() {
-        console.log('onLocationAdd');
-        var mainView = this.getView(),
-            store = this.getStore('locations'),
-            user = mainView.getViewModel().get('user'),
-            addLocation = function() {
-                var view = this.addLocationView,
-                    location;
-            
-                if (!view) {
-                    this.addLocationView = view = Ext.create('CB.view.location.Add', {
-                        tabConfig: {
-                            hidden: true
-                        }
-                    });
-                    mainView.add(view);
-                }
-                
-                location = Ext.create('CB.model.Location');
-                
-                view.getSession().createRecord('Location', location);
-                view.getViewModel().set('location', location);
-                
-                mainView.setActiveTab(view);
-            };
-    
-        if (!user) {
-            this.redirectTo('home');
-            return;
-        }
-        
-        if (store.isLoaded()) {
-            addLocation.apply(this);
-        } else {
-            store.on({
-                load: {
-                    fn: addLocation,
-                    single: true,
-                    scope: this
-                }
-            });
-        }
-    },
-    
-    /**
-     * Listeners
-     */
     
     onHeaderAfterRender: function(header) {
         console.log('onHeaderAfterRender');
@@ -241,30 +109,157 @@ Ext.define('CB.view.main.MainController', {
         this.getView().saveState();
     },
     
-    onTabChange: function (view, tab) {
-        console.log('onTabChange');
-        if (tab.route) {
-            this.redirectTo(tab.route);
+    onUnmatchedRoute: function(hash) {
+        console.log('onUnmatchedRoute');
+        var view = this.getView(),
+            tab, header, title;
+        
+        view.setActiveTab(0);
+        tab = view.getActiveTab();
+        header = tab.down('toolbar[ui=header]');
+        title = header.down('tbtext[cls=title]');
+        title.setText('Unable to find #' + hash);
+    },
+    
+    /**
+     * Routes
+     */
+    
+    showHome: function() {
+        console.log('showHome');
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
+        if (tab) {
+            this.redirectTo('home');
         }
     },
     
-    onMenuClick: function (e) {
+    showMap: function() {
+        console.log('showMap');
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-map'));
+        if (tab) {
+            this.redirectTo('map');
+        }
+    },
+    
+    showUser: function() {
+        console.log('showUser');
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-user'));
+        if (tab) {
+            this.redirectTo('user');
+        }
+    },
+    
+    showLocations: function() {
+        console.log('showLocations');
+        var tab = this.getView().setActiveTab(this.lookupReference('cb-locations'));
+        if (tab) {
+            this.redirectTo('locations');
+        }
+    },
+    
+    showLocation: function(id) {
+        console.log('showLocation');
+        var mainView = this.getView(),
+            locationView = this.lookupReference('cb-location'),
+            locationViewModel = locationView.getViewModel(),
+            locationViewCtrl = locationView.getController(),
+            store = this.getStore('locations'),
+            storeLoaded = store.isLoaded(),
+            showLocation = function() {
+                var location = store.getById(id);
+                if (location) {
+                    locationViewCtrl.showLocation(location);
+                    locationViewModel.bind({bindTo: '{location}', single: true}, function(location){
+                        if (storeLoaded && mainView.setActiveTab(locationView)) {
+                            this.redirectTo('location/' + id);
+                        }
+                    }, this);
+                    locationViewModel.linkTo('location', location);
+                } else {
+                    locationViewModel.set('location.name', 'Oooops, location #' + id + ' does not exist.');
+                }
+            };
+    
+        if (storeLoaded) {
+            showLocation.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: showLocation,
+                    single: true,
+                    scope: this
+                }
+            });
+            
+            if (mainView.setActiveTab(locationView)) {
+                this.redirectTo('location/' + id);
+            }
+        }
+    },
+    
+    showLocationAdd: function() {
+        console.log('showLocationAdd');
+        var mainView = this.getView(),
+            store = this.getStore('locations'),
+            user = mainView.getViewModel().get('user'),
+            addLocation = function() {
+                var view = this.addLocationView,
+                    location;
+            
+                if (!view) {
+                    this.addLocationView = view = Ext.create('CB.view.location.Add', {
+                        tabConfig: {
+                            hidden: true
+                        }
+                    });
+                    mainView.add(view);
+                }
+                
+                location = store.getById(482);
+                view.getSession().adopt(location);
+                
+                //location = Ext.create('CB.model.Location');
+                
+                //view.getSession().createRecord('Location', location);
+                view.getViewModel().set('location', location);
+                
+                mainView.setActiveTab(view);
+            };
+    
+        if (!user) {
+            this.redirectTo('home');
+            return;
+        }
+        
+        if (store.isLoaded()) {
+            addLocation.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: addLocation,
+                    single: true,
+                    scope: this
+                }
+            });
+        }
+    },
+    
+    /**
+     * Navigation menu
+     */
+    
+    showNavigationMenu: function (e) {
         console.log('onMenuClick');
         if (!this.navigationMenu) {
-            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().getNavigationMenu());
+            this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
         }
 
         this.navigationMenu.showAt(e.getXY());
     },
     
-    onMenuItemClick: function (menu, item) {
+    onNavigationMenuClick: function (menu, item) {
         console.log('onMenuItemClick');
         this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
-    },
-    
-    onMapMarkerClick: function(marker, location, e) {
-        console.log('onMapMarkerClick');
-        this.redirectTo('location/' + location.get('id'));
     }
     
 });

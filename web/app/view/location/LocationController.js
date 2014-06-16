@@ -7,7 +7,17 @@ Ext.define('CB.view.location.LocationController', {
     alias: 'controller.cb-location',
     
     showLocation: function(location) {
-        console.log('showLocation', location);
-        this.lookupReference('cb-paper').setLocation(location);
+        var view = this.getView(),
+            paper = this.lookupReference('cb-paper');
+        
+        if (view.rendered) {
+            paper.setLocation(location);
+        } else {
+            view.on({
+                afterrender: function() {
+                    paper.setLocation(location);
+                }
+            });
+        }
     }
 });

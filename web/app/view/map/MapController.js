@@ -21,13 +21,7 @@ Ext.define('CB.view.map.MapController', {
             lat: 46.088472,
             lng: 14.644775
         },
-        lastCenter: null,
-        /**
-         * Menus
-         */
-        mapMenu: null,
-        markerMenu: null,
-        filterMenu: null
+        lastCenter: null
     },
     
     /**
@@ -35,10 +29,7 @@ Ext.define('CB.view.map.MapController', {
      */
     
     destroy: function () {
-        if (this.getMapMenu())    this.getMapMenu().destroy();
-        if (this.getMarkerMenu()) this.getMarkerMenu().destroy();
-        if (this.getFilterMenu()) this.getFilterMenu().destroy();
-        
+        Ext.destroyMembers(this, 'mapMenu', 'markerMenu', 'filterMenu');
         this.callParent();
     },
     
@@ -91,7 +82,7 @@ Ext.define('CB.view.map.MapController', {
     },
     
     openLocation: function() {
-        var location = this.getMarkerMenu().getLocation();
+        var location = this.markerMenu.getLocation();
         
         if (!location) {
             return;
@@ -162,11 +153,11 @@ Ext.define('CB.view.map.MapController', {
     },
     
     onMapRightClick: function(e) {
-        var menu = this.getMapMenu();
+        var view = this.getView(),
+            menu = this.mapMenu;
         
         if (!menu) {
-            menu = this.getView().add(this.getView().getMapMenu());
-            this.setMapMenu(menu);
+            this.mapMenu = menu = view.add(view.mapMenu);
         }
         
         menu.showAt(this.getLatLngLocalXY(e.latLng));
@@ -301,21 +292,22 @@ Ext.define('CB.view.map.MapController', {
         console.log('onMarkerClick');
         var location = marker.getLocation();
         if (location) {
-            this.fireEvent('markerclick', marker, location, e);
+            this.redirectTo('location/' + location.get('id'));
+            //this.fireEvent('markerclick', marker, location, e);
         }
     },
     
     onMarkerRightClick: function(e, marker) {
-        var location = marker.getLocation(),
-            menu = this.getMarkerMenu();
+        var view = this.getView(),
+            menu = this.markerMenu,
+            location = marker ? marker.getLocation() : null;
     
         if (!marker || !location) {
             return;
         }
         
         if (!menu) {
-            menu = this.getView().add(this.getView().getMarkerMenu());
-            this.setMarkerMenu(menu);
+            this.markerMenu = menu = view.add(view.markerMenu);
         }
         
         menu.setMarker(marker);
@@ -337,18 +329,22 @@ Ext.define('CB.view.map.MapController', {
      * Toolbar
      */
     
-    onFilterButtonClick: function(btn, e) {
+    onSearch: function(btn, e) {
+        console.log('search');
+    },
+    
+    showFilterMenu: function(btn, e) {
         console.log('onFilterButtonClick');
-        var menu = this.getFilterMenu(),
-            view = this.getView(),
-            viewModel = view.getViewModel();
+        var view = this.getView(),
+            viewModel = view.getViewModel(),
+            menu = this.filterMenu;
 
         if (!menu) {
             menu = {
                 xtype: 'menu',
                 items: [],
                 listeners: {
-                    click: this.onFilterMenuClick,
+                    click: this.onFilterMenuItemClick,
                     scope: this
                 }
             };
@@ -361,20 +357,15 @@ Ext.define('CB.view.map.MapController', {
                 });
             }, this);
             
-            menu = view.add(menu);
+            this.filterMenu = menu = view.add(menu);
             btn.setMenu(menu);
-            this.setFilterMenu(menu);
         }
         
         btn.showMenu();
     },
     
-    onFilterMenuClick: function(menu, item, e) {
-        console.log('onFilterMenuClick');
-    },
-    
-    onSearch: function(btn, e) {
-        console.log('search');
+    onFilterMenuItemClick: function(menu, item, e) {
+        console.log('onFilterMenuItemClick');
     }
     
 });

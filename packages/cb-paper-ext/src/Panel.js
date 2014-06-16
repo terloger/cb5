@@ -44,7 +44,9 @@ Ext.define('CB.paper.Panel', {
     },
     
     onAfterRender: function() {
+        console.log('extPanelAfterRender');
         // set canvas and image reference
+        console.log(Ext.get('image'));
         this.setImage(Ext.get('image'));
         this.setCanvas(Ext.get('canvas'));
         
@@ -150,7 +152,6 @@ Ext.define('CB.paper.Panel', {
     
     onResize: function(w, h, oldW, oldH) {
         this.callParent(arguments);
-        console.log('resize');
         if (this.getCanvas()) {
             this.getCanvas().setWidth(w);
             this.getCanvas().setHeight(h);
