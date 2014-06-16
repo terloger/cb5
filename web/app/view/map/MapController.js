@@ -100,16 +100,6 @@ Ext.define('CB.view.map.MapController', {
         this.redirectTo('location/' + location.get('id'));
     },
     
-    editLocation: function() {
-        var location = this.getMarkerMenu().getLocation();
-        
-        if (!location) {
-            return;
-        }
-        
-        this.redirectTo('location/edit/' + location.get('id'));
-    },
-    
     moveLocation: function() {
         console.log('move location');
     },

@@ -1,10 +1,18 @@
 /**
- * Add/edit location controller
+ * Add location controller
  */
-Ext.define('CB.view.location.EditController', {
+Ext.define('CB.view.location.AddController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.cb-location-edit',
+    alias: 'controller.cb-location-add',
+    
+    saveLocation: function() {
+        var view = this.getView(),
+            session = view.getSession();
+    
+        console.log('session', session);
+        console.log('session changes', session.getChanges());
+    },
     
     clearFiles: function() {
         console.log('onFileClear');
@@ -12,6 +20,7 @@ Ext.define('CB.view.location.EditController', {
             grid = view.down('grid'),
             fileField = view.down('filebutton');
     
+        view.getViewModel().set('fileCount', 0);
         grid.getStore().removeAll();
         fileField.reset();
     },
@@ -20,6 +29,7 @@ Ext.define('CB.view.location.EditController', {
         console.log('onFileAdd');
         var view = this.getView(),
             grid = view.down('grid'),
+            store = grid.getStore(),
             files = button.fileInputEl.dom.files,
             data = [],
             file;
@@ -33,29 +43,10 @@ Ext.define('CB.view.location.EditController', {
                 type: file.type,
                 date: file.lastModifiedDate
             });
-            console.log(file);
         }
 
-        console.log(data);
-        console.log(grid);
-
-        grid.getStore().loadData(data);
-    },
-    
-    removeFile: function(widgetButton) {
-        console.log('onFileRemove');
-        var view = this.getView(),
-            grid = view.down('grid'),
-            fileButton = view.down('filebutton'),
-            record = widgetButton.getWidgetRecord();
-        
-        console.log(record);
-        console.log(widgetButton);
-        console.log(fileButton);
-        console.log(grid);
-        
-        grid.getStore().remove(record);
-        fileButton.removeFile(record.get('id'));
+        store.loadData(data);
+        view.getViewModel().set('fileCount', store.getCount());
     }
     
 });

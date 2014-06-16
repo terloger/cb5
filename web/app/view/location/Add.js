@@ -1,24 +1,24 @@
 /**
- * Add/edit location
+ * Add location
  */
-Ext.define('CB.view.location.Edit', {
+Ext.define('CB.view.location.Add', {
     extend: 'Ext.form.Panel',
     
     requires: [
         'Ext.form.field.ComboBox'
     ],
     
-    xtype: 'cb-location-edit',
+    xtype: 'cb-location-add',
     
-    controller: 'cb-location-edit',
+    controller: 'cb-location-add',
     
     viewModel: {
-        type: 'cb-location-edit'
+        type: 'cb-location-add'
     },
     
     session: true,
     
-    title: 'Add/edit Location',
+    title: 'Add location',
     bodyPadding: 20,
     autoScroll: true,
     
@@ -27,8 +27,10 @@ Ext.define('CB.view.location.Edit', {
         height: 72,
         items: [{
             xtype: 'tbtext',
-            text: 'Add/edit Location',
-            reference: 'title',
+            text: 'Add location',
+            bind: {
+                text: 'Add location {location.name}'
+            },
             cls: 'title'
         }]
     },
@@ -53,6 +55,7 @@ Ext.define('CB.view.location.Edit', {
         queryMode: 'local',
         multiSelect: true,
         allowBlank: false,
+        editable: false,
         value: [],
         bind: {
             store: '{locationTypes}',
@@ -64,7 +67,8 @@ Ext.define('CB.view.location.Edit', {
         items: [{
             xtype: 'grid',
             frame: true,
-            height: 400,
+            height: 285,
+            disableSelection: true,
             tbar: {
                 items: [{
                     xtype: 'filebutton',
@@ -127,25 +131,14 @@ Ext.define('CB.view.location.Edit', {
                 renderer: function(value) {
                     return Math.round(value / 1024) + ' KB';
                 }
-            }/*,{
-                xtype: 'widgetcolumn',
-                dataIndex: 'progress',
-                width: 40,
-                sortable: false,
-                menuDisabled: true,
-                widget: {
-                    xtype: 'button',
-                    ui: 'blank',
-                    width: 40,
-                    glyph: 'xe619@climbuddy',
-                    margin: '3 0 0 0',
-                    handler: 'removeFile'
-                },
-                renderer: function(value, meta, record) {
-                    meta.innerCls = 'nopadding';
-                }
-            }*/]
+            }]
         }]
+    }],
+
+    buttons: [{
+        text: 'Save',
+        formBind: true,
+        handler: 'saveLocation'
     }]
     
 });

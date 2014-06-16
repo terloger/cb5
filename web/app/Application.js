@@ -23,7 +23,7 @@ Ext.define('CB.Application', {
         'map.Map',
         'locations.Locations',
         'location.Location',
-        'location.Edit',
+        'location.Add',
         'user.User',
         'user.Login',
         'user.Home'

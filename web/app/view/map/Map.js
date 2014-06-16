@@ -43,10 +43,6 @@ Ext.define('CB.view.map.Map', {
                 handler: 'openLocation',
                 glyph: 'xe605@climbuddy'
             },'-',{
-                text: 'Edit location',
-                handler: 'editLocation',
-                glyph: 'xe627@climbuddy'
-            },{
                 text: 'Move location',
                 handler: 'moveLocation',
                 glyph: 'xe63a@climbuddy'

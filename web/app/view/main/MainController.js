@@ -11,13 +11,7 @@ Ext.define('CB.view.main.MainController', {
         'map': 'onMap',
         'user': 'onUser',
         'locations': 'onLocations',
-        'location/add': 'onLocationEdit',
-        'location/edit/:id': {
-            action: 'onLocationEdit',
-            conditions: {
-                ':id': '([0-9]+)'
-            }
-        },
+        'location/add': 'onLocationAdd',
         'location/:id': {
             action: 'onLocation',
             conditions: {
@@ -144,38 +138,30 @@ Ext.define('CB.view.main.MainController', {
         }
     },
     
-    onLocationEdit: function(id) {
-        console.log('onLocationEdit', id);
+    onLocationAdd: function() {
+        console.log('onLocationAdd');
         var mainView = this.getView(),
-            editLocationView = this.editLocationView,
             store = this.getStore('locations'),
-            storeLoaded = store.isLoaded(),
             user = mainView.getViewModel().get('user'),
-            location,
-            editLocation = function() {
-                if (id) {
-                    location = store.getById(id);
-                } else {
-                    location = Ext.create('CB.model.Location');
-                }
-                
-                if (!location) {
-                    this.redirectTo('home');
-                    return;
-                }
-                
-                if (!editLocationView) {
-                    this.editLocationView = editLocationView = Ext.create('CB.view.location.Edit', {
+            addLocation = function() {
+                var view = this.addLocationView,
+                    location;
+            
+                if (!view) {
+                    this.addLocationView = view = Ext.create('CB.view.location.Add', {
                         tabConfig: {
                             hidden: true
                         }
                     });
-                    mainView.add(editLocationView);
+                    mainView.add(view);
                 }
                 
-                mainView.setActiveTab(editLocationView);
+                location = Ext.create('CB.model.Location');
                 
-                editLocationView.getViewModel().set('location', location);
+                view.getSession().createRecord('Location', location);
+                view.getViewModel().set('location', location);
+                
+                mainView.setActiveTab(view);
             };
     
         if (!user) {
@@ -183,12 +169,12 @@ Ext.define('CB.view.main.MainController', {
             return;
         }
         
-        if (storeLoaded) {
-            editLocation.apply(this);
+        if (store.isLoaded()) {
+            addLocation.apply(this);
         } else {
             store.on({
                 load: {
-                    fn: editLocation,
+                    fn: addLocation,
                     single: true,
                     scope: this
                 }
