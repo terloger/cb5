@@ -78,7 +78,17 @@ Ext.define('CB.view.map.MapController', {
     
     addLocation: function() {
         console.log('addLocation');
-        this.redirectTo('location/add');
+        //this.redirectTo('location/add');
+        
+        var e = this.mapMenu.getEvent();
+        
+        if (!e) {
+            return;
+        }
+        
+        console.log(e);
+        console.log(e.latLng.lat());
+        console.log(e.latLng.lng());
     },
     
     openLocation: function() {
@@ -160,6 +170,8 @@ Ext.define('CB.view.map.MapController', {
             this.mapMenu = menu = view.add(view.mapMenu);
         }
         
+        menu.setEvent(e);
+        
         menu.showAt(this.getLatLngLocalXY(e.latLng));
     },
     
@@ -217,7 +229,7 @@ Ext.define('CB.view.map.MapController', {
             projection,
             pixel;
     
-        if (!overlay.ready) {
+        if (!overlay || !overlay.ready) {
             return [0,0];
         }
         

@@ -28,7 +28,7 @@ Ext.define('CB.view.map.Map', {
         height: 72,
         items: [{
             xtype: 'tbtext',
-            text: 'Search locations: ',
+            text: 'Search: ',
             cls: 'title',
             margin: '0 5 0 0'
         },{
@@ -73,7 +73,9 @@ Ext.define('CB.view.map.Map', {
             text: 'Add location',
             handler: 'addLocation',
             glyph: 'xe618@climbuddy'
-        }]
+        }],
+        getEvent: function() { return this.event; },
+        setEvent: function(event) { this.event = event; }
     },
     
     markerMenu: {

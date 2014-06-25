@@ -203,27 +203,23 @@ Ext.define('CB.view.main.MainController', {
             store = this.getStore('locations'),
             user = mainView.getViewModel().get('user'),
             addLocation = function() {
-                var view = this.addLocationView,
+                var addView = this.addLocationView,
                     location;
             
-                if (!view) {
-                    this.addLocationView = view = Ext.create('CB.view.location.Add', {
+                if (!addView) {
+                    this.addLocationView = addView = Ext.create('CB.view.location.Add', {
                         tabConfig: {
                             hidden: true
                         }
                     });
-                    mainView.add(view);
+                    mainView.add(addView);
                 }
                 
-                location = store.getById(482);
-                view.getSession().adopt(location);
-                
-                //location = Ext.create('CB.model.Location');
-                
-                //view.getSession().createRecord('Location', location);
-                view.getViewModel().set('location', location);
-                
-                mainView.setActiveTab(view);
+                location = mainView.getSession().createRecord('Location', {
+                    created: new Date()
+                });
+                addView.getViewModel().set('location', location);
+                mainView.setActiveTab(addView);
             };
     
         if (!user) {

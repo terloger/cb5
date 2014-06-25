@@ -1324,9 +1324,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.store.Sectors": [],
   "CB.view.Spinner": [],
   "CB.view.home.Home": [],
-  "CB.view.location.Edit": [],
-  "CB.view.location.EditController": [],
-  "CB.view.location.EditModel": [],
+  "CB.view.location.Add": [],
+  "CB.view.location.AddController": [],
+  "CB.view.location.AddModel": [],
   "CB.view.location.Location": [],
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
@@ -2435,14 +2435,14 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.home.Home": [
     "widget.cb-home"
   ],
-  "CB.view.location.Edit": [
-    "widget.cb-location-edit"
+  "CB.view.location.Add": [
+    "widget.cb-location-add"
   ],
-  "CB.view.location.EditController": [
-    "controller.cb-location-edit"
+  "CB.view.location.AddController": [
+    "controller.cb-location-add"
   ],
-  "CB.view.location.EditModel": [
-    "viewmodel.cb-location-edit"
+  "CB.view.location.AddModel": [
+    "viewmodel.cb-location-add"
   ],
   "CB.view.location.Location": [
     "widget.cb-location"

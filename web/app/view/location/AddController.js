@@ -6,12 +6,19 @@ Ext.define('CB.view.location.AddController', {
 
     alias: 'controller.cb-location-add',
     
-    saveLocation: function() {
-        var view = this.getView(),
-            session = view.getSession();
+    init: function() {
+        console.log('init CB.view.location.AddController');
+    },
     
-        console.log('session', session);
-        console.log('session changes', session.getChanges());
+    saveLocation: function() {
+        console.log('SAVE LOCATION');
+        var view = this.getView(),
+            session = view.getSession(),
+            mainView = view.up('cb-main'),
+            mainSession = mainView.getSession();
+    
+        console.log('main session', mainSession);
+        console.log('main session changes', mainSession.getChanges());
     },
     
     clearFiles: function() {

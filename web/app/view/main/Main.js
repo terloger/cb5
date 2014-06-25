@@ -242,7 +242,7 @@ Ext.define('CB.view.main.Main', {
         
         if (collapsed && header.isCollapsed) {
             el.addCls('collapsed');
-        } else {
+        } else if (el.is('.collapsed')) {
             el.removeCls('collapsed');
         }
     },
@@ -250,10 +250,14 @@ Ext.define('CB.view.main.Main', {
     applyState: function(state) {
         if (state) {
             if (state.header && state.header.isCollapsed) {
+                var cls = this.header.cls;
+                if (Ext.mixin.Responsive.state.wide) {
+                    cls += ' ' + this.header.collapsedCls;
+                }
                 Ext.apply(this.header, {
                     isCollapsed: true,
                     width: 68,
-                    cls: this.header.cls + ' ' + this.header.collapsedCls
+                    cls: cls
                 });
             }
         }

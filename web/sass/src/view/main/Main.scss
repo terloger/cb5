@@ -46,7 +46,7 @@
     $background-color-pressed: transparent,
     $background-color-disabled: transparent,
 
-    $color: #000,
+    $color: #777,
     $color-over: #000,
     $color-focus: #000,
     $color-pressed: #000,
@@ -54,6 +54,8 @@
     
     $glyph-color: #000,
     $glyph-opacity: 0.4,
+    
+    $icon-size: 22px,
 
     $font-size: $button-small-font-size,
     $font-size-over: $button-small-font-size-over,
@@ -72,6 +74,51 @@
     $font-family-focus: $button-small-font-family-focus,
     $font-family-pressed: $button-small-font-family-pressed,
     $font-family-disabled: $button-small-font-family-disabled
+);
+
+@include extjs-button-medium-ui(
+    $ui: 'blank',
+
+    $border-color: transparent,
+    $border-color-over: transparent,
+    $border-color-focus: transparent,
+    $border-color-pressed: transparent,
+    $border-color-disabled: transparent,
+
+    $background-color: transparent,
+    $background-color-over: transparent,
+    $background-color-focus: transparent,
+    $background-color-pressed: transparent,
+    $background-color-disabled: transparent,
+
+    $color: #777,
+    $color-over: #000,
+    $color-focus: #000,
+    $color-pressed: #000,
+    $color-disabled: #999,
+    
+    $glyph-color: #000,
+    $glyph-opacity: 0.4,
+    
+    $icon-size: 24px,
+
+    $font-size: $button-medium-font-size,
+    $font-size-over: $button-medium-font-size-over,
+    $font-size-focus: $button-medium-font-size-focus,
+    $font-size-pressed: $button-medium-font-size-pressed,
+    $font-size-disabled: $button-medium-font-size-disabled,
+
+    $font-weight: $button-medium-font-weight,
+    $font-weight-over: $button-medium-font-weight-over,
+    $font-weight-focus: $button-medium-font-weight-focus,
+    $font-weight-pressed: $button-medium-font-weight-pressed,
+    $font-weight-disabled: $button-medium-font-weight-disabled,
+
+    $font-family: $button-medium-font-family,
+    $font-family-over: $button-medium-font-family-over,
+    $font-family-focus: $button-medium-font-family-focus,
+    $font-family-pressed: $button-medium-font-family-pressed,
+    $font-family-disabled: $button-medium-font-family-disabled
 );
 
 /**
@@ -134,12 +181,10 @@
     $background-color: #fff,
     $border-width: 0,
     $vertical-spacing: 0,
-    $horizontal-spacing: 20px
+    $horizontal-spacing: 10px,
+    $separator-color: #999,
+    $separator-horizontal-margin: 0 10px 0 0
 );
-
-.cb-spinner {
-    background: transparent url(images/tree/loading.gif) no-repeat center center;
-}
 
 .x-css-shadow {
     -webkit-box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
@@ -179,6 +224,62 @@
     }
 }
 
+.x-tab-inner-navigation {
+    white-space: normal;
+
+    .x-ie8 & {
+        font-size: 13px;
+    }
+}
+
+.x-panel-header-title-navigation {
+    text-align: left;
+}
+
+.x-toolbar-header {
+    
+    -webkit-box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
+    -moz-box-shadow:    0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
+    box-shadow:         0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
+    
+    .title {
+        font-size: 20px;
+    }
+    
+    .x-box-menu-after {
+        margin-top: 22px;
+        background: none;
+        border: none;
+        
+        &.x-btn-over {
+            .x-toolbar-more-icon {
+                opacity: 1;
+            }
+        }
+        
+        .x-toolbar-more-icon {
+            opacity: 0.6;
+            background: none;
+            font-family: 'climbuddy';
+            speak: none;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+
+            /* Better Font Rendering =========== */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .x-toolbar-more-icon:before {
+            content: "\e644";
+        }
+    }
+}
+
 .cb-collapser {
     background: none !important;
     border: none;
@@ -202,30 +303,6 @@
         line-height: 20px;
         -webkit-font-smoothing: antialiased;
     }
-}
-
-.x-tab-inner-navigation {
-    white-space: normal;
-
-    .x-ie8 & {
-        font-size: 13px;
-    }
-}
-
-.x-panel-header-title-navigation {
-    text-align: left;
-}
-
-.x-toolbar-header {
-    
-    -webkit-box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
-    -moz-box-shadow:    0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
-    box-shadow:         0px 0px 4px 3px rgba(0, 0, 0, 0.35) !important;
-    
-    .title {
-        font-size: 20px;
-    }
-    
 }
 
 .cb-navigation {
@@ -312,3 +389,6 @@
     }
 }
 
+.cb-spinner {
+    background: transparent url(images/tree/loading.gif) no-repeat center center;
+}
