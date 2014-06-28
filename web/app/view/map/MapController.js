@@ -78,17 +78,40 @@ Ext.define('CB.view.map.MapController', {
     
     addLocation: function() {
         console.log('addLocation');
-        //this.redirectTo('location/add');
+        var countries = this.getView().getViewModel().get('countries'),
+            latLng = this.mapMenu.getEvent().latLng,
+            lat = latLng.lat(),
+            lng = latLng.lng(),
+            country;
         
-        var e = this.mapMenu.getEvent();
-        
-        if (!e) {
-            return;
+        if (!this.geocoder) {
+            this.geocoder = new google.maps.Geocoder();
         }
         
-        console.log(e);
-        console.log(e.latLng.lat());
-        console.log(e.latLng.lng());
+        this.geocoder.geocode({latLng: latLng}, Ext.bind(function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+                var iso = null;
+                for (var i = 0, len = results.length; i < len; i++) {
+                    var r = results[i];
+                    for (var j = 0, len = r.address_components.length; j < len; j++) {
+                        var c = r.address_components[j];
+                        if (c.types.indexOf('country') > -1) {
+                            iso = c.short_name;
+                            break;
+                        }
+                    }
+                    if (iso) break;
+                }
+                
+                country = countries.getAt(countries.find('iso', iso));
+                if (country) {
+                    this.fireEvent('addlocation', country, lat, lng);
+                    return;
+                }
+            }
+            
+            Ext.Msg.alert('Error', 'Unable to fetch country name!');
+        }, this));
     },
     
     openLocation: function() {
@@ -119,7 +142,7 @@ Ext.define('CB.view.map.MapController', {
     
     onMapReady: function() {
         var me = this,
-            store = me.getView().getViewModel().getParent().getStore('locations'),
+            store = me.getView().getViewModel().get('locations'),
             showMarkers = function() {
                 store.each(function(location){
                     var hasFiles = location.files().getCount() > 0,
@@ -360,7 +383,7 @@ Ext.define('CB.view.map.MapController', {
                     scope: this
                 }
             };
-            viewModel.getParent().getStore('locationTypes').each(function(type){
+            viewModel.get('locationTypes').each(function(type){
                 menu.items.push({
                     xtype: 'menucheckitem',
                     text: type.get('name'),

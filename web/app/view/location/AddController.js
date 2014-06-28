@@ -19,6 +19,10 @@ Ext.define('CB.view.location.AddController', {
     
         console.log('main session', mainSession);
         console.log('main session changes', mainSession.getChanges());
+        
+        var batch = mainSession.getSaveBatch();
+        console.log('batch', batch);
+        batch.start();
     },
     
     clearFiles: function() {

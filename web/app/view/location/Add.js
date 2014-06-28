@@ -5,7 +5,11 @@ Ext.define('CB.view.location.Add', {
     extend: 'Ext.form.Panel',
     
     requires: [
-        'Ext.form.field.ComboBox'
+        'Ext.layout.container.Auto',
+        'Ext.layout.container.Column',
+        'Ext.form.field.ComboBox',
+        'Ext.form.field.File',
+        'CB.form.field.MultiFileButton'
     ],
     
     xtype: 'cb-location-add',
@@ -33,81 +37,92 @@ Ext.define('CB.view.location.Add', {
         }]
     },
     
-    defaults: {
-        width: 600,
-        labelWidth: 80
+    fieldDefaults: {
+        anchor: '100%'
     },
     
     items: [{
-        xtype: 'textfield',
-        name: 'name',
-        fieldLabel: 'Name',
-        bind: '{location.name}',
-        allowBlank: false
+        xtype: 'panel',
+        title: 'Information',
+        layout: 'anchor',
+        frame: true,
+        autoScroll: true,
+        bodyPadding: '20 20 10 20',
+        margin: '0 0 20 0',
+        items: [{
+            xtype: 'textfield',
+            name: 'name',
+            fieldLabel: 'Name',
+            bind: '{location.name}',
+            allowBlank: false
+        },{
+            xtype: 'combobox',
+            name: 'types',
+            fieldLabel: 'Type',
+            displayField: 'name',
+            valueField: 'id',
+            queryMode: 'local',
+            multiSelect: true,
+            allowBlank: false,
+            editable: false,
+            value: [],
+            bind: {
+                store: '{locationTypes}',
+                value: '{types}'
+            }
+        },{
+            xtype: 'textarea',
+            name: 'description',
+            fieldLabel: 'Description',
+            bind: '{location.description}'
+        },{
+            xtype: 'displayfield',
+            name: 'country',
+            fieldLabel: 'Country',
+            bind: '{location.country.name}'
+        },{
+            xtype: 'displayfield',
+            name: 'lat',
+            fieldLabel: 'Latitude',
+            bind: '{location.lat}'
+        },{
+            xtype: 'displayfield',
+            name: 'lng',
+            fieldLabel: 'Longitude',
+            bind: '{location.lng}'
+        }]
     },{
-        xtype: 'combobox',
-        name: 'types',
-        fieldLabel: 'Type',
-        displayField: 'name',
-        valueField: 'id',
-        queryMode: 'local',
-        multiSelect: true,
-        allowBlank: false,
-        editable: false,
-        value: [],
-        bind: {
-            store: '{locationTypes}',
-            value: '{types}'
-        }
-    },{
-        xtype: 'fieldcontainer',
-        fieldLabel: 'Photos',
+        xtype: 'panel',
+        title: 'Photos',
+        frame: true,
         items: [{
             xtype: 'grid',
-            frame: true,
-            height: 285,
-            disableSelection: true,
+            autoScroll: true,
             tbar: {
                 items: [{
-                    xtype: 'filebutton',
-                    ui: 'default',
+                    xtype: 'multifilebutton',
+                    ui: 'default-toolbar',
                     name: 'photos',
+                    text: 'Select Photos ...',
                     buttonOnly: true,
                     allowBlank: false,
-                    text: 'Select Photos ...',
                     listeners: {
                         change: 'addFiles'
-                    },
-                    afterTpl: '<input id="{id}-fileInputEl" data-ref="fileInputEl" class="{childElCls} {inputCls}" ' +
-                              'type="file" size="1" name="{inputName}" role="{role}" tabIndex="{tabIndex}" multiple="1">',
-                    createFileInput: function(isTemporary) {
-                        var me = this;
-                        me.fileInputEl = me.el.createChild({
-                            name: me.inputName,
-                            id: !isTemporary ? me.id + '-fileInputEl' : undefined,
-                            cls: me.inputCls,
-                            tag: 'input',
-                            type: 'file',
-                            size: 1,
-                            role: 'button',
-                            multiple: 1
-                        });
-                        me.fileInputEl.on('change', me.fireChange, me);  
                     }
                 },{
                     xtype: 'button',
                     text: 'Clear',
                     handler: 'clearFiles',
-                    visible: false,
+                    hidden: true,
                     bind: {
-                        visible: '{fileCount}'
+                        hidden: '{!fileCount}'
                     }
                 },{
                     xtype: 'tbtext',
-                    visible: false,
+                    hidden: true,
                     bind: {
                         text: '{fileCount} files selected',
-                        visible: '{fileCount}'
+                        hidden: '{!fileCount}'
                     }
                 }]
             },

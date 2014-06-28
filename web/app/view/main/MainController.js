@@ -22,8 +22,11 @@ Ext.define('CB.view.main.MainController', {
     
     listen: {
         controller: {
-            '#' : {
+            '#': {
                 unmatchedroute : 'onUnmatchedRoute'
+            },
+            '*': {
+                addlocation: 'showLocationAdd'
             }
         }
     },
@@ -59,10 +62,9 @@ Ext.define('CB.view.main.MainController', {
         var collapseGlyph = 'xe61b@climbuddy',
             expandGlyph = 'xe61c@climbuddy',
             collapseText = 'Collapse menu',
-            expandText = '',
-            btn;
+            expandText = '';
         
-        this.collapseButton = btn = Ext.create('Ext.button.Button', {
+        this.collapseButton = Ext.create('Ext.button.Button', {
             renderTo: header.el,
             cls: 'cb-collapser',
             handler: 'onCollapseClick',
@@ -197,47 +199,42 @@ Ext.define('CB.view.main.MainController', {
         }
     },
     
-    showLocationAdd: function() {
-        console.log('showLocationAdd');
-        var mainView = this.getView(),
-            store = this.getStore('locations'),
-            user = mainView.getViewModel().get('user'),
-            addLocation = function() {
-                var addView = this.addLocationView,
-                    location;
-            
-                if (!addView) {
-                    this.addLocationView = addView = Ext.create('CB.view.location.Add', {
-                        tabConfig: {
-                            hidden: true
-                        }
-                    });
-                    mainView.add(addView);
-                }
-                
-                location = mainView.getSession().createRecord('Location', {
-                    created: new Date()
-                });
-                addView.getViewModel().set('location', location);
-                mainView.setActiveTab(addView);
-            };
+    showLocationAdd: function(country, lat, lng) {
+        console.log('showLocationAdd', arguments);
+        var view = this.getView(),
+            viewModel = view.getViewModel(),
+            session = view.getSession(),
+            user = viewModel.get('user'),
+            addLocationView = this.addLocationView,
+            location;
     
         if (!user) {
             this.redirectTo('home');
             return;
         }
         
-        if (store.isLoaded()) {
-            addLocation.apply(this);
-        } else {
-            store.on({
-                load: {
-                    fn: addLocation,
-                    single: true,
-                    scope: this
+        if (!addLocationView) {
+            this.addLocationView = addLocationView = Ext.create('CB.view.location.Add', {
+                tabConfig: {
+                    hidden: true
                 }
             });
+            view.add(addLocationView);
         }
+
+        location = session.createRecord('Location', {
+            lat: lat,
+            lng: lng,
+            created: new Date()
+        });
+        
+        location.setCountry(country);
+        
+        console.log(location);
+        
+        addLocationView.getViewModel().set('location', location);
+        
+        view.setActiveTab(addLocationView);
     },
     
     /**
