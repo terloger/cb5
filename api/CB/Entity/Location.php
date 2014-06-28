@@ -218,11 +218,13 @@ class Location extends AbstractEntity
     public function setUser($User)
     {
         $this->user = $User;
+        $this->userId = $User->getId();
     }
 
     public function setCountry($Country)
     {
         $this->country = $Country;
+        $this->countryId = $Country->getId();
     }
 
     public function setValues($location)

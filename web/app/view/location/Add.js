@@ -21,8 +21,8 @@ Ext.define('CB.view.location.Add', {
     },
     
     title: 'Add location',
-    bodyPadding: 20,
     autoScroll: true,
+    bodyPadding: 10,
     
     tbar: {
         ui: 'header',
@@ -37,6 +37,15 @@ Ext.define('CB.view.location.Add', {
         }]
     },
     
+    defaults: {
+        minWidth: 300,
+        maxWidth: 600,
+        margin: 10,
+        style: {
+            float: 'left'
+        }
+    },
+
     fieldDefaults: {
         anchor: '100%'
     },
@@ -46,9 +55,7 @@ Ext.define('CB.view.location.Add', {
         title: 'Information',
         layout: 'anchor',
         frame: true,
-        autoScroll: true,
-        bodyPadding: '20 20 10 20',
-        margin: '0 0 20 0',
+        bodyPadding: 20,
         items: [{
             xtype: 'textfield',
             name: 'name',
@@ -69,6 +76,9 @@ Ext.define('CB.view.location.Add', {
             bind: {
                 store: '{locationTypes}',
                 value: '{types}'
+            },
+            listeners: {
+                select: 'onTypeSelect'
             }
         },{
             xtype: 'textarea',
@@ -98,6 +108,11 @@ Ext.define('CB.view.location.Add', {
         items: [{
             xtype: 'grid',
             autoScroll: true,
+            minHeight: 166,
+            emptyText: '<div style="padding:20px;text-align:center;font-size:22px;color:#ccc;">Drop files here ...</div>',
+            bind: {
+                store: '{files}'
+            },
             tbar: {
                 items: [{
                     xtype: 'multifilebutton',
@@ -106,6 +121,7 @@ Ext.define('CB.view.location.Add', {
                     text: 'Select Photos ...',
                     buttonOnly: true,
                     allowBlank: false,
+                    //glyph: 'xe623@climbuddy',
                     listeners: {
                         change: 'addFiles'
                     }
@@ -125,9 +141,6 @@ Ext.define('CB.view.location.Add', {
                         hidden: '{!fileCount}'
                     }
                 }]
-            },
-            bind: {
-                store: '{files}'
             },
             columns: [{
                 text: 'Name',

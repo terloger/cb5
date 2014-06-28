@@ -33,7 +33,7 @@ Ext.define('CB.model.Location', {
     proxy: {
         type: 'direct',
         api: {
-            create  : 'CB.api.Location.save',
+            create  : 'CB.api.Location.create',
             read    : 'CB.api.Location.read',
             update  : 'CB.api.Location.save',
             destroy : 'CB.api.Location.destroy'
@@ -46,7 +46,8 @@ Ext.define('CB.model.Location', {
             messageProperty: 'message'
         },
         writer: {
-            type: 'json'
+            type: 'json',
+            writeAllFields: true
         }
     }
     

@@ -205,7 +205,7 @@ class Location extends AbstractController
         
         return $location;
     }
-
+    
     /**
      * Save location
 	 *
@@ -464,6 +464,56 @@ class Location extends AbstractController
             //</editor-fold>
 
             return $this->success('Location successfully saved.', $location);
+        }
+        catch (\Exception $e)
+        {
+            return $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * Create location
+	 *
+	 * This function receives entire location graph from client and creates/updates entity.
+	 *
+	 * TODO: update only changed stuff
+     *
+     * @access public
+     * @param  array $location
+     * @return array
+     */
+    public function create($location)
+    {
+        try
+        {
+            // must be logged in
+            if (null === $User = $this->getSessionUser())
+            {
+                return $this->error('You must be signed-in to perform this action!');
+            }
+            
+            // get entity manager
+            $em = $this->getEntityManager();
+            
+            // must have country
+            $countryId = isset($location['countryId']) ? $location['countryId'] : null;
+            if (null === $Country = $em->getRepository('\CB\Entity\Country')->find($countryId))
+            {
+                return $this->error('Unable to set location country!');
+            }
+
+            // create new location
+            $Location = new \CB\Entity\Location();
+            $Location->setValues($location);
+            $Location->setUser($User);
+            $Location->setCountry($Country);
+            
+            // save it
+            $em->persist($Location);
+            $em->flush();
+            
+            // return response
+            return $this->success('Location successfully saved.', $Location->getValues());
         }
         catch (\Exception $e)
         {

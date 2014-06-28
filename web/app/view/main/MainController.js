@@ -200,7 +200,7 @@ Ext.define('CB.view.main.MainController', {
     },
     
     showLocationAdd: function(country, lat, lng) {
-        console.log('showLocationAdd', arguments);
+        console.log('showLocationAdd');
         var view = this.getView(),
             viewModel = view.getViewModel(),
             session = view.getSession(),
@@ -229,8 +229,6 @@ Ext.define('CB.view.main.MainController', {
         });
         
         location.setCountry(country);
-        
-        console.log(location);
         
         addLocationView.getViewModel().set('location', location);
         

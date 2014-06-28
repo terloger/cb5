@@ -6,34 +6,65 @@ Ext.define('CB.view.location.AddController', {
 
     alias: 'controller.cb-location-add',
     
-    init: function() {
-        console.log('init CB.view.location.AddController');
-    },
-    
     saveLocation: function() {
-        console.log('SAVE LOCATION');
+        console.log('saveLocation');
         var view = this.getView(),
             session = view.getSession(),
             mainView = view.up('cb-main'),
-            mainSession = mainView.getSession();
+            mainSession = mainView.getSession(),
+            batch = mainSession.getSaveBatch(),
+            location = view.getViewModel().get('location');
+    
+        
     
         console.log('main session', mainSession);
         console.log('main session changes', mainSession.getChanges());
-        
-        var batch = mainSession.getSaveBatch();
         console.log('batch', batch);
+        
+        console.log('location', location);
+        
+        return;
+        
+        batch.on({
+            complete: this.onBatchComplete,
+            exception: this.onBatchException,
+            scope: this
+        });
+        
         batch.start();
+        
     },
     
-    clearFiles: function() {
-        console.log('onFileClear');
-        var view = this.getView(),
-            grid = view.down('grid'),
-            fileField = view.down('filebutton');
+    onBatchComplete: function() {
+        console.log('complete', arguments);
+    },
     
-        view.getViewModel().set('fileCount', 0);
-        grid.getStore().removeAll();
-        fileField.reset();
+    onBatchException: function() {
+        console.log('exception', arguments);
+    },
+    
+    onTypeSelect: function(combo, records) {
+        console.log('onTypeSelect');
+        var view = this.getView(),
+            session = view.getSession(),
+            mainView = view.up('cb-main'),
+            mainSession = mainView.getSession(),
+            location = this.getView().getViewModel().get('location'),
+            types = [],
+            type;
+                
+        location.types().removeAll();
+        
+        if (records.length) {
+            Ext.each(records, function(record){
+                type = mainSession.createRecord('LocationType', {
+                    name: record.get('name'),
+                    type: record.get('type')
+                });
+                types.push(type);
+            });
+            location.types().add(types);
+        }
     },
     
     addFiles: function(button) {
@@ -58,6 +89,17 @@ Ext.define('CB.view.location.AddController', {
 
         store.loadData(data);
         view.getViewModel().set('fileCount', store.getCount());
+    },
+    
+    clearFiles: function() {
+        console.log('onFileClear');
+        var view = this.getView(),
+            grid = view.down('grid'),
+            fileField = view.down('filebutton');
+    
+        view.getViewModel().set('fileCount', 0);
+        grid.getStore().removeAll();
+        fileField.reset();
     }
     
 });

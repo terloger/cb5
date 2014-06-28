@@ -55,11 +55,15 @@ Ext.define('CB.view.map.MapController', {
         
         // attach map listeners
         google.maps.event.addListenerOnce(this.getMap(), 'tilesloaded',       Ext.bind(this.onMapReady, this));
-        google.maps.event.addListener(this.getMap(),     'click',             Ext.bind(this.onMapClick, this));
-        google.maps.event.addListener(this.getMap(),     'rightclick',        Ext.bind(this.onMapRightClick, this));
         google.maps.event.addListener(this.getMap(),     'dragend',           Ext.bind(this.onMapDragEnd, this));
         google.maps.event.addListener(this.getMap(),     'zoom_changed',      Ext.bind(this.onMapZoomChanged, this));
         google.maps.event.addListener(this.getMap(),     'maptypeid_changed', Ext.bind(this.onMapTypeIdChanged, this));
+        if (Ext.supports.Touch) {
+            google.maps.event.addListener(this.getMap(), 'click',             Ext.bind(this.onMapRightClick, this));
+        } else {
+            google.maps.event.addListener(this.getMap(), 'click',             Ext.bind(this.onMapClick, this));
+            google.maps.event.addListener(this.getMap(), 'rightclick',        Ext.bind(this.onMapRightClick, this));
+        }
     },
     
     onResize: function(w, h) {
@@ -144,16 +148,18 @@ Ext.define('CB.view.map.MapController', {
         var me = this,
             store = me.getView().getViewModel().get('locations'),
             showMarkers = function() {
-                store.each(function(location){
+                store.each(function(location, index){
                     var hasFiles = location.files().getCount() > 0,
                         latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
-                        drop = true;
+                        drop = false;
                         
-                    if (hasFiles) {
+                        console.log(location.types().getCount(), location, location.types());
+                        
+                    //if (hasFiles) {
                         this.addMarker(latLng, location, icon, drop);
-                    }
+                    //}
                 }, this);
             };
         
