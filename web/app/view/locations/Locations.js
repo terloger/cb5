@@ -10,11 +10,14 @@ Ext.define('CB.view.locations.Locations', {
     
     xtype: 'cb-locations',
     
+    controller: 'cb-locations',
+    
     layout: {
         type: 'fit'
     },
     
     title: 'Locations',
+    bodyPadding: 20,
     
     tbar: {
         ui: 'header',
@@ -24,14 +27,15 @@ Ext.define('CB.view.locations.Locations', {
             text: 'Locations',
             cls: 'title'
         }]
-    },
-    
-    bodyPadding: 20,
+    },    
     
     items: [{
         xtype: 'grid',
         frame: true,
         bind: '{locations}',
+        listeners: {
+            itemdblclick: 'onItemDblClick'
+        },
         columns: [{
             text: 'Name',
             dataIndex: 'name',

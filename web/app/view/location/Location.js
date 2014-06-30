@@ -19,11 +19,16 @@ Ext.define('CB.view.location.Location', {
     
     session: true,
     
+    title: 'Location',
+    
     layout: {
         type: 'fit'
     },
     
-    title: 'Location',
+    listeners: {
+        hide: 'hideLocation',
+        scope: 'controller'
+    },
     
     tbar: {
         ui: 'header',
@@ -41,7 +46,6 @@ Ext.define('CB.view.location.Location', {
             xtype: 'tbtext',
             reference: 'title',
             cls: 'title',
-            hidden: true,
             bind: {
                 hidden: '{!location}',
                 text: '{location.name}'
@@ -51,61 +55,105 @@ Ext.define('CB.view.location.Location', {
             ui: 'blank',
             tooltip: 'Previous Photo',
             overflowText: 'Previous Photo',
-            glyph: 'xe61b@climbuddy'
+            glyph: 'xe61b@climbuddy',
+            bind: {
+                hidden: '{!fileCount}'
+            }
         },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Next Photo',
             overflowText: 'Next Photo',
-            glyph: 'xe61c@climbuddy'
-        },'-',{
+            glyph: 'xe61c@climbuddy',
+            bind: {
+                hidden: '{!fileCount}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!fileCount}'
+            }
+        },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Add Photo',
             overflowText: 'Add Photo',
-            glyph: 'xe623@climbuddy'
-        },'-',{
+            glyph: 'xe623@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Select Tool',
             overflowText: 'Select Tool',
-            glyph: 'xe62a@climbuddy'
+            glyph: 'xe62a@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
         },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Move Tool',
             overflowText: 'Move Tool',
-            glyph: 'xe63a@climbuddy'
+            glyph: 'xe63a@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
         },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Pen Tool',
             overflowText: 'Pen Tool',
-            glyph: 'xe628@climbuddy'
-        },'-',{
+            glyph: 'xe628@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Lock',
             overflowText: 'Lock',
-            glyph: 'xe630@climbuddy'
+            glyph: 'xe630@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
         },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Unlock',
             overflowText: 'Unlock',
-            glyph: 'xe631@climbuddy'
-        },'-',{
-            xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Zoom Out',
-            overflowText: 'Zoom Out',
-            glyph: 'xe63e@climbuddy'
+            glyph: 'xe631@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!user}'
+            }
         },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Zoom In',
             overflowText: 'Zoom In',
             glyph: 'xe63f@climbuddy'
+        },{
+            xtype: 'button',
+            ui: 'blank',
+            tooltip: 'Zoom Out',
+            overflowText: 'Zoom Out',
+            glyph: 'xe63e@climbuddy'
         },'-',{
             xtype: 'button',
             ui: 'blank',
@@ -117,7 +165,10 @@ Ext.define('CB.view.location.Location', {
             ui: 'blank',
             tooltip: 'Settings',
             overflowText: 'Settings',
-            glyph: 'xe60a@climbuddy'
+            glyph: 'xe60a@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            }
         }]
     },
     

@@ -28,11 +28,6 @@ Ext.define('CB.view.map.MapController', {
      * Core
      */
     
-    destroy: function () {
-        Ext.destroyMembers(this, 'mapMenu', 'markerMenu', 'filterMenu');
-        this.callParent();
-    },
-    
     onAfterRender: function() {
         // no google api available
         if (typeof google === 'undefined') {
@@ -66,6 +61,48 @@ Ext.define('CB.view.map.MapController', {
         }
     },
     
+    onMapReady: function() {
+        var me = this,
+            store = me.getView().getViewModel().get('locations'),
+            showMarkers = function() {
+                store.each(function(location, index){
+                    var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
+                        type = location.types().getAt(0),
+                        icon = type ? type.get('type') : 'default',
+                        drop = false;
+                        
+                        //console.log(location.types().getCount(), location);
+                        
+                    if (location.files().getCount() >= 0) {
+                        this.addMarker(latLng, location, icon, drop);
+                    }
+                }, this);
+            };
+        
+        // show markers immediately or on store load
+        if (store.isLoaded()) {
+            showMarkers.apply(this);
+        } else {
+            store.on({
+                load: {
+                    fn: showMarkers,
+                    scope: this,
+                    single: true
+                }
+            });
+        }
+        
+        // create map overlay
+        this.setOverlay(new google.maps.OverlayView());
+        this.getOverlay().setMap(this.getMap());
+        this.getOverlay().draw = function(){
+            if (!this.ready) {
+                this.ready = true;
+                google.maps.event.trigger(this, 'ready');
+            }
+        };
+    },
+    
     onResize: function(w, h) {
         if (this.getMap()) {
             google.maps.event.trigger(this.getMap(), 'resize');
@@ -74,6 +111,11 @@ Ext.define('CB.view.map.MapController', {
                 this.getMap().setCenter(this.getLastCenter(), this.getZoom());
             }
         }
+    },
+    
+    destroy: function () {
+        Ext.destroyMembers(this, 'mapMenu', 'markerMenu', 'filterMenu');
+        this.callParent();
     },
     
     /**
@@ -144,57 +186,19 @@ Ext.define('CB.view.map.MapController', {
         console.log('refresh map');
     },
     
-    onMapReady: function() {
-        var me = this,
-            store = me.getView().getViewModel().get('locations'),
-            showMarkers = function() {
-                store.each(function(location, index){
-                    var hasFiles = location.files().getCount() > 0,
-                        latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
-                        type = location.types().getAt(0),
-                        icon = type ? type.get('type') : 'default',
-                        drop = false;
-                        
-                        console.log(location.types().getCount(), location);
-                        
-                    //if (hasFiles) {
-                        this.addMarker(latLng, location, icon, drop);
-                    //}
-                }, this);
-            };
-        
-        // show markers immediately or on store load
-        if (store.isLoaded()) {
-            showMarkers.apply(this);
-        } else {
-            store.on({
-                load: {
-                    fn: showMarkers,
-                    scope: this,
-                    single: true
-                }
-            });
-        }
-        
-        // create map overlay
-        this.setOverlay(new google.maps.OverlayView());
-        this.getOverlay().setMap(this.getMap());
-        this.getOverlay().draw = function(){
-            if (!this.ready) {
-                this.ready = true;
-                google.maps.event.trigger(this, 'ready');
-            }
-        };
-    },
-    
     onMapClick: function(e) {
         console.log('onMapClick');
     },
     
     onMapRightClick: function(e) {
         var view = this.getView(),
-            menu = this.mapMenu;
-        
+            menu = this.mapMenu,
+            user = view.getViewModel().get('user');
+    
+        if (!user) {
+            return false;
+        }
+    
         if (!menu) {
             this.mapMenu = menu = view.add(view.mapMenu);
         }
@@ -341,10 +345,11 @@ Ext.define('CB.view.map.MapController', {
     onMarkerRightClick: function(e, marker) {
         var view = this.getView(),
             menu = this.markerMenu,
-            location = marker ? marker.getLocation() : null;
-    
-        if (!marker || !location) {
-            return;
+            location = marker ? marker.getLocation() : null,
+            user = view.getViewModel().get('user');
+            
+        if (!user || !marker || !location) {
+            return false;
         }
         
         if (!menu) {
@@ -370,7 +375,7 @@ Ext.define('CB.view.map.MapController', {
      * Toolbar
      */
     
-    onSearch: function(btn, e) {
+    search: function(btn, e) {
         console.log('search');
     },
     

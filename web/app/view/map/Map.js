@@ -37,7 +37,7 @@ Ext.define('CB.view.map.Map', {
             margin: '0 -1 0 0'
         },{
             xtype: 'button',
-            handler: 'onSearch',
+            handler: 'search',
             glyph: 'xe63d@climbuddy',
             style: {
                 borderTopLeftRadius: 0,
