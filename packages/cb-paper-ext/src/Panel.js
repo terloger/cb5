@@ -299,20 +299,12 @@ Ext.define('CB.paper.Panel', {
                 var startScale = this.getStartScale();
                 var newScale = startScale * distanceDiff;
                 
-                /*
-                if (newScale < 0.5) {
-                    newScale = 0.5;
-                } else if (newScale > 4) {
-                    newScale = 3;
-                }
-                */
-                
                 var ratio = newScale / scale;
                 
                 // get center position within image
-                var mx = endCenterX - this.getCanvas().getX();
-                var my = endCenterY - this.getCanvas().getY();
-
+                var mx = endCenterX - this.getImage().getX();
+                var my = endCenterY - this.getImage().getY();
+                
                 // get center position within image after resize
                 var nx = mx * ratio;
                 var ny = my * ratio;
