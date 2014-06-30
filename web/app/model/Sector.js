@@ -2,7 +2,6 @@ Ext.define('CB.model.Sector', {
     extend: 'CB.model.Base',
 
     idProperty: 'sectorId',
-    clientIdProperty: 'clientId',
 
     fields: [
         {name: 'locationId', reference: 'Location'},

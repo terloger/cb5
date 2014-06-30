@@ -40,5 +40,20 @@ class LocationType extends AbstractController
         }
         return $this->error('Unable to read types!');
 	}
+    
+    public function create($data)
+    {
+        print_r($data);
+    }
+    
+    public function update($data)
+    {
+        print_r($data);
+    }
+    
+    public function destroy($data)
+    {
+        print_r($data);
+    }
 
 }

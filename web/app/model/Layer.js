@@ -2,7 +2,6 @@ Ext.define('CB.model.Layer', {
     extend: 'CB.model.Base',
     
     idProperty: 'id',
-    clientIdProperty: 'clientId',
 
     fields: [
         {name: 'routeId', reference: 'Route'},

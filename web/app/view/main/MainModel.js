@@ -30,7 +30,6 @@ Ext.define('CB.view.main.MainModel', {
         },
         locations: {
             model: 'Location',
-            session: true,
             autoLoad: true
         }
     }

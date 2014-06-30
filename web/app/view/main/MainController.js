@@ -47,7 +47,7 @@ Ext.define('CB.view.main.MainController', {
     
     destroy: function () {
         Ext.destroyMembers(this, 'addLocationView', 'navigationMenu', 'collapseButton');
-        this.callParent();
+        this.callParent(arguments);
     },
     
     onTabChange: function (view, tab) {
@@ -203,9 +203,9 @@ Ext.define('CB.view.main.MainController', {
         console.log('showLocationAdd');
         var view = this.getView(),
             viewModel = view.getViewModel(),
-            session = view.getSession(),
             user = viewModel.get('user'),
-            addLocationView = this.addLocationView,
+            addLocationView,
+            session,
             location;
     
         if (!user) {
@@ -213,14 +213,16 @@ Ext.define('CB.view.main.MainController', {
             return;
         }
         
-        if (!addLocationView) {
-            this.addLocationView = addLocationView = Ext.create('CB.view.location.Add', {
-                tabConfig: {
-                    hidden: true
-                }
-            });
-            view.add(addLocationView);
-        }
+        session = Ext.create('Ext.data.Session');
+
+        addLocationView = Ext.create('CB.view.location.Add', {
+            session: session,
+            tabConfig: {
+                hidden: true
+            }
+        });
+        
+        view.add(addLocationView);
 
         location = session.createRecord('Location', {
             lat: lat,

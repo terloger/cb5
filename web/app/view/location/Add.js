@@ -24,6 +24,11 @@ Ext.define('CB.view.location.Add', {
     autoScroll: true,
     bodyPadding: 10,
     
+    listeners: {
+        hide: 'onHide',
+        scope: 'controller'
+    },
+    
     tbar: {
         ui: 'header',
         height: 72,
@@ -165,6 +170,9 @@ Ext.define('CB.view.location.Add', {
         text: 'Save',
         formBind: true,
         handler: 'saveLocation'
+    },{
+        text: 'Close',
+        handler: 'close'
     }]
     
 });

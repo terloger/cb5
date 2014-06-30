@@ -23,6 +23,14 @@ Ext.define('CB.model.Location', {
         {name: 'created', type: 'date'}
     ],
     
+    manyToMany: {
+        LocationTypes: {
+            type: 'LocationType',
+            role: 'types',
+            field: 'typeId'
+        }
+    },
+    
     validators: [
         {type: 'presence', name: 'name'},
         {type: 'length',   name: 'name', min: 3},
@@ -33,10 +41,10 @@ Ext.define('CB.model.Location', {
     proxy: {
         type: 'direct',
         api: {
-            create  : 'CB.api.Location.create',
-            read    : 'CB.api.Location.read',
-            update  : 'CB.api.Location.save',
-            destroy : 'CB.api.Location.destroy'
+            create:  'CB.api.Location.create',
+            read:    'CB.api.Location.read',
+            update:  'CB.api.Location.save',
+            destroy: 'CB.api.Location.destroy'
         },
         reader: {
             type: 'json',
@@ -46,8 +54,7 @@ Ext.define('CB.model.Location', {
             messageProperty: 'message'
         },
         writer: {
-            type: 'json',
-            writeAllFields: true
+            type: 'json'
         }
     }
     

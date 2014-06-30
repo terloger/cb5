@@ -18,6 +18,7 @@ Ext.define('CB.view.location.AddModel', {
     stores: {
         files: {
             type: 'json',
+            session: true,
             fields: [
                 {name: 'id',   type: 'integer'},
                 {name: 'name', type: 'string'},
