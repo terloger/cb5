@@ -120,7 +120,7 @@ Ext.define('CB.view.main.MainController', {
         tab = view.getActiveTab();
         header = tab.down('toolbar[ui=header]');
         title = header.down('tbtext[cls=title]');
-        title.setText('Unable to find #' + hash);
+        title.setText('Unable to find route #' + hash);
     },
     
     /**
@@ -129,7 +129,9 @@ Ext.define('CB.view.main.MainController', {
     
     showHome: function() {
         console.log('showHome');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-home'));
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-home'));
+        
         if (tab) {
             this.redirectTo('home');
         }
@@ -137,7 +139,9 @@ Ext.define('CB.view.main.MainController', {
     
     showMap: function() {
         console.log('showMap');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-map'));
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-map'))
+    
         if (tab) {
             this.redirectTo('map');
         }
@@ -145,7 +149,9 @@ Ext.define('CB.view.main.MainController', {
     
     showUser: function() {
         console.log('showUser');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-user'));
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-user'))
+
         if (tab) {
             this.redirectTo('user');
         }
@@ -153,7 +159,9 @@ Ext.define('CB.view.main.MainController', {
     
     showLocations: function() {
         console.log('showLocations');
-        var tab = this.getView().setActiveTab(this.lookupReference('cb-locations'));
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-locations'))
+    
         if (tab) {
             this.redirectTo('locations');
         }
@@ -161,18 +169,19 @@ Ext.define('CB.view.main.MainController', {
     
     showLocation: function(id) {
         console.log('showLocation');
-        var mainView = this.getView(),
-            locationView = this.lookupReference('cb-location'),
+        var view = this.getView(),
+            viewModel = view.getViewModel(),
+            locationView = view.down('cb-location'),
             locationViewModel = locationView.getViewModel(),
             locationViewCtrl = locationView.getController(),
-            store = this.getStore('locations'),
+            store = viewModel.get('locations'),
             storeLoaded = store.isLoaded(),
             showLocation = function() {
                 var location = store.getById(id);
                 if (location) {
                     locationViewCtrl.showLocation(location);
                     locationViewModel.bind({bindTo: '{location}', single: true}, function(location){
-                        if (storeLoaded && mainView.setActiveTab(locationView)) {
+                        if (storeLoaded && view.setActiveTab(locationView)) {
                             this.redirectTo('location/' + id);
                         }
                     }, this);
@@ -193,7 +202,7 @@ Ext.define('CB.view.main.MainController', {
                 }
             });
             
-            if (mainView.setActiveTab(locationView)) {
+            if (view.setActiveTab(locationView)) {
                 this.redirectTo('location/' + id);
             }
         }

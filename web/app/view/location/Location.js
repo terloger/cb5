@@ -56,6 +56,7 @@ Ext.define('CB.view.location.Location', {
             tooltip: 'Previous Photo',
             overflowText: 'Previous Photo',
             glyph: 'xe61b@climbuddy',
+            handler: 'prevFile',
             bind: {
                 hidden: '{!fileCount}'
             }
@@ -65,6 +66,7 @@ Ext.define('CB.view.location.Location', {
             tooltip: 'Next Photo',
             overflowText: 'Next Photo',
             glyph: 'xe61c@climbuddy',
+            handler: 'nextFile',
             bind: {
                 hidden: '{!fileCount}'
             }

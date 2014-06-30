@@ -13,9 +13,8 @@ Ext.define('CB.paper.Panel', {
     },
     
     html: [
-        '<div id="paper" class="paper">',
-            '<img id="image" class="image" src="" />',
-            '<canvas id="canvas" class="canvas"></canvas>',
+        '<div id="cb-paper" class="cb-paper">',
+            '<canvas id="cb-canvas" class="cb-canvas"></canvas>',
         '</div>'
     ].join(''),
     
@@ -23,17 +22,23 @@ Ext.define('CB.paper.Panel', {
         location: null,
         route: null,
         file: null,
+        
+        paper: null,
         canvas: null,
         image: null,
         
         imageWidth: 0,
         imageHeight: 0,
-        imagePadding: 10,
+        imagePadding: 40,
         
         scale: 1,
         startScale: 1,
         translateX: 0,
-        translateY: 0
+        translateY: 0,
+        
+        swipeDistanceMin: 100,
+        swipeDurationMax: 600,
+        animateDuration: 80
     },
     
     /**
@@ -46,33 +51,15 @@ Ext.define('CB.paper.Panel', {
         // initialize panel on afterrender
         this.on({
             afterrender: this.onAfterRender,
-            delay: 1,
             scope: this
-        });
-        
-        Ext.util.Observable.capture(this, function() {
-            console.log('capture', arguments);
         });
     },
     
     onAfterRender: function() {
-        // set canvas and image reference
-        this.setImage(Ext.get('image'));
-        this.setCanvas(Ext.get('canvas'));
-        
-        // set absolute position and transform origin
-        var style = {
-            position: 'absolute',
-            'transform-origin': '0 0',
-            '-o-transform-origin': '0 0',
-            '-ms-transform-origin': '0 0',
-            '-moz-transform-origin': '0 0',
-            '-webkit-transform-origin': '0 0'
-        };
-        
-        // set canvas and image styles
-        this.getImage().setStyle(style);
-        this.getCanvas().setStyle(style);
+        // set paper, canvas and image reference
+        this.setPaper(Ext.get('cb-paper'));
+        this.setImage(Ext.get('cb-image'));
+        this.setCanvas(Ext.get('cb-canvas'));
         
         // init canvas
         paper.setup(this.getCanvas().dom);
@@ -127,17 +114,24 @@ Ext.define('CB.paper.Panel', {
         }
     },
     
+    /**
+     * Location
+     */
+    
     applyLocation: function(location) {
-        // check if location and if changed
-        if (!(location instanceof CB.model.Location) || this.getLocation() === location) {
+        // clear location
+        if (!location || !(location instanceof CB.model.Location)) {
+            this.setFile(null);
+            return null;
+        }
+        
+        // location not changed
+        if (this.getLocation() === location) {
             return;
         }
 
         // set file
-        var file = location.files().getAt(0);
-        if (file) {
-            this.setFile(file);
-        }
+        this.setFile(location.files().getAt(0));
         
         // confirm change
         return location;
@@ -147,55 +141,27 @@ Ext.define('CB.paper.Panel', {
         this.fireEvent('locationchange', this, newLocation, oldLocation);
     },
     
+    /**
+     * File
+     */
+    
     applyFile: function(file) {
-        if (!(file instanceof CB.model.File)) {
+        // clear image
+        if (this.getImage()) {
+            this.getImage().destroy();
+            this.setImage(null);
+        }
+        
+        // must be a valid file
+        if (!file || !(file instanceof CB.model.File)) {
             return;
         }
         
         // preload image
         var image = new Image();
-        
-        // initialize image on load
-        image.addEventListener('load', Ext.bind(function() {
-            var box = this.getBox(),
-                padding = this.getImagePadding(),
-                wr = (box.width - (padding * 2)) / image.width,
-                hr = (box.height - (padding * 2)) / image.height,
-                scale = wr > hr ? hr : wr,
-                translateX = padding,
-                translateY = padding;
-            
-            // apply image src
-            this.getImage().dom.src = image.src;
-            
-            // reset scale
-            this.setScale(scale);
-            this.setStartScale(scale);
-            
-            // reset image position
-            this.setTranslateX(translateX);
-            this.setTranslateY(translateY);
-            
-            // reset image size
-            this.getImage().setWidth(image.width);
-            this.getImage().setHeight(image.height);
-            
-            // store image size
-            this.setImageWidth(image.width);
-            this.setImageHeight(image.height);
-            
-            this.applyTransform();
-            
-            /*
-            var path = this.path = new paper.Path.Line(new paper.Point(100,100), new paper.Point(200,200));
-            path.strokeWidth = 3; 
-            path.strokeColor = 'red';
-            paper.view.draw();
-            */
-            
-        }, this));
-
-        // set new image
+        image.addEventListener('load', Ext.bind(this.onFileLoad, this, [image]));
+        image.id = 'cb-image';
+        image.className = 'cb-image';
         image.src = file.getUrl('720');
         
         // confirm file change
@@ -204,6 +170,110 @@ Ext.define('CB.paper.Panel', {
     
     updateFile: function(newFile, oldFile) {
         this.fireEvent('filechange', this, oldFile, newFile);
+    },
+    
+    onFileLoad: function(image) {
+        var box = this.getBox(),
+            pad = this.getImagePadding(),
+            wr = (box.width - (pad * 2)) / image.width,
+            hr = (box.height - (pad * 2)) / image.height,
+            scale = wr > hr ? hr : wr,
+            translateX = (box.width - (image.width * scale)) / 2,
+            translateY = pad;
+    
+        // create image
+        var newImage = this.getPaper().insertFirst(image);
+        this.setImage(newImage);
+
+        // apply image size
+        this.getImage().setWidth(image.width);
+        this.getImage().setHeight(image.height);
+
+        // store image size
+        this.setImageWidth(image.width);
+        this.setImageHeight(image.height);
+
+        // fit image
+        this.setScale(scale);
+        this.setStartScale(scale);
+        this.setTranslateX(translateX);
+        this.setTranslateY(translateY);
+        this.applyTransform();
+
+        /*
+        var path = this.path = new paper.Path.Line(new paper.Point(100,100), new paper.Point(200,200));
+        path.strokeWidth = 3; 
+        path.strokeColor = 'red';
+        paper.view.draw();
+        */
+
+        this.fireEvent('fileload', this, this.getFile());
+    },
+    
+    prevFile: function() {
+        var file = this.getPrevFile();
+        
+        if (!file) {
+            return;
+        }
+        
+        this.setFile(file);
+    },
+    
+    nextFile: function() {
+        var file = this.getNextFile();
+        
+        if (!file) {
+            return;
+        }
+        
+        this.setFile(file);
+    },
+    
+    getPrevFile: function() {
+        var location = this.getLocation(),
+            files = location.files(),
+            current,
+            prev;
+    
+        // must have at least two files
+        if (files.getCount() < 2) {
+            return files.getAt(0);
+        }
+        
+        // get current position
+        current = files.indexOf(this.getFile());
+        prev = current - 1;
+        
+        // show last
+        if (prev < 0) {
+            prev = files.getCount() - 1;
+        }
+        
+        return files.getAt(prev);
+    },
+    
+    getNextFile: function() {
+        var location = this.getLocation(),
+            files = location.files(),
+            current,
+            next;
+    
+        // must have at least two files
+        if (files.getCount() < 2) {
+            return files.getAt(0);
+        }
+        
+        // get current position
+        current = files.indexOf(this.getFile());
+        next = current + 1;
+        
+        // show first
+        if (next === files.getCount()) {
+            next = 0;
+        }
+        
+        return files.getAt(next);
     },
     
     /**
@@ -354,48 +424,56 @@ Ext.define('CB.paper.Panel', {
     },
     
     onSwipe: function(e, node, options) {
-        console.log('swipe', e.distance, e.duration, e.direction);
-        var location = this.getLocation(),
-            files = location.files(),
-            current, next;
+        // limit swipe distance and duration
+        if (e.distance < this.getSwipeDistanceMin() || e.duration > this.getSwipeDurationMax()) {
+            if (e.distance < this.getSwipeDistanceMin()) console.log('too short distance');
+            if (e.duration > this.getSwipeDurationMax()) console.log('too long duration');
+            return;
+        }
+        
+        var file = (e.direction === 'left') ? this.getPrevFile() : this.getNextFile(),
+            image = this.getImage(),
+            s = this.getScale(),
+            x = this.getTranslateX(),
+            y = this.getTranslateY(),
+            w = this.getImageWidth() * s,
+            h = this.getImageHeight() * s,
+            d = this.getAnimateDuration(),
+            t = 'all ' + d + 'ms';
     
-        // must have at least two files
-        if (files.getCount() < 2) {
-            console.log('no files');
+        if (!file) {
             return;
         }
-        
-        // check to see if proper swipe
-        if (e.distance < 200 || e.duration > 300) {
-            if (e.distance < 200) console.log('too short distance');
-            if (e.duration > 300) console.log('too long duration');
-            return;
-        }
-        
-        // get current position
-        current = files.indexOf(this.getFile());
-        
-        // show prev/next
-        if (e.direction === 'left') {
-            next = current - 1;
-        } else {
-            next = current + 1;
-        }
-        
-        // show first
-        if (next === files.getCount()) {
-            next = 0;
-        }
-        
-        // show last
-        if (next < 0) {
-            next = files.getCount() - 1;
-        }
-        
-        console.log(current, next);
-        
-        // set file
-        this.setFile(files.getAt(next));
+            
+        // add transition effect
+        image.setStyle({
+            '-webkit-transition': t,
+            '-moz-transition':    t,
+            '-o-transition':      t,
+            'transition':         t
+        });
+
+        // trigger animation
+        this.setScale(0);
+        this.setTranslateX(x + (w / 2));
+        this.setTranslateY(y + (h / 2));
+        this.applyTransform();
+
+        // animation callback
+        Ext.defer(function(){
+
+            // remove transition effect
+            image.setStyle({
+                '-webkit-transition': 'none',
+                '-moz-transition':    'none',
+                '-o-transition':      'all 0 ease-in',
+                'transition':         'none'
+            });
+
+            // show new image
+            this.setFile(file);
+
+        }, d, this);
     },
     
     /**

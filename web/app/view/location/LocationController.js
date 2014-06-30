@@ -12,7 +12,7 @@ Ext.define('CB.view.location.LocationController', {
         var view = this.getView(),
             rendered = view.rendered,
             visible = view.isVisible(),
-            paper = this.lookupReference('cb-paper');
+            paper = view.down('cb-paper');
         
         if (!rendered) {
             view.on({
@@ -39,11 +39,19 @@ Ext.define('CB.view.location.LocationController', {
         
         var view = this.getView(),
             viewModel = view.getViewModel(),
-            paper = this.lookupReference('cb-paper');
+            paper = view.down('cb-paper');
     
         viewModel.set('location', null);
         
         paper.setLocation(null);
+    },
+    
+    prevFile: function() {
+        this.getView().down('cb-paper').prevFile();
+    },
+    
+    nextFile: function() {
+        this.getView().down('cb-paper').nextFile();
     }
     
 });

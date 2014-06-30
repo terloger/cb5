@@ -1,7 +1,21 @@
-.paper {
-    .image {
+.cb-paper {
+    
+    .cb-canvas {
+        position: absolute;
+    }
+    
+    .cb-image {
+        position: absolute;
+            
+        -webkit-transform-origin: 0 0;
+        -moz-transform-origin: 0 0;
+        -ms-transform-origin: 0 0;
+        -o-transform-origin: 0 0;
+        transform-origin: 0 0;
+        
         -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 1);
         -moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 1);
         box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 1);
     }
+    
 }
