@@ -23,6 +23,19 @@ Ext.define('CB.view.map.Map', {
     
     title: 'Map',
     
+    stateful: true,
+    stateId: 'CB.view.map.Map',
+    
+    config: {
+        map: null,
+        mapTypeId: 'roadmap',
+        zoom: 5,
+        center: {
+            lat: 46.088472,
+            lng: 14.644775
+        }
+    },
+    
     tbar: {
         ui: 'header',
         height: 72,
@@ -99,6 +112,26 @@ Ext.define('CB.view.map.Map', {
         setLocation: function(location) { this.location = location; },
         getEvent: function() { return this.event; },
         setEvent: function(event) { this.event = event; }
+    },
+    
+    applyState: function(state) {
+        if (state) {
+            Ext.apply(this, state);
+        }
+    },
+
+    getState: function() {
+        var map = this.getMap(),
+            state = {
+                mapTypeId: map.getMapTypeId(),
+                zoom: map.getZoom(),
+                center: {
+                    lat: map.getCenter().lat(),
+                    lng: map.getCenter().lng()
+                }
+            };
+        
+        return state;
     }
     
 });

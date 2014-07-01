@@ -7,20 +7,11 @@ Ext.define('CB.view.map.MapController', {
     alias: 'controller.cb-map',
     
     config: {
-        /**
-         * Map
-         */
         map: null,
         markers: null,
         overlay: null,
         weatherLayer: null,
         markerClusterer: null,
-        mapType: 'roadmap',
-        zoom: 5,
-        center: {
-            lat: 46.088472,
-            lng: 14.644775
-        },
         lastCenter: null
     },
     
@@ -34,30 +25,36 @@ Ext.define('CB.view.map.MapController', {
             return;
         }
         
-        // create map
-        this.setMap(new google.maps.Map(this.getView().body.dom, {
-            zoom: this.getZoom(),
-            mapTypeId: this.getMapTypeId()
-        }));
-        
-        // create markers collection
-        this.setMarkers(Ext.create('Ext.util.MixedCollection'));
+        var me = this,
+            view = me.getView(),
+            map = new google.maps.Map(view.body.dom, {
+                zoom: view.getZoom(),
+                mapTypeId: view.getMapTypeId()
+            }),
+            center = new google.maps.LatLng(view.getCenter().lat, view.getCenter().lng),
+            markers = Ext.create('Ext.util.MixedCollection');
+            
+        // set map reference on controller and view
+        me.setMap(map);
+        view.setMap(map);
         
         // set map center
-        var latLng = new google.maps.LatLng(this.getCenter().lat, this.getCenter().lng);
-        this.getMap().setCenter(latLng, this.getZoom());
-        this.setLastCenter(latLng);
+        map.setCenter(center, view.getZoom());
+        me.setLastCenter(center);
         
-        // attach map listeners
-        google.maps.event.addListenerOnce(this.getMap(), 'tilesloaded',       Ext.bind(this.onMapReady, this));
-        google.maps.event.addListener(this.getMap(),     'dragend',           Ext.bind(this.onMapDragEnd, this));
-        google.maps.event.addListener(this.getMap(),     'zoom_changed',      Ext.bind(this.onMapZoomChanged, this));
-        google.maps.event.addListener(this.getMap(),     'maptypeid_changed', Ext.bind(this.onMapTypeIdChanged, this));
+        // set markers reference
+        me.setMarkers(markers);
+        
+        // handle map events
+        google.maps.event.addListenerOnce(map, 'tilesloaded',       Ext.bind(me.onMapReady, me));
+        google.maps.event.addListener(map,     'dragend',           Ext.bind(me.onMapDragEnd, me));
+        google.maps.event.addListener(map,     'zoom_changed',      Ext.bind(me.onMapZoomChanged, me));
+        google.maps.event.addListener(map,     'maptypeid_changed', Ext.bind(me.onMapTypeIdChanged, me));
         if (Ext.supports.Touch) {
-            google.maps.event.addListener(this.getMap(), 'click',             Ext.bind(this.onMapRightClick, this));
+            google.maps.event.addListener(map, 'click',             Ext.bind(me.onMapRightClick, me));
         } else {
-            google.maps.event.addListener(this.getMap(), 'click',             Ext.bind(this.onMapClick, this));
-            google.maps.event.addListener(this.getMap(), 'rightclick',        Ext.bind(this.onMapRightClick, this));
+            google.maps.event.addListener(map, 'click',             Ext.bind(me.onMapClick, me));
+            google.maps.event.addListener(map, 'rightclick',        Ext.bind(me.onMapRightClick, me));
         }
     },
     
@@ -108,7 +105,7 @@ Ext.define('CB.view.map.MapController', {
             google.maps.event.trigger(this.getMap(), 'resize');
             
             if (this.getLastCenter()) {
-                this.getMap().setCenter(this.getLastCenter(), this.getZoom());
+                this.getMap().setCenter(this.getLastCenter(), this.getView().getZoom());
             }
         }
     },
@@ -210,20 +207,23 @@ Ext.define('CB.view.map.MapController', {
     
     onMapZoomChanged: function() {
         console.log('onMapZoomChanged');
+        this.getView().saveState();
     },
     
     onMapTypeIdChanged: function() {
         console.log('onMapTypeIdChanged');
+        this.getView().saveState();
     },
     
     onMapDragEnd: function() {
-        this.setLastCenter(this.getMap().getCenter());
         console.log('onMapDragEnd');
+        this.setLastCenter(this.getMap().getCenter());
+        this.getView().saveState();
     },
     
-    getMapTypeId: function() {
+    getMapTypeId: function(type) {
         console.log('getMapTypeId');
-        switch (this.getMapType()) {
+        switch (type) {
             default:
             case 'roadmap':
                 return google.maps.MapTypeId.ROADMAP;
