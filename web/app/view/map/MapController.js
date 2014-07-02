@@ -20,8 +20,13 @@ Ext.define('CB.view.map.MapController', {
      */
     
     onAfterRender: function() {
-        // no google api available
+        // no google available
         if (typeof google === 'undefined') {
+            this.getView().add({
+                xtype: 'container',
+                margin: '0 20',
+                html: '<p>Looks like Google Maps services are not available at the moment.</p><p>Please try again later.</p>'
+            });
             return;
         }
         
@@ -78,6 +83,16 @@ Ext.define('CB.view.map.MapController', {
                     }
                 }, this);
             };
+            
+        // create map overlay
+        this.setOverlay(new google.maps.OverlayView());
+        this.getOverlay().setMap(this.getMap());
+        this.getOverlay().draw = function(){
+            if (!this.ready) {
+                this.ready = true;
+                google.maps.event.trigger(this, 'ready');
+            }
+        };
         
         // show markers immediately or on store load
         if (store.isLoaded()) {
@@ -91,16 +106,6 @@ Ext.define('CB.view.map.MapController', {
                 }
             });
         }
-        
-        // create map overlay
-        this.setOverlay(new google.maps.OverlayView());
-        this.getOverlay().setMap(this.getMap());
-        this.getOverlay().draw = function(){
-            if (!this.ready) {
-                this.ready = true;
-                google.maps.event.trigger(this, 'ready');
-            }
-        };
     },
     
     onResize: function(w, h) {

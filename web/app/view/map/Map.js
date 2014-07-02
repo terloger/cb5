@@ -122,14 +122,16 @@ Ext.define('CB.view.map.Map', {
 
     getState: function() {
         var map = this.getMap(),
-            state = {
-                mapTypeId: map.getMapTypeId(),
-                zoom: map.getZoom(),
-                center: {
-                    lat: map.getCenter().lat(),
-                    lng: map.getCenter().lng()
-                }
+            state = {};
+            
+        if (map) {
+            state.mapTypeId = map.getMapTypeId();
+            state.zoom = map.getZoom();
+            state.center = {
+                lat: map.getCenter().lat(),
+                lng: map.getCenter().lng()
             };
+        }
         
         return state;
     }
