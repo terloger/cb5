@@ -29,13 +29,8 @@ Ext.define('CB.view.location.AddController', {
             location = view.getViewModel().get('location'),
             batch = session.getSaveBatch();
     
-        console.log('location', location.getData({
-            associated: true,
-            changes: true
-        }));
         console.log('changes', session.getChanges());
-        
-        return;
+        console.log('batch', batch);
         
         batch.on({
             complete: this.onSaveComplete,
@@ -48,6 +43,8 @@ Ext.define('CB.view.location.AddController', {
     
     onSaveComplete: function() {
         console.log('onSaveComplete', arguments);
+        console.log('changes', this.getView().getSession().getChanges());
+        console.log('changes', this.getView().getSession().getSaveBatch());
     },
     
     onSaveException: function() {
@@ -57,24 +54,17 @@ Ext.define('CB.view.location.AddController', {
     onTypeSelect: function(combo, records) {
         console.log('onTypeSelect');
         var view = this.getView(),
-            session = view.getSession(),
-            location = view.getViewModel().get('location'),
-            types = [],
-            type;
+            location = view.getViewModel().get('location');
     
+        console.log(records);
+        
         location.types().removeAll();
         
         if (records.length) {
-            Ext.each(records, function(record){
-                type = session.createRecord('LocationType', {
-                    name: record.get('name'),
-                    type: record.get('type')
-                });
-                console.log(type);
-                types.push(type);
-            });
-            location.types().add(types);
+            location.types().add(records);
         }
+        
+        console.log(location.types());
     },
     
     addFiles: function(button) {

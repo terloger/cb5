@@ -27,7 +27,11 @@ Ext.define('CB.model.Location', {
         LocationTypes: {
             type: 'LocationType',
             role: 'types',
-            field: 'typeId'
+            field: 'typeId',
+            right: {
+                field: 'locationId',
+                role: 'locations'
+            }
         }
     },
     

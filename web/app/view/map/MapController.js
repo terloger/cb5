@@ -69,6 +69,9 @@ Ext.define('CB.view.map.MapController', {
                         drop = false;
                         
                         //console.log(location.types().getCount(), location);
+                        if (type) {
+                            console.log(location.types().getAt(0));
+                        }
                         
                     if (location.files().getCount() >= 0) {
                         this.addMarker(latLng, location, icon, drop);

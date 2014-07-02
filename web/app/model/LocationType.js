@@ -1,8 +1,6 @@
 Ext.define('CB.model.LocationType', {
     extend: 'CB.model.Base',
 
-    idProperty: 'id',
-
     fields: [
         {name: 'name', type: 'string'},
         {name: 'type', type: 'string'}
@@ -12,7 +10,11 @@ Ext.define('CB.model.LocationType', {
         Locations: {
             type: 'Location',
             role: 'locations',
-            field: 'locationId'
+            field: 'locationId',
+            left: {
+                field: 'typeId',
+                role: 'types'
+            }
         }
     },
     
