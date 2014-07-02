@@ -212,6 +212,7 @@ Ext.define('CB.view.main.MainController', {
         console.log('showLocationAdd');
         var view = this.getView(),
             viewModel = view.getViewModel(),
+            session = view.getSession().spawn(),
             user = viewModel.get('user'),
             addLocationView,
             session,
@@ -222,8 +223,6 @@ Ext.define('CB.view.main.MainController', {
             return;
         }
         
-        session = Ext.create('Ext.data.Session');
-
         addLocationView = Ext.create('CB.view.location.Add', {
             session: session,
             tabConfig: {
