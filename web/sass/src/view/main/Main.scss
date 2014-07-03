@@ -178,7 +178,7 @@
 
 @include extjs-toolbar-ui(
     $ui: 'header',
-    $background-color: #fff,
+    $background-color: rgba(255, 255, 255, 0.9),
     $border-width: 0,
     $vertical-spacing: 0,
     $horizontal-spacing: 10px,

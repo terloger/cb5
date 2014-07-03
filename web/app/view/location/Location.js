@@ -25,6 +25,10 @@ Ext.define('CB.view.location.Location', {
         type: 'fit'
     },
     
+    bodyStyle: {
+        overflow: 'visible'
+    },
+    
     listeners: {
         hide: 'hideLocation',
         scope: 'controller'
