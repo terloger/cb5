@@ -26,15 +26,19 @@ Ext.define('CB.view.location.AddController', {
         console.log('saveLocation');
         var view = this.getView(),
             session = view.getSession(),
-            location = view.getViewModel().get('location'),
+            //location = view.getViewModel().get('location'),
             batch = session.getSaveBatch();
-    
+            
         console.log('changes', session.getChanges());
-        console.log('batch', batch);
+        
+        if (!batch) {
+            return;
+        }
         
         batch.on({
             complete: this.onSaveComplete,
             exception: this.onSaveException,
+            single: true,
             scope: this
         });
         
@@ -42,9 +46,16 @@ Ext.define('CB.view.location.AddController', {
     },
     
     onSaveComplete: function() {
-        console.log('onSaveComplete', arguments);
-        console.log('changes', this.getView().getSession().getChanges());
-        console.log('changes', this.getView().getSession().getSaveBatch());
+        var view = this.getView(),
+            session = view.getSession(),
+            //location = view.getViewModel().get('location'),
+            changes = session.getChanges();
+    
+        console.log('changes', changes);
+        
+        if (changes && changes.LocationType && changes.LocationType.locations) {
+            CB.api.Location.setTypes(changes.LocationType.locations);
+        }
     },
     
     onSaveException: function() {

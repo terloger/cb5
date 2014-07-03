@@ -214,6 +214,7 @@ Ext.define('CB.view.main.MainController', {
             viewModel = view.getViewModel(),
             session = view.getSession().spawn(),
             user = viewModel.get('user'),
+            locationTypes = viewModel.get('locationTypes'),
             addLocationView,
             session,
             location;

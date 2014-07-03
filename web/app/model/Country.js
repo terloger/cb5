@@ -4,7 +4,7 @@ Ext.define('CB.model.Country', {
     idProperty: 'id',
 
     fields: [
-        {name: 'locationId', reference: {type: 'Location', inverse: 'country'}},
+        {name: 'locationId', reference: 'Location'},
         {name: 'name', type: 'string'},
         {name: 'iso', type: 'string'}
     ]

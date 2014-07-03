@@ -15,6 +15,10 @@ Ext.define('CB.view.location.LocationModel', {
                 location = get('location');
             return (user instanceof CB.model.User && location instanceof CB.model.Location);
         },
+        hasFiles: function(get) {
+            var location = get('location');
+            return location instanceof CB.model.Location ? location.files().getCount() > 1: false;
+        },
         fileCount: function(get) {
             var location = get('location');
             return location instanceof CB.model.Location ? location.files().getCount() : 0;

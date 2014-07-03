@@ -8,7 +8,7 @@ Ext.define('CB.model.File', {
     idProperty: 'id',
     
     fields: [
-        {name: 'locationId', reference: {type: 'Location', inverse: 'files'}},
+        {name: 'locationId', reference: 'Location'},
         {name: 'name', type: 'string'},
         {name: 'fileName', type: 'string'},
         {name: 'extension', type: 'string'},

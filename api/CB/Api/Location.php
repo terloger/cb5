@@ -91,9 +91,12 @@ class Location extends AbstractController
             $location = $Location->getValues();
             
             // apply location country
+            /*
             $location['country'] = array_merge($Location->getCountry()->getValues(), [
                 'locationId' => $Location->getId()
             ]);
+             * 
+             */
             
             // apply location types
             foreach ($Location->getTypes() as $LocationType)
@@ -474,10 +477,6 @@ class Location extends AbstractController
     /**
      * Create location
 	 *
-	 * This function receives entire location graph from client and creates/updates entity.
-	 *
-	 * TODO: update only changed stuff
-     *
      * @access public
      * @param  array $location
      * @return array
@@ -513,7 +512,61 @@ class Location extends AbstractController
             $em->flush();
             
             // return response
-            return $this->success('Location successfully saved.', $Location->getValues());
+            return $this->success('Location successfully created.', $Location->getValues());
+        }
+        catch (\Exception $e)
+        {
+            return $this->error($e->getMessage());
+        }
+    }
+    
+    /**
+     * Update location
+	 *
+     * @access public
+     * @param  array $location
+     * @return array
+     */
+    public function update($location)
+    {
+        try
+        {
+            // must be logged in
+            if (null === $User = $this->getSessionUser())
+            {
+                return $this->error('You must be signed-in to perform this action!');
+            }
+            
+            // get entity manager
+            $em = $this->getEntityManager();
+            
+            // load location
+            $locationId = isset($location['id']) ? $location['id'] : null;
+            if (null === $Location = $em->getRepository('\CB\Entity\Location')->find($locationId))
+            {
+                return $this->error('Unable to find location!');
+            }
+            
+            // update location
+            $Location->setValues($location);
+            
+            // do we need to change country?
+            $countryId = isset($location['countryId']) ? $location['countryId'] : null;
+            if ($countryId)
+            {
+                if (null === $Country = $em->getRepository('\CB\Entity\Country')->find($countryId))
+                {
+                    return $this->error('Unable to change location country!');
+                }
+                $Location->setCountry($Country);
+            }
+            
+            // save it
+            $em->persist($Location);
+            $em->flush();
+            
+            // return response
+            return $this->success('Location successfully updated.', $Location->getValues());
         }
         catch (\Exception $e)
         {
@@ -658,6 +711,87 @@ class Location extends AbstractController
         }
         
         return $this->error('Unable to delete file!');
+    }
+    
+    /**
+     * Set types
+     * 
+     * @param array $data
+     * @return array
+     */
+    public function setTypes($data)
+    {
+        $msg = [];
+        
+        if (is_array($data))
+        {
+            // get entity manager
+            $em = $this->getEntityManager();
+            
+            // loop through actions
+            foreach ($data as $action => $types)
+            {
+                switch ($action)
+                {
+                    // create
+                    case 'C':
+                        $values = [];
+                        
+                        foreach ($types as $typeId => $locationIds)
+                        {
+                            if ($typeId < 1 || $typeId > 9 || !is_array($locationIds))
+                            {
+                                continue;
+                            }
+                            foreach ($locationIds as $locationId)
+                            {
+                                $values[] = '(' . (int)$locationId . ',' . (int)$typeId . ')';
+                            }
+                        }
+                        
+                        $sql = 'INSERT INTO location_types (location_id, type_id) VALUES ' . implode(',', $values);
+                        
+                        $stmt = $em->getConnection()->prepare($sql);
+                        $stmt->execute();
+                        
+                        $msg[] = $sql;
+                        //$msg[] = 'Created: ' . count($values) . '.';
+                        break;
+                        
+                    // delete
+                    case 'D':
+                        $values = [];
+                        
+                        foreach ($types as $typeId => $locationIds)
+                        {
+                            if ($typeId < 1 || $typeId > 9 || !is_array($locationIds))
+                            {
+                                continue;
+                            }
+                            foreach ($locationIds as $locationId)
+                            {
+                                $values[] = '(location_id = ' . (int)$locationId . ' AND type_id = ' . (int)$typeId . ')';
+                            }
+                        }
+                        
+                        $sql = 'DELETE FROM location_types WHERE ' . implode(' OR ', $values);
+                        
+                        $stmt = $em->getConnection()->prepare($sql);
+                        $stmt->execute();
+                        
+                        $msg[] = $sql;
+                        //$msg[] = 'Deleted: ' . count($values) . '.';
+                        break;
+                    
+                    // invalid action
+                    default:
+                        $msg[] = 'Invalid action: ' . $action . '!';
+                        break;
+                }
+            }
+        }
+        
+        return $this->success(implode(' ', $msg));
     }
 
 }

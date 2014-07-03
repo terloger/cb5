@@ -71,7 +71,7 @@ Ext.define('CB.view.map.MapController', {
                     var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
-                        drop = false;
+                        drop = true;
                         
                     if (location.files().getCount() >= 0) {
                         this.addMarker(latLng, location, icon, drop);
@@ -171,11 +171,34 @@ Ext.define('CB.view.map.MapController', {
     },
     
     moveLocation: function() {
-        console.log('move location');
+        var marker = this.markerMenu.getMarker();
+        
+        if (marker) {
+            marker.setDraggable(true);
+        }
     },
     
     deleteLocation: function() {
-        console.log('delete location');
+        var location = this.markerMenu.getLocation(),
+            marker = this.markerMenu.getMarker();
+    
+        Ext.Msg.confirm('Are you sure?', 'Do you really want to remove this location?', function(btn){
+            if (btn === 'yes') {
+                location.erase({
+                    callback: function(records, operation, success) {
+                        console.log('success', success);
+                        console.log(records);
+                        if (success) {
+                            this.removeMarker(marker);
+                        }
+                    },
+                    scope: this
+                });
+            }
+        }, this);
+        
+        this.fireEvent('deletelocation', location, marker);
+        console.log('delete location', location, marker);
     },
     
     /**
@@ -320,19 +343,16 @@ Ext.define('CB.view.map.MapController', {
 
     removeMarker: function(marker) {
         if (marker) {
-            // remove from marker clusterer
-            this.markerClusterer.removeMarker(marker);
-
             // remove events
             google.maps.event.clearListeners(marker, 'click');
             google.maps.event.clearListeners(marker, 'rightclick');
             google.maps.event.clearListeners(marker, 'dragend');
+            
+            // remove from collection
+            this.getMarkers().remove(marker);
 
             // remove from map
             marker.setMap(null);
-
-            // remove from collection
-            this.getMarkers().remove(marker);
         }
     },
     
@@ -369,8 +389,13 @@ Ext.define('CB.view.map.MapController', {
     onMarkerDragEnd: function(e, marker) {
         console.log('onMarkerDragEnd');
         var location = marker.getLocation();
+        
+        marker.setDraggable(false);
+        
         if (location) {
-            this.fireEvent('markerdragend', marker, location, e);
+            location.set('lat', e.latLng.lat());
+            location.set('lng', e.latLng.lng());
+            location.save();
         }
     },
     

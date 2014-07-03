@@ -58,7 +58,7 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe61b@climbuddy',
             handler: 'prevFile',
             bind: {
-                hidden: '{!fileCount}'
+                hidden: '{!hasFiles}'
             }
         },{
             xtype: 'button',
@@ -68,12 +68,12 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe61c@climbuddy',
             handler: 'nextFile',
             bind: {
-                hidden: '{!fileCount}'
+                hidden: '{!hasFiles}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!fileCount}'
+                hidden: '{!hasFiles}'
             }
         },{
             xtype: 'button',

@@ -119,15 +119,15 @@ Ext.define('CB.paper.Panel', {
      */
     
     applyLocation: function(location) {
+        // location not changed
+        if (location === this.getLocation()) {
+            return;
+        }
+        
         // clear location
         if (!location || !(location instanceof CB.model.Location)) {
             this.setFile(null);
             return null;
-        }
-        
-        // location not changed
-        if (this.getLocation() === location) {
-            return;
         }
 
         // set file
@@ -146,6 +146,13 @@ Ext.define('CB.paper.Panel', {
      */
     
     applyFile: function(file) {
+        console.log('apply file', file);
+        // not changed
+        if (file === this.getFile()) {
+            console.log(this.getFile());
+            return;
+        }
+        
         // clear image
         if (this.getImage()) {
             this.getImage().destroy();
@@ -154,7 +161,7 @@ Ext.define('CB.paper.Panel', {
         
         // must be a valid file
         if (!file || !(file instanceof CB.model.File)) {
-            return;
+            return null;
         }
         
         // preload image
