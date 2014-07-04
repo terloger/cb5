@@ -6,8 +6,12 @@ Ext.define('CB.paper.PanelController', {
 
     alias: 'controller.cb-paper',
     
+    config: {
+        location: null
+    },
+    
     init: function() {
-        console.log('init paper panel controller');
+        this.getViewModel().bind('{location}', this.setLocation, this);
     }
     
 });

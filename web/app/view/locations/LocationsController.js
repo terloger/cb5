@@ -6,8 +6,8 @@ Ext.define('CB.view.locations.LocationsController', {
 
     alias: 'controller.cb-locations',
     
-    onItemDblClick: function(grid, record, item, index, e) {
-        console.log('onItemDblClick');
+    gridItemDblClick: function(grid, record, item, index, e) {
+        console.log('gridItemDblClick');
         this.redirectTo('location/' + record.get('id'));
     }
     

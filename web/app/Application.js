@@ -30,6 +30,7 @@ Ext.define('CB.Application', {
     ],
     
     waitFor: [
+        'Country.read',
         'Location.read',
         'LocationType.read',
         'GradeType.read'

@@ -38,7 +38,10 @@ Ext.define('CB.paper.Mouse', {
         // get mouse position within image
         var mx = e.getX() - this.getImage().getX();
         var my = e.getY() - this.getImage().getY();
-        //console.log(mx, my);
+        if (mx < 0) mx = 100;
+        if (my < 0) my = 100;
+        if (mx > (this.getImageWidth() * scale)) mx = this.getImageWidth() * scale - 100;
+        if (my > (this.getImageHeight() * scale)) my = this.getImageHeight() * scale - 100;
         
         // get mouse position within image after resize
         var nx = mx * ratio;

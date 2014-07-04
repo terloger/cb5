@@ -6,7 +6,7 @@ Ext.define('CB.view.user.HomeController', {
 
     alias: 'controller.cb-user-home',
     
-    onLogoutClick: function() {
+    logoutClick: function() {
         var homeView = this.getView(),
             homeViewModel = homeView.getViewModel(),
             userView = homeView.up('cb-user'),

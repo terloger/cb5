@@ -6,7 +6,7 @@ Ext.define('CB.view.user.UserController', {
 
     alias: 'controller.cb-user',
     
-    onDeactivate: function() {
+    deactivate: function() {
         var loginView = this.getView().down('cb-user-login');
         if (loginView) {
             loginView.reset();

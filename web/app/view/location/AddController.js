@@ -10,6 +10,47 @@ Ext.define('CB.view.location.AddController', {
 
     alias: 'controller.cb-location-add',
     
+    /**
+     * Core
+     */
+    
+    save: function() {
+        console.log('save');
+        this.operations = [
+            'saveLocation',
+            'saveTypes',
+            'saveFiles'
+        ];
+        
+        this.saveLocation();
+    },
+    
+    saveComplete: function() {
+        console.log('saveComplete');
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        view.unmask();
+        
+        this.close();
+        
+        this.fireEvent('createlocation', location);
+    },
+    
+    operationComplete: function(operation) {
+        console.log('operationComplete', operation);
+        var index = this.operations.indexOf(operation);
+        
+        if (index > -1) {
+            this.operations.splice(index, 1);
+        }
+        
+        if (this.operations.length === 0) {
+            this.saveComplete();
+        }
+    },
+    
     close: function() {
         var view = this.getView(),
             mainView = view.up('cb-main'),
@@ -18,26 +59,31 @@ Ext.define('CB.view.location.AddController', {
         mainView.setActiveTab(mapView);
     },
     
-    onHide: function() {
+    hideView: function() {
         this.getView().destroy();
     },
     
+    /**
+     * Location
+     */
+    
     saveLocation: function() {
-        console.log('saveLocation');
         var view = this.getView(),
             session = view.getSession(),
-            //location = view.getViewModel().get('location'),
             batch = session.getSaveBatch();
             
-        console.log('changes', session.getChanges());
+        console.log('saveLocation', session.getChanges());
+        
+        this.getView().mask('Saving Location ...');
         
         if (!batch) {
+            this.saveLocationComplete();
             return;
         }
         
         batch.on({
-            complete: this.onSaveComplete,
-            exception: this.onSaveException,
+            complete: this.saveLocationComplete,
+            exception: this.saveLocationException,
             single: true,
             scope: this
         });
@@ -45,41 +91,96 @@ Ext.define('CB.view.location.AddController', {
         batch.start();
     },
     
-    onSaveComplete: function() {
-        var view = this.getView(),
-            session = view.getSession(),
-            //location = view.getViewModel().get('location'),
-            changes = session.getChanges();
+    saveLocationComplete: function(batch, operation) {
+        console.log('saveLocationComplete');
+        this.operationComplete('saveLocation');
+        this.saveTypes();
+    },
     
-        console.log('changes', changes);
+    saveLocationException: function(batch, operation) {
+        console.log('saveLocationException', arguments);
+        var exceptions = batch.getExceptions(),
+            msg = [];
+    
+        Ext.each(exceptions, function(exception){
+            msg.push(exception.getError());
+        }, this);
         
-        if (changes && changes.LocationType && changes.LocationType.locations) {
-            CB.api.Location.setTypes(changes.LocationType.locations);
-        }
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: msg.length ? msg.join('<br />') : 'Unable to save Location!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+        
+        this.operationComplete('saveLocation');
+        this.operationComplete('saveTypes');
+        this.operationComplete('saveFiles');
     },
     
-    onSaveException: function() {
-        console.log('onSaveException', arguments);
-    },
+    /**
+     * Types
+     */
     
-    onTypeSelect: function(combo, records) {
-        console.log('onTypeSelect');
+    setTypes: function(combo, records) {
+        console.log('setTypes', records);
         var view = this.getView(),
             location = view.getViewModel().get('location');
     
-        console.log(records);
-        
         location.types().removeAll();
         
         if (records.length) {
             location.types().add(records);
         }
-        
-        console.log(location.types());
     },
     
-    addFiles: function(button) {
-        console.log('onFileAdd');
+    saveTypes: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            changes = session.getChanges();
+        
+        console.log('saveTypes', changes);
+        
+        if (changes && changes.LocationType && changes.LocationType.locations) {
+            this.getView().mask('Saving Location Types ...');
+            
+            CB.api.Location.setTypes(changes.LocationType.locations, function(result) {
+                if (result && result.success) {
+                    this.saveTypesComplete(result);
+                } else {
+                    this.saveTypesException(result);
+                }
+            }, this);
+        } else {
+            this.saveFiles();
+        }
+    },
+    
+    saveTypesComplete: function(result) {
+        console.log('saveTypesSuccess', result);
+        
+        this.operationComplete('saveTypes');
+        
+        this.saveFiles();
+    },
+    
+    saveTypesException: function(result) {
+        console.log('saveTypesException', result);
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: result && result.message ? result.message : 'Unable to save Location Types!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+        
+        this.operationComplete('saveTypes');
+    },
+    
+    /**
+     * Files
+     */
+    
+    setFiles: function(button) {
         var view = this.getView(),
             grid = view.down('grid'),
             store = grid.getStore(),
@@ -87,6 +188,7 @@ Ext.define('CB.view.location.AddController', {
             data = [],
             file;
 
+        console.log('setFiles', files);
         for (var i = 0, len = files.length; i < len; i++) {
             file = files[i];
             data.push({
@@ -103,7 +205,7 @@ Ext.define('CB.view.location.AddController', {
     },
     
     clearFiles: function() {
-        console.log('onFileClear');
+        console.log('clearFiles');
         var view = this.getView(),
             grid = view.down('grid'),
             fileField = view.down('filebutton');
@@ -113,76 +215,111 @@ Ext.define('CB.view.location.AddController', {
         fileField.reset();
     },
     
-    uploadFiles: function() {
+    saveFiles: function() {
         var view = this.getView(),
-            viewModel = view.getViewModel(),
-            session = view.getSession(),
-            location = viewModel.get('location'),
             button = view.down('multifilebutton'),
             files = button.fileInputEl.dom.files,
-            fileCount = files.length;
-
-        if (!fileCount) {
+            len = files.length,
+            i = 0;
+    
+        this.fileCount = len;
+        this.fileErrors = [];
+    
+        console.log('saveFiles', files);
+        
+        if (!len) {
+            this.saveFilesComplete();
             return;
         }
         
-        // mask
-
-        for (var i = 0, len = files.length; i < len; i++) {
-            var File = files[i];
-
-            var connection = Ext.create('CB.data.Connection', {
+        this.getView().mask('Saving Location Files ...');
+        
+        for (; i < len; i++) {
+            this.saveFile(files[i]);
+        }
+    },
+    
+    saveFilesComplete: function() {
+        console.log('saveFilesComplete');
+        
+        this.operationComplete('saveFiles');
+    },
+    
+    saveFilesException: function() {
+        console.log('saveFilesExceptions');
+        
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: this.fileErrors.join('<br />'),
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+        
+        this.operationComplete('saveFiles');
+    },
+    
+    /**
+     * File
+     */
+    
+    saveFile: function(File) {
+        console.log('saveFile', File);
+        var view = this.getView(),
+            viewModel = view.getViewModel(),
+            location = viewModel.get('location'),
+            connection = Ext.create('CB.data.Connection', {
                 url: '/api/upload-file/'
             });
 
-            connection.uploadFile(File, {
-                headers: {
-                    'X-Location-Id': location.get('id'),
-                    'X-File-Name': File.name
-                },
-                progress: function(e) {
-                },
-                success: function(response, operation) {
-                    if (--fileCount === 0) {
-                        // unmask
+        connection.uploadFile(File, {
+            headers: {
+                'X-Location-Id': location.get('id'),
+                'X-File-Name': File.name
+            },
+            /*progress: function(e) {
+            },*/
+            success: function(response, operation) {
+                try {
+                    var result = Ext.JSON.decode(response.responseText, true);
+                    if (result.success) {
+                        this.saveFileComplete(result);
+                    } else {
+                        this.saveFileException(result.message ? result.message : 'Unable to upload File!');
                     }
-                    if (response.status === 200) {
-                        try
-                        {
-                            var result = Ext.JSON.decode(response.responseText, true);
-                            if (result.success) {
-                                location.files().add(session.createRecord('File', result.data));
-                            } else {
-                                Ext.MessageBox.show({
-                                    title: 'Server Exception',
-                                    msg: result.message,
-                                    icon: Ext.MessageBox.ERROR,
-                                    buttons: Ext.MessageBox.OK
-                                });
-                            }
-                        } catch (e) {
-                            Ext.MessageBox.show({
-                                title: 'Server Exception',
-                                msg: 'Error processing response from server.',
-                                icon: Ext.MessageBox.ERROR,
-                                buttons: Ext.MessageBox.OK
-                            });
-                        }
-                    }
-                },
-                failure: function(response, operation) {
-                    if (--fileCount === 0) {
-                        // unmask
-                    }
-                    Ext.MessageBox.show({
-                        title: 'Server Exception',
-                        msg: 'Error ' + response.status + ': ' + response.statusText,
-                        icon: Ext.MessageBox.ERROR,
-                        buttons: Ext.MessageBox.OK
-                    });
-                },
-                scope: this
-            });
+                } catch (e) {
+                    this.saveFileException('Error processing response from server.');
+                }
+            },
+            failure: function(response, operation) {
+                this.saveFileException('Error ' + response.status + ': ' + response.statusText);
+            },
+            scope: this
+        });
+    },
+    
+    saveFileComplete: function(result) {
+        console.log('saveFileComplete', result);
+        var view = this.getView(),
+            viewModel = view.getViewModel(),
+            location = viewModel.get('location');
+    
+        location.files().add(Ext.create('CB.model.File', result.data));
+        
+        if (--this.fileCount === 0) {
+            if (this.fileErrors.length) {
+                this.saveFilesException();
+            } else {
+                this.saveFilesComplete();
+            }
+        }
+    },
+    
+    saveFileException: function(msg) {
+        console.log('saveFileException', msg);
+        this.fileErrors.push(msg);
+        
+        if (--this.fileCount === 0) {
+            this.saveFilesException();
         }
     }
     

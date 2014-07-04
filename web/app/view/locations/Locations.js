@@ -34,7 +34,7 @@ Ext.define('CB.view.locations.Locations', {
         frame: true,
         bind: '{locations}',
         listeners: {
-            itemdblclick: 'onItemDblClick'
+            itemdblclick: 'gridItemDblClick'
         },
         columns: [{
             text: 'Name',

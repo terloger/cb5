@@ -7,13 +7,13 @@ Ext.define('CB.view.main.MainController', {
     alias: 'controller.cb-main',
     
     routes: {
-        'home': 'showHome',
-        'map': 'showMap',
-        'user': 'showUser',
-        'locations': 'showLocations',
-        'location/add': 'showLocationAdd',
+        'home': 'homeRoute',
+        'map': 'mapRoute',
+        'user': 'userRoute',
+        'locations': 'locationsRoute',
         'location/:id': {
-            action: 'showLocation',
+            action: 'locationRoute',
+            before: 'beforeLocationRoute',
             conditions: {
                 ':id': '([0-9]+)'
             }
@@ -23,7 +23,7 @@ Ext.define('CB.view.main.MainController', {
     listen: {
         controller: {
             '#': {
-                unmatchedroute : 'onUnmatchedRoute'
+                unmatchedroute : 'unmatchedRoute'
             },
             '*': {
                 addlocation: 'showLocationAdd'
@@ -50,15 +50,108 @@ Ext.define('CB.view.main.MainController', {
         this.callParent(arguments);
     },
     
-    onTabChange: function (view, tab) {
+    /**
+     * Routes
+     */
+    
+    homeRoute: function() {
+        console.log('homeRoute');
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-home'));
+        
+        if (tab) {
+            this.redirectTo('home');
+        }
+    },
+    
+    mapRoute: function() {
+        console.log('mapRoute');
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-map'))
+    
+        if (tab) {
+            this.redirectTo('map');
+        }
+    },
+    
+    userRoute: function() {
+        console.log('userRoute');
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-user'))
+
+        if (tab) {
+            this.redirectTo('user');
+        }
+    },
+    
+    locationsRoute: function() {
+        console.log('locationsRoute');
+        var view = this.getView(),
+            tab = view.setActiveTab(view.down('cb-locations'))
+    
+        if (tab) {
+            this.redirectTo('locations');
+        }
+    },
+    
+    beforeLocationRoute: function(id, action) {
+        console.log('beforeLocationRoute');
+        var view = this.getView(),
+            locationView = view.down('cb-location'),
+            vm = locationView.getViewModel(),
+            store = vm.get('locations'),
+            storeLoaded = store.isLoaded(),
+            checkLocation = function() {
+                var location = store.getById(id);
+                if (location) {
+                    action.resume();
+                } else {
+                    action.stop(true);
+                    this.showError('Unable to find location ' + id);
+                }
+            };
+    
+        if (storeLoaded) {
+            checkLocation.apply(this);
+        } else {
+            store.on({
+                load: checkLocation,
+                single: true,
+                scope: this
+            });
+        }
+    },
+    
+    locationRoute: function(id) {
+        console.log('locationRoute');
+        var view = this.getView(),
+            locationView = view.down('cb-location'),
+            vm = locationView.getViewModel(),
+            store = vm.get('locations'),
+            location = store.getById(id);
+        
+        view.setActiveTab(locationView);
+        vm.set('location', location);
+        this.redirectTo('location/' + id);
+    },
+    
+    unmatchedRoute: function(hash) {
+        console.log('unmatchedRoute', hash);
+        this.showError('Unable to find route ' + hash);
+    },
+    
+    /**
+     * View
+     */
+    
+    tabChange: function (view, tab) {
         console.log('onTabChange');
         if (tab.route) {
             this.redirectTo(tab.route);
         }
     },
     
-    onHeaderAfterRender: function(header) {
-        console.log('onHeaderAfterRender');
+    headerAfterRender: function(header) {
         var collapseGlyph = 'xe61b@climbuddy',
             expandGlyph = 'xe61c@climbuddy',
             collapseText = 'Collapse menu',
@@ -87,8 +180,7 @@ Ext.define('CB.view.main.MainController', {
         });
     },
     
-    onCollapseClick: function() {
-        console.log('onCollapseClick');
+    collapseClick: function() {
         var header = this.getView().getHeader(),
             btn = this.collapseButton,
             el = header.getEl();
@@ -111,8 +203,8 @@ Ext.define('CB.view.main.MainController', {
         this.getView().saveState();
     },
     
-    onUnmatchedRoute: function(hash) {
-        console.log('onUnmatchedRoute');
+    showError: function(msg) {
+        console.log('showError', msg);
         var view = this.getView(),
             tab, header, title;
         
@@ -120,103 +212,15 @@ Ext.define('CB.view.main.MainController', {
         tab = view.getActiveTab();
         header = tab.down('toolbar[ui=header]');
         title = header.down('tbtext[cls=title]');
-        title.setText('Unable to find route #' + hash);
-    },
-    
-    /**
-     * Routes
-     */
-    
-    showHome: function() {
-        console.log('showHome');
-        var view = this.getView(),
-            tab = view.setActiveTab(view.down('cb-home'));
-        
-        if (tab) {
-            this.redirectTo('home');
-        }
-    },
-    
-    showMap: function() {
-        console.log('showMap');
-        var view = this.getView(),
-            tab = view.setActiveTab(view.down('cb-map'))
-    
-        if (tab) {
-            this.redirectTo('map');
-        }
-    },
-    
-    showUser: function() {
-        console.log('showUser');
-        var view = this.getView(),
-            tab = view.setActiveTab(view.down('cb-user'))
-
-        if (tab) {
-            this.redirectTo('user');
-        }
-    },
-    
-    showLocations: function() {
-        console.log('showLocations');
-        var view = this.getView(),
-            tab = view.setActiveTab(view.down('cb-locations'))
-    
-        if (tab) {
-            this.redirectTo('locations');
-        }
-    },
-    
-    showLocation: function(id) {
-        console.log('showLocation');
-        var view = this.getView(),
-            viewModel = view.getViewModel(),
-            locationView = view.down('cb-location'),
-            locationViewModel = locationView.getViewModel(),
-            locationViewCtrl = locationView.getController(),
-            store = viewModel.get('locations'),
-            storeLoaded = store.isLoaded(),
-            showLocation = function() {
-                var location = store.getById(id);
-                if (location) {
-                    locationViewCtrl.showLocation(location);
-                    locationViewModel.bind({bindTo: '{location}', single: true}, function(location){
-                        if (storeLoaded && view.setActiveTab(locationView)) {
-                            this.redirectTo('location/' + id);
-                        }
-                    }, this);
-                    locationViewModel.linkTo('location', location);
-                } else {
-                    locationViewModel.set('location.name', 'Oooops, location #' + id + ' does not exist.');
-                }
-            };
-    
-        if (storeLoaded) {
-            showLocation.apply(this);
-        } else {
-            store.on({
-                load: {
-                    fn: showLocation,
-                    single: true,
-                    scope: this
-                }
-            });
-            
-            if (view.setActiveTab(locationView)) {
-                this.redirectTo('location/' + id);
-            }
-        }
+        title.setText(msg || 'Unknown error');
     },
     
     showLocationAdd: function(country, lat, lng) {
         console.log('showLocationAdd');
         var view = this.getView(),
-            viewModel = view.getViewModel(),
             session = view.getSession().spawn(),
-            user = viewModel.get('user'),
-            locationTypes = viewModel.get('locationTypes'),
+            user = view.getViewModel().get('user'),
             addLocationView,
-            session,
             location;
     
         if (!user) {
@@ -246,12 +250,7 @@ Ext.define('CB.view.main.MainController', {
         view.setActiveTab(addLocationView);
     },
     
-    /**
-     * Navigation menu
-     */
-    
     showNavigationMenu: function (e) {
-        console.log('onMenuClick');
         if (!this.navigationMenu) {
             this.navigationMenu = Ext.create('Ext.menu.Menu', this.getView().navigationMenu);
         }
@@ -259,8 +258,7 @@ Ext.define('CB.view.main.MainController', {
         this.navigationMenu.showAt(e.getXY());
     },
     
-    onNavigationMenuClick: function (menu, item) {
-        console.log('onMenuItemClick');
+    navigationMenuClick: function (menu, item) {
         this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
     }
     

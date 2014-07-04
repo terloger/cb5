@@ -25,7 +25,7 @@ Ext.define('CB.view.user.User', {
     },
     
     listeners: {
-        hide: 'onDeactivate',
+        hide: 'deactivate',
         scope: 'controller'
     },
     

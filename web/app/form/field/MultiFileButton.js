@@ -6,6 +6,8 @@ Ext.define('CB.form.field.MultiFileButton', {
     
     xtype: 'widget.multifilebutton',
     
+    alias: 'widget.multifilebutton',
+    
     afterTpl: '<input id="{id}-fileInputEl" data-ref="fileInputEl" class="{childElCls} {inputCls}" ' +
         'type="file" size="1" name="{inputName}" role="{role}" tabIndex="{tabIndex}" multiple="1">',
 

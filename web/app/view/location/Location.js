@@ -86,12 +86,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Add Photo',
             glyph: 'xe623@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -100,7 +100,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Select Tool',
             glyph: 'xe62a@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -109,7 +109,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Move Tool',
             glyph: 'xe63a@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -118,12 +118,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Pen Tool',
             glyph: 'xe628@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -132,7 +132,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Lock',
             glyph: 'xe630@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -141,12 +141,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Unlock',
             glyph: 'xe631@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -155,7 +155,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Zoom In',
             glyph: 'xe63f@climbuddy',
             bind: {
-                hidden: '{!isLocation}'
+                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'button',
@@ -164,12 +164,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Zoom Out',
             glyph: 'xe63e@climbuddy',
             bind: {
-                hidden: '{!isLocation}'
+                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!isLocation}'
+                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'button',
@@ -178,7 +178,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Print',
             glyph: 'xe62e@climbuddy',
             bind: {
-                hidden: '{!isLocation}'
+                hidden: '{!hasLocation}'
             }
         },'->',{
             xtype: 'button',
@@ -187,7 +187,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Settings',
             glyph: 'xe60a@climbuddy',
             bind: {
-                hidden: '{!isEditMode}'
+                hidden: '{!editMode}'
             }
         }]
     },

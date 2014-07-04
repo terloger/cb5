@@ -32,7 +32,7 @@ Ext.define('CB.view.user.Home', {
             xtype: 'button',
             text: 'Sign Out',
             glyph: 'xe60b@climbuddy',
-            handler: 'onLogoutClick'
+            handler: 'logoutClick'
         }]
     },
     

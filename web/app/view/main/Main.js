@@ -39,7 +39,7 @@ Ext.define('CB.view.main.Main', {
             flex: 0
         },
         listeners: {
-            afterrender: 'onHeaderAfterRender'
+            afterrender: 'headerAfterRender'
         },
         tools: [{
             type: 'gear',
@@ -80,7 +80,7 @@ Ext.define('CB.view.main.Main', {
             height: 50
         }],
         listeners: {
-            click: 'onNavigationMenuClick'
+            click: 'navigationMenuClick'
         }
     },
     
@@ -104,7 +104,7 @@ Ext.define('CB.view.main.Main', {
     },
     
     listeners: {
-        tabchange: 'onTabChange',
+        tabchange: 'tabChange',
         scope: 'controller'
     },
     

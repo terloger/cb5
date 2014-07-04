@@ -71,14 +71,18 @@ Ext.define('CB.view.map.Map', {
     },
     
     listeners: {
-        afterrender: 'onAfterRender',
-        resize: 'onResize',
+        afterrender: 'afterRender',
+        resize: 'resize',
         scope: 'controller'
     },
     
     mapMenu: {
         xtype: 'menu',
         items: [{
+            text: 'Map',
+            baseCls: 'x-menu-title',
+            hideOnClick: false
+        },{
             text: 'Refresh',
             handler: 'refreshMap',
             glyph: 'xe61d@climbuddy'
@@ -94,10 +98,14 @@ Ext.define('CB.view.map.Map', {
     markerMenu: {
         xtype: 'menu',
         items: [{
+            text: '',
+            baseCls: 'x-menu-title',
+            hideOnClick: false
+        },{
             text: 'Open location',
             handler: 'openLocation',
             glyph: 'xe605@climbuddy'
-        },'-',{
+        },{
             text: 'Move location',
             handler: 'moveLocation',
             glyph: 'xe63a@climbuddy'

@@ -21,9 +21,8 @@ Ext.define('CB.data.Connection', {
     },
 
     uploadFile: function(File, config) {
-        var onProgress = config.progress;
-        if (onProgress) {
-            this.onProgress = onProgress;
+        if (config.progress && typeof config.progress === 'function') {
+            this.onProgress = Ext.bind(config.progress, config.scope || this);
         }
 
         config = Ext.applyIf(config, {

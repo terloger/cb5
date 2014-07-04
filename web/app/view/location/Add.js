@@ -25,7 +25,7 @@ Ext.define('CB.view.location.Add', {
     bodyPadding: 10,
     
     listeners: {
-        hide: 'onHide',
+        hide: 'hideView',
         scope: 'controller'
     },
     
@@ -83,7 +83,7 @@ Ext.define('CB.view.location.Add', {
                 value: '{types}'
             },
             listeners: {
-                select: 'onTypeSelect'
+                select: 'setTypes'
             }
         },{
             xtype: 'textarea',
@@ -121,6 +121,7 @@ Ext.define('CB.view.location.Add', {
             tbar: {
                 items: [{
                     xtype: 'multifilebutton',
+                    itemId: 'multifilebutton',
                     ui: 'default-toolbar',
                     name: 'photos',
                     text: 'Select Photos ...',
@@ -128,7 +129,7 @@ Ext.define('CB.view.location.Add', {
                     allowBlank: false,
                     //glyph: 'xe623@climbuddy',
                     listeners: {
-                        change: 'addFiles'
+                        change: 'setFiles'
                     }
                 },{
                     xtype: 'button',
@@ -169,7 +170,7 @@ Ext.define('CB.view.location.Add', {
     buttons: [{
         text: 'Save',
         formBind: true,
-        handler: 'saveLocation'
+        handler: 'save'
     },{
         text: 'Close',
         handler: 'close'

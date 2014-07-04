@@ -6,6 +6,14 @@ Ext.define('CB.view.map.MapController', {
     
     alias: 'controller.cb-map',
     
+    listen: {
+        controller: {
+            '*': {
+                createlocation: 'createLocation'
+            }
+        }
+    },
+    
     config: {
         map: null,
         markers: null,
@@ -19,7 +27,7 @@ Ext.define('CB.view.map.MapController', {
      * Core
      */
     
-    onAfterRender: function() {
+    afterRender: function() {
         // no google available
         if (typeof google === 'undefined') {
             this.getView().add({
@@ -51,19 +59,29 @@ Ext.define('CB.view.map.MapController', {
         me.setMarkers(markers);
         
         // handle map events
-        google.maps.event.addListenerOnce(map, 'tilesloaded',       Ext.bind(me.onMapReady, me));
-        google.maps.event.addListener(map,     'dragend',           Ext.bind(me.onMapDragEnd, me));
-        google.maps.event.addListener(map,     'zoom_changed',      Ext.bind(me.onMapZoomChanged, me));
-        google.maps.event.addListener(map,     'maptypeid_changed', Ext.bind(me.onMapTypeIdChanged, me));
+        google.maps.event.addListenerOnce(map, 'tilesloaded',       Ext.bind(me.mapReady, me));
+        google.maps.event.addListener(map,     'dragend',           Ext.bind(me.mapDragEnd, me));
+        google.maps.event.addListener(map,     'zoom_changed',      Ext.bind(me.mapZoomChanged, me));
+        google.maps.event.addListener(map,     'maptypeid_changed', Ext.bind(me.mapTypeIdChanged, me));
         if (Ext.supports.Touch) {
-            google.maps.event.addListener(map, 'click',             Ext.bind(me.onMapRightClick, me));
+            google.maps.event.addListener(map, 'click',             Ext.bind(me.mapRightClick, me));
         } else {
-            google.maps.event.addListener(map, 'click',             Ext.bind(me.onMapClick, me));
-            google.maps.event.addListener(map, 'rightclick',        Ext.bind(me.onMapRightClick, me));
+            google.maps.event.addListener(map, 'click',             Ext.bind(me.mapClick, me));
+            google.maps.event.addListener(map, 'rightclick',        Ext.bind(me.mapRightClick, me));
         }
     },
     
-    onMapReady: function() {
+    resize: function(w, h) {
+        if (this.getMap()) {
+            google.maps.event.trigger(this.getMap(), 'resize');
+            
+            if (this.getLastCenter()) {
+                this.getMap().setCenter(this.getLastCenter(), this.getView().getZoom());
+            }
+        }
+    },
+    
+    mapReady: function() {
         var me = this,
             store = me.getView().getViewModel().get('locations'),
             showMarkers = function() {
@@ -103,16 +121,6 @@ Ext.define('CB.view.map.MapController', {
         }
     },
     
-    onResize: function(w, h) {
-        if (this.getMap()) {
-            google.maps.event.trigger(this.getMap(), 'resize');
-            
-            if (this.getLastCenter()) {
-                this.getMap().setCenter(this.getLastCenter(), this.getView().getZoom());
-            }
-        }
-    },
-    
     destroy: function () {
         Ext.destroyMembers(this, 'mapMenu', 'markerMenu', 'filterMenu');
         this.callParent();
@@ -122,8 +130,25 @@ Ext.define('CB.view.map.MapController', {
      * Location
      */
     
+    createLocation: function(location) {
+        console.log('createLocation', location);
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            locations = vm.get('locations'),
+            latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
+            type = location.types().getAt(0),
+            icon = type ? type.get('type') : 'default',
+            drop = true;
+    
+        locations.add(location);
+
+        if (location.files().getCount() >= 0) {
+            this.addMarker(latLng, location, icon, drop);
+        }
+    },
+    
     addLocation: function() {
-        console.log('addLocation');
+        console.log('addLocation', this.mapMenu.getEvent().latLng);
         var countries = this.getView().getViewModel().get('countries'),
             latLng = this.mapMenu.getEvent().latLng,
             lat = latLng.lat(),
@@ -133,6 +158,8 @@ Ext.define('CB.view.map.MapController', {
         if (!this.geocoder) {
             this.geocoder = new google.maps.Geocoder();
         }
+        
+        console.log('geocode');
         
         this.geocoder.geocode({latLng: latLng}, Ext.bind(function(results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
@@ -156,11 +183,12 @@ Ext.define('CB.view.map.MapController', {
                 }
             }
             
-            Ext.Msg.alert('Error', 'Unable to fetch country name!');
+            Ext.Msg.alert('Error', 'You cannot place a location there!');
         }, this));
     },
     
     openLocation: function() {
+        console.log('openLocation', this.markerMenu.getLocation());
         var location = this.markerMenu.getLocation();
         
         if (!location) {
@@ -171,6 +199,7 @@ Ext.define('CB.view.map.MapController', {
     },
     
     moveLocation: function() {
+        console.log('moveLocation', this.markerMenu.getLocation());
         var marker = this.markerMenu.getMarker();
         
         if (marker) {
@@ -179,15 +208,14 @@ Ext.define('CB.view.map.MapController', {
     },
     
     deleteLocation: function() {
+        console.log('deleteLocation', this.markerMenu.getLocation());
         var location = this.markerMenu.getLocation(),
             marker = this.markerMenu.getMarker();
     
-        Ext.Msg.confirm('Are you sure?', 'Do you really want to remove this location?', function(btn){
+        Ext.Msg.confirm('Are you sure?', 'Do you really want to remove location?', function(btn){
             if (btn === 'yes') {
                 location.erase({
                     callback: function(records, operation, success) {
-                        console.log('success', success);
-                        console.log(records);
                         if (success) {
                             this.removeMarker(marker);
                         }
@@ -198,7 +226,6 @@ Ext.define('CB.view.map.MapController', {
         }, this);
         
         this.fireEvent('deletelocation', location, marker);
-        console.log('delete location', location, marker);
     },
     
     /**
@@ -209,16 +236,16 @@ Ext.define('CB.view.map.MapController', {
         console.log('refresh map');
     },
     
-    onMapClick: function(e) {
-        console.log('onMapClick');
+    mapClick: function(e) {
     },
     
-    onMapRightClick: function(e) {
+    mapRightClick: function(e) {
         var view = this.getView(),
             menu = this.mapMenu,
-            user = view.getViewModel().get('user');
+            user = view.getViewModel().get('user'),
+            xy = this.getLatLngLocalXY(e.latLng);
     
-        if (!user) {
+        if (!user || !xy) {
             return false;
         }
     
@@ -228,21 +255,18 @@ Ext.define('CB.view.map.MapController', {
         
         menu.setEvent(e);
         
-        menu.showAt(this.getLatLngLocalXY(e.latLng));
+        menu.showAt(xy);
     },
     
-    onMapZoomChanged: function() {
-        console.log('onMapZoomChanged');
+    mapZoomChanged: function() {
         this.getView().saveState();
     },
     
-    onMapTypeIdChanged: function() {
-        console.log('onMapTypeIdChanged');
+    mapTypeIdChanged: function() {
         this.getView().saveState();
     },
     
-    onMapDragEnd: function() {
-        console.log('onMapDragEnd');
+    mapDragEnd: function() {
         this.setLastCenter(this.getMap().getCenter());
         this.getView().saveState();
     },
@@ -263,15 +287,15 @@ Ext.define('CB.view.map.MapController', {
     },
     
     getLatLngXY: function(latLng) {
-        if (!latLng) return [0,0];
+        if (!latLng) return false;
         
         var overlay = this.getOverlay(),
             projection,
             pixel,
             box;
         
-        if (!overlay.ready) {
-            return [0,0];
+        if (!overlay || !overlay.ready) {
+            return false;
         }
     
         projection = overlay.getProjection();
@@ -282,14 +306,14 @@ Ext.define('CB.view.map.MapController', {
     },
     
     getLatLngLocalXY: function(latLng) {
-        if (!latLng) return [0,0];
+        if (!latLng) return false;
         
         var overlay = this.getOverlay(),
             projection,
             pixel;
     
         if (!overlay || !overlay.ready) {
-            return [0,0];
+            return false;
         }
         
         projection = overlay.getProjection();
@@ -333,9 +357,9 @@ Ext.define('CB.view.map.MapController', {
         marker.setMap(this.getMap());
 
         // add event listeners
-        google.maps.event.addListener(marker, 'click',      Ext.bind(this.onMarkerClick, this, [marker], true));
-        google.maps.event.addListener(marker, 'rightclick', Ext.bind(this.onMarkerRightClick, this, [marker], true));
-        google.maps.event.addListener(marker, 'dragend',    Ext.bind(this.onMarkerDragEnd, this, [marker], true));
+        google.maps.event.addListener(marker, 'click',      Ext.bind(this.markerClick, this, [marker], true));
+        google.maps.event.addListener(marker, 'rightclick', Ext.bind(this.markerRightClick, this, [marker], true));
+        google.maps.event.addListener(marker, 'dragend',    Ext.bind(this.markerDragEnd, this, [marker], true));
 
         // return instance
         return marker;
@@ -356,8 +380,7 @@ Ext.define('CB.view.map.MapController', {
         }
     },
     
-    onMarkerClick: function(e, marker) {
-        console.log('onMarkerClick');
+    markerClick: function(e, marker) {
         var location = marker.getLocation();
         if (location) {
             this.redirectTo('location/' + location.get('id'));
@@ -365,13 +388,14 @@ Ext.define('CB.view.map.MapController', {
         }
     },
     
-    onMarkerRightClick: function(e, marker) {
+    markerRightClick: function(e, marker) {
         var view = this.getView(),
             menu = this.markerMenu,
             location = marker ? marker.getLocation() : null,
-            user = view.getViewModel().get('user');
+            user = view.getViewModel().get('user'),
+            xy = this.getLatLngLocalXY(e.latLng);
             
-        if (!user || !marker || !location) {
+        if (!user || !marker || !location || !xy) {
             return false;
         }
         
@@ -383,11 +407,12 @@ Ext.define('CB.view.map.MapController', {
         menu.setLocation(location);
         menu.setEvent(e);
         
-        menu.showAt(this.getLatLngLocalXY(e.latLng));
+        menu.items.getAt(0).setText(location.get('name'));
+        
+        menu.showAt(xy);
     },
     
-    onMarkerDragEnd: function(e, marker) {
-        console.log('onMarkerDragEnd');
+    markerDragEnd: function(e, marker) {
         var location = marker.getLocation();
         
         marker.setDraggable(false);
@@ -408,7 +433,7 @@ Ext.define('CB.view.map.MapController', {
     },
     
     showFilterMenu: function(btn, e) {
-        console.log('onFilterButtonClick');
+        console.log('showFilterMenu');
         var view = this.getView(),
             viewModel = view.getViewModel(),
             menu = this.filterMenu;
@@ -418,7 +443,7 @@ Ext.define('CB.view.map.MapController', {
                 xtype: 'menu',
                 items: [],
                 listeners: {
-                    click: this.onFilterMenuItemClick,
+                    click: this.filterMenuItemClick,
                     scope: this
                 }
             };
@@ -438,8 +463,8 @@ Ext.define('CB.view.map.MapController', {
         btn.showMenu();
     },
     
-    onFilterMenuItemClick: function(menu, item, e) {
-        console.log('onFilterMenuItemClick');
+    filterMenuItemClick: function(menu, item, e) {
+        console.log('filterMenuItemClick');
     }
     
 });

@@ -29,8 +29,6 @@
 }
 */
 
-
-
 @include extjs-button-small-ui(
     $ui: 'blank',
 
@@ -211,6 +209,18 @@
     &.x-tab-pressed {
         background-color: mix(#000, $cb-dark-background, 20%) !important;
         @include opacity(1);
+    }
+}
+
+.x-menu-title {
+    cursor: default;
+    background: #eee;
+    border-bottom: 1px solid #E1E1E1;
+    margin-bottom: 2px;
+    
+    .x-menu-item-text.x-menu-item-indent-no-separator {
+        margin-left: 6px;
+        font-weight: bold;
     }
 }
 

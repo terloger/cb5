@@ -108,19 +108,15 @@ Ext.define('CB.paper.Panel', {
         
         // clear location
         if (!location || !(location instanceof CB.model.Location)) {
-            this.setFile(null);
             return null;
         }
-
-        // set file
-        this.setFile(location.files().getAt(0));
         
         // confirm change
         return location;
     },
 
-    updateLocation: function(newLocation, oldLocation) {
-        this.fireEvent('locationchange', this, newLocation, oldLocation);
+    updateLocation: function(location, oldLocation) {
+        this.fireEvent('locationchange', this, location, oldLocation);
     },
     
     /**
@@ -155,8 +151,8 @@ Ext.define('CB.paper.Panel', {
         return file;
     },
     
-    updateFile: function(newFile, oldFile) {
-        this.fireEvent('filechange', this, oldFile, newFile);
+    updateFile: function(file, oldFile) {
+        this.fireEvent('filechange', this, file, oldFile);
     },
     
     onFileLoad: function(image) {
@@ -195,72 +191,6 @@ Ext.define('CB.paper.Panel', {
         */
 
         this.fireEvent('fileload', this, this.getFile());
-    },
-    
-    prevFile: function() {
-        var file = this.getPrevFile();
-        
-        if (!file) {
-            return;
-        }
-        
-        this.setFile(file);
-    },
-    
-    nextFile: function() {
-        var file = this.getNextFile();
-        
-        if (!file) {
-            return;
-        }
-        
-        this.setFile(file);
-    },
-    
-    getPrevFile: function() {
-        var location = this.getLocation(),
-            files = location.files(),
-            current,
-            prev;
-    
-        // must have at least two files
-        if (files.getCount() < 2) {
-            return files.getAt(0);
-        }
-        
-        // get current position
-        current = files.indexOf(this.getFile());
-        prev = current - 1;
-        
-        // show last
-        if (prev < 0) {
-            prev = files.getCount() - 1;
-        }
-        
-        return files.getAt(prev);
-    },
-    
-    getNextFile: function() {
-        var location = this.getLocation(),
-            files = location.files(),
-            current,
-            next;
-    
-        // must have at least two files
-        if (files.getCount() < 2) {
-            return files.getAt(0);
-        }
-        
-        // get current position
-        current = files.indexOf(this.getFile());
-        next = current + 1;
-        
-        // show first
-        if (next === files.getCount()) {
-            next = 0;
-        }
-        
-        return files.getAt(next);
     },
     
     /**
