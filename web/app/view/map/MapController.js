@@ -159,17 +159,21 @@ Ext.define('CB.view.map.MapController', {
             this.geocoder = new google.maps.Geocoder();
         }
         
-        console.log('geocode');
-        
         this.geocoder.geocode({latLng: latLng}, Ext.bind(function(results, status) {
+            var iso = null,
+                name = null;
+                
+            console.log('status', status);
+            console.log('results', results);
+            
             if (status === google.maps.GeocoderStatus.OK) {
-                var iso = null;
                 for (var i = 0, len = results.length; i < len; i++) {
                     var r = results[i];
                     for (var j = 0, len = r.address_components.length; j < len; j++) {
                         var c = r.address_components[j];
                         if (c.types.indexOf('country') > -1) {
                             iso = c.short_name;
+                            name = c.long_name;
                             break;
                         }
                     }
@@ -180,10 +184,15 @@ Ext.define('CB.view.map.MapController', {
                 if (country) {
                     this.fireEvent('addlocation', country, lat, lng);
                     return;
+                } else {
+                    Ext.Msg.alert('Error', 'Country ' + name + ' (' + iso + ') is not yet supported. Please ask system administrator to add it.s');
+                    return;
                 }
             }
             
-            Ext.Msg.alert('Error', 'You cannot place a location there!');
+            country = countries.getAt(countries.find('iso', 'NONE'));
+            this.fireEvent('addlocation', country, lat, lng);
+            
         }, this));
     },
     
