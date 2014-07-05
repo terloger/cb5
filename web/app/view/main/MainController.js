@@ -41,7 +41,7 @@ Ext.define('CB.view.main.MainController', {
 
         // initialize user
         if (CB.init.User) {
-            this.getView().getViewModel().set('user', Ext.create('CB.model.User', CB.init.User));
+            this.getViewModel().set('user', Ext.create('CB.model.User', CB.init.User));
         }
     },
     

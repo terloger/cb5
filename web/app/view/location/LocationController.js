@@ -7,7 +7,9 @@ Ext.define('CB.view.location.LocationController', {
     alias: 'controller.cb-location',
     
     init: function() {
-        this.getViewModel().bind('{location}', this.showLocation, this);
+        var vm = this.getViewModel();
+        
+        vm.bind('{location}', this.showLocation, this);
     },
     
     showLocation: function(location) {
@@ -21,14 +23,10 @@ Ext.define('CB.view.location.LocationController', {
             vm = view.getViewModel(),
             rendered = view.rendered,
             visible = view.isVisible(),
-            paper = view.down('cb-paper'),
             file = location && location.files ? location.files().getAt(0) : null,
             showLocation = function() {
                 vm.set('location', location);
                 vm.set('file', file);
-                paper.getViewModel().set('location', location);
-                paper.setLocation(location);
-                paper.setFile(file);
             };
             
         if (!rendered) {
