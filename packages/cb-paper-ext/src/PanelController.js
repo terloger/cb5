@@ -9,7 +9,7 @@ Ext.define('CB.paper.PanelController', {
     mixins: {
         location: 'CB.paper.Location',
         layer: 'CB.paper.Layer',
-        path: 'CB.paper.Path',
+        ppath: 'CB.paper.PPath', // cannot use path ;)
         tools: 'CB.paper.Tools',
         mouse: 'CB.paper.Mouse',
         touch: 'CB.paper.Touch'
@@ -55,20 +55,27 @@ Ext.define('CB.paper.PanelController', {
         this.resizePaper(w, h);
         
         // init mixins
+        
         if (Ext.supports.Touch) {
             this.mixins.touch.constructor.call(this);
         } else {
             this.mixins.mouse.constructor.call(this);
         }
+        
         this.mixins.location.constructor.call(this);
         this.mixins.layer.constructor.call(this);
-        this.mixins.path.constructor.call(this);
+        
+        this.mixins.ppath.constructor.call(this);
+        
         this.mixins.tools.constructor.call(this, {
-            tools: ['hand']
+            tools: ['select','move', 'pen']
         });
     },
     
-    resizePaper: function(w, h) {
+    resizePaper: function(a, b, c) {
+        var w = Ext.isNumber(a) ? a : b,
+            h = Ext.isNumber(a) ? b : c;
+    
         if (this.getCanvas()) {
             this.getCanvas().setWidth(w);
             this.getCanvas().setHeight(h);

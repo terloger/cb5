@@ -10,6 +10,41 @@ Ext.define('CB.paper.Mouse', {
     },
     
     constructor: function() {
+        this.on({
+            toolchange: this.toolChange
+        });
+    },
+    
+    toolChange: function(name, tool) {
+        switch (name) {
+            case 'pen':
+            case 'select':
+                this.suspendPaperMouseEvents();
+                break;
+            case 'move':
+                this.resumePaperMouseEvents();
+                break;
+        }
+    },
+    
+    suspendPaperMouseEvents: function() {
+        console.log('suspendPaperMouseEvents');
+        this.getCanvas().un({
+            mousewheel: this.onPaperMouseWheel,
+            mousedown: this.onPaperMouseDown,
+            mousemove: this.onPaperMouseMove,
+            mouseup: this.onPaperMouseUp,
+            scope: this
+        });
+        // fix mouseup when out of window
+        Ext.getDoc().un({
+            mouseup: this.onPaperMouseUp,
+            scope: this
+        });
+    },
+    
+    resumePaperMouseEvents: function() {
+        console.log('resumePaperMouseEvents');
         this.getCanvas().on({
             mousewheel: this.onPaperMouseWheel,
             mousedown: this.onPaperMouseDown,

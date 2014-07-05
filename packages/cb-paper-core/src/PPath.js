@@ -1,7 +1,9 @@
-Ext.define('CB.paper.Path', {
+/**
+ * Climbuddy paperjs path
+ */
+Ext.define('CB.paper.PPath', {
 
     config: {
-        activePath: null,
         simplifyPath: 10, // how much to "simplify" paths when user draws a line with mouse
 
         strokeWidth: 2,
@@ -12,6 +14,10 @@ Ext.define('CB.paper.Path', {
         ghostStrokeWidth: 30,
         ghostStrokeColor: '#ffffff',
         ghostStrokeColorAlpha: .0
+    },
+    
+    constructor: function(config) {
+        console.log('construct pathh');
     },
     
     createPath: function(data, route) {

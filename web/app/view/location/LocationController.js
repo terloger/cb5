@@ -133,6 +133,13 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         return files.getAt(next);
+    },
+    
+    setPaperTool: function(btn) {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.setActiveTool(btn.paperTool);
     }
     
 });

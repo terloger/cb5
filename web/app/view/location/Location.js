@@ -99,6 +99,8 @@ Ext.define('CB.view.location.Location', {
             tooltip: 'Select Tool',
             overflowText: 'Select Tool',
             glyph: 'xe62a@climbuddy',
+            paperTool: 'select',
+            handler: 'setPaperTool',
             bind: {
                 hidden: '{!editMode}'
             }
@@ -108,6 +110,8 @@ Ext.define('CB.view.location.Location', {
             tooltip: 'Move Tool',
             overflowText: 'Move Tool',
             glyph: 'xe63a@climbuddy',
+            paperTool: 'move',
+            handler: 'setPaperTool',
             bind: {
                 hidden: '{!editMode}'
             }
@@ -117,6 +121,8 @@ Ext.define('CB.view.location.Location', {
             tooltip: 'Pen Tool',
             overflowText: 'Pen Tool',
             glyph: 'xe628@climbuddy',
+            paperTool: 'pen',
+            handler: 'setPaperTool',
             bind: {
                 hidden: '{!editMode}'
             }

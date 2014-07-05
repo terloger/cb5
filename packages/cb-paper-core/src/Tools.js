@@ -7,17 +7,18 @@ Ext.define('CB.paper.Tools', {
     ],
     
     mixins: {
-        hand: 'CB.paper.tool.Hand',
         move: 'CB.paper.tool.Move',
-        pen: 'CB.paper.tool.Pen'
+        pen: 'CB.paper.tool.Pen',
+        select: 'CB.paper.tool.Select'
     },
     
     config: {
-        activeTool: null,
-        tools: null
+        tools: null,
+        activeTool: null
     },
     
     constructor: function(config) {
+        console.log('construct tools');
         // create tools collection
         this.setTools(Ext.create('Ext.util.MixedCollection'));
         
@@ -37,10 +38,19 @@ Ext.define('CB.paper.Tools', {
     },
     
     applyActiveTool: function(name) {
+        console.log('applyActiveTool', name);
         var tool = this.getTools().getByKey(name);
-        if (!tool || tool === this.getActiveTool()) return;
+        
+        if (!tool || tool === this.getActiveTool()) {
+            console.log('not tool');
+            return;
+        }
+        
+        console.log('activate tool', tool.name);
         
         tool.activate();
+        
+        this.fireEvent('toolchange', name, tool);
         
         return tool;
     }
