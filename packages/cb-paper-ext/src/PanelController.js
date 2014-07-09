@@ -28,7 +28,7 @@ Ext.define('CB.paper.PanelController', {
         
         imageWidth: 0,
         imageHeight: 0,
-        imagePadding: 40
+        imagePadding: -72
     },
     
     init: function() {
@@ -68,7 +68,7 @@ Ext.define('CB.paper.PanelController', {
         this.mixins.ppath.constructor.call(this);
         
         this.mixins.tools.constructor.call(this, {
-            tools: ['select','move', 'pen']
+            tools: ['move','select','pen']
         });
     },
     
@@ -184,6 +184,42 @@ Ext.define('CB.paper.PanelController', {
     /**
      * Transform
      */
+    
+    zoomIn: function() {
+        var scale = this.getScale(),
+            newScale = scale * Math.pow(1.1, 2),
+            w = scale * this.getImageWidth(),
+            h = scale * this.getImageHeight(),
+            newW = newScale * this.getImageWidth(),
+            newH = newScale * this.getImageHeight(),
+            dx = (w - newW) / 2,
+            dy = (h - newH) / 2,
+            translateX = this.getTranslateX() + dx,
+            translateY = this.getTranslateY() + dy;
+        
+        this.setScale(newScale);
+        this.setTranslateX(translateX);
+        this.setTranslateY(translateY);
+        this.applyTransform();
+    },
+    
+    zoomOut: function() {
+        var scale = this.getScale(),
+            newScale = scale * (1 / Math.pow(1.1, 2)),
+            w = scale * this.getImageWidth(),
+            h = scale * this.getImageHeight(),
+            newW = newScale * this.getImageWidth(),
+            newH = newScale * this.getImageHeight(),
+            dx = (w - newW) / 2,
+            dy = (h - newH) / 2,
+            translateX = this.getTranslateX() + dx,
+            translateY = this.getTranslateY() + dy;
+        
+        this.setScale(newScale);
+        this.setTranslateX(translateX);
+        this.setTranslateY(translateY);
+        this.applyTransform();
+    },
     
     applyTransform: function() {
         var scale = this.getScale(),

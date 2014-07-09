@@ -20,7 +20,8 @@ Ext.define('CB.view.map.MapController', {
         overlay: null,
         weatherLayer: null,
         markerClusterer: null,
-        lastCenter: null
+        lastCenter: null,
+        dropMarker: false
     },
     
     /**
@@ -89,7 +90,7 @@ Ext.define('CB.view.map.MapController', {
                     var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
-                        drop = true;
+                        drop = this.getDropMarker();
                         
                     if (location.files().getCount() >= 0) {
                         this.addMarker(latLng, location, icon, drop);
@@ -138,7 +139,7 @@ Ext.define('CB.view.map.MapController', {
             latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
             type = location.types().getAt(0),
             icon = type ? type.get('type') : 'default',
-            drop = true;
+            drop = this.getDropMarker();
     
         locations.add(location);
 

@@ -51,8 +51,6 @@ Ext.define('CB.view.location.LocationController', {
     
         vm.set('location', null);
         vm.set('file', null);
-        paper.setLocation(null);
-        paper.setFile(null);
     },
     
     prevFile: function() {
@@ -66,7 +64,6 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         vm.set('file', file);
-        paper.setFile(file);
     },
     
     nextFile: function() {
@@ -80,7 +77,6 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         vm.set('file', file);
-        paper.setFile(file);
     },
     
     getPrevFile: function() {
@@ -133,6 +129,20 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         return files.getAt(next);
+    },
+    
+    zoomIn: function() {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.zoomIn();
+    },
+    
+    zoomOut: function() {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.zoomOut();
     },
     
     setPaperTool: function(btn) {

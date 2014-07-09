@@ -57,6 +57,20 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'button',
             ui: 'blank',
+            tooltip: 'Add Photo',
+            overflowText: 'Add Photo',
+            glyph: 'xe623@climbuddy',
+            bind: {
+                hidden: '{!editMode}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!editMode}'
+            }
+        },{
+            xtype: 'button',
+            ui: 'blank',
             tooltip: 'Previous Photo',
             overflowText: 'Previous Photo',
             glyph: 'xe61b@climbuddy',
@@ -82,16 +96,27 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'button',
             ui: 'blank',
-            tooltip: 'Add Photo',
-            overflowText: 'Add Photo',
-            glyph: 'xe623@climbuddy',
+            tooltip: 'Zoom In',
+            overflowText: 'Zoom In',
+            glyph: 'xe63f@climbuddy',
+            handler: 'zoomIn',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!hasLocation}'
+            }
+        },{
+            xtype: 'button',
+            ui: 'blank',
+            tooltip: 'Zoom Out',
+            overflowText: 'Zoom Out',
+            glyph: 'xe63e@climbuddy',
+            handler: 'zoomOut',
+            bind: {
+                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'button',
@@ -130,52 +155,6 @@ Ext.define('CB.view.location.Location', {
             xtype: 'tbseparator',
             bind: {
                 hidden: '{!editMode}'
-            }
-        },{
-            xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Lock',
-            overflowText: 'Lock',
-            glyph: 'xe630@climbuddy',
-            bind: {
-                hidden: '{!editMode}'
-            }
-        },{
-            xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Unlock',
-            overflowText: 'Unlock',
-            glyph: 'xe631@climbuddy',
-            bind: {
-                hidden: '{!editMode}'
-            }
-        },{
-            xtype: 'tbseparator',
-            bind: {
-                hidden: '{!editMode}'
-            }
-        },{
-            xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Zoom In',
-            overflowText: 'Zoom In',
-            glyph: 'xe63f@climbuddy',
-            bind: {
-                hidden: '{!hasLocation}'
-            }
-        },{
-            xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Zoom Out',
-            overflowText: 'Zoom Out',
-            glyph: 'xe63e@climbuddy',
-            bind: {
-                hidden: '{!hasLocation}'
-            }
-        },{
-            xtype: 'tbseparator',
-            bind: {
-                hidden: '{!hasLocation}'
             }
         },{
             xtype: 'button',
