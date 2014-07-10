@@ -66,7 +66,7 @@ Ext.define('CB.Application', {
         
         Ext.getBody().unmask();
         
-        /*
+        /**
         var intro = Ext.get('cb-intro');
         if (intro) {
             intro.fadeOut({

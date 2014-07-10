@@ -7,8 +7,7 @@ Ext.define('CB.view.location.Location', {
     requires: [
         'Ext.layout.container.Border',
         'Ext.grid.plugin.CellEditing',
-        'CB.paper.Panel',
-        'CB.view.Spinner'
+        'CB.paper.Panel'
     ],
     
     xtype: 'cb-location',

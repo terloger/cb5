@@ -112,14 +112,6 @@
         {
             "path": "app.js",
             "bundle": true
-        },
-        {
-            "path": "resources/paperjs/paper-full.js",
-            "bundle": true
-        },
-        {
-            "path": "/api/",
-            "remote": true
         }
     ],
 

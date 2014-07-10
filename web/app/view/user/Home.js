@@ -23,12 +23,6 @@ Ext.define('CB.view.user.Home', {
                 text: 'Wellcome {user.username}'
             }
         },'->',{
-            xtype: 'cb-spinner',
-            hidden: true,
-            bind: {
-                hidden: '{!loading}'
-            }
-        },{
             xtype: 'button',
             text: 'Sign Out',
             glyph: 'xe60b@climbuddy',

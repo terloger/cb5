@@ -1331,16 +1331,15 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.store.Locations": [],
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
-  "CB.view.Spinner": [],
   "CB.view.home.Home": [],
   "CB.view.location.Add": [],
   "CB.view.location.AddController": [],
   "CB.view.location.AddModel": [],
+  "CB.view.location.List": [],
+  "CB.view.location.ListController": [],
   "CB.view.location.Location": [],
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
-  "CB.view.locations.Locations": [],
-  "CB.view.locations.LocationsController": [],
   "CB.view.main.Main": [],
   "CB.view.main.MainController": [],
   "CB.view.main.MainModel": [],
@@ -2452,9 +2451,6 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.store.Locations": [],
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
-  "CB.view.Spinner": [
-    "widget.widget.cb-spinner"
-  ],
   "CB.view.home.Home": [
     "widget.cb-home"
   ],
@@ -2467,6 +2463,12 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.location.AddModel": [
     "viewmodel.cb-location-add"
   ],
+  "CB.view.location.List": [
+    "widget.cb-location-list"
+  ],
+  "CB.view.location.ListController": [
+    "controller.cb-location-list"
+  ],
   "CB.view.location.Location": [
     "widget.cb-location"
   ],
@@ -2475,12 +2477,6 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.location.LocationModel": [
     "viewmodel.cb-location"
-  ],
-  "CB.view.locations.Locations": [
-    "widget.cb-locations"
-  ],
-  "CB.view.locations.LocationsController": [
-    "controller.cb-locations"
   ],
   "CB.view.main.Main": [
     "widget.cb-main"

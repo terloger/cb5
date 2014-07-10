@@ -61,12 +61,6 @@ Ext.define('CB.view.user.Login', {
         maxWidth: 400,
         margin: '0 0 0 20',
         items: [{
-            xtype: 'cb-spinner',
-            hidden: true,
-            bind: {
-                hidden: '{!loading}'
-            }
-        },{
             //formBind: true,
             text: 'Sign In',
             handler: 'login'

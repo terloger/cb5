@@ -68,7 +68,7 @@ class Api extends AbstractController
         header('Content-Type: text/javascript');
 
         // init api
-        $response  = 'Ext.ns("CB.init");';
+        $response  = 'var CB = {}; CB.init = {};';
         $response .= 'CB.init.API=' . json_encode($api) . ';';
         
         // init config
