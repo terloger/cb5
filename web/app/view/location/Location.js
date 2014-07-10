@@ -6,6 +6,7 @@ Ext.define('CB.view.location.Location', {
     
     requires: [
         'Ext.layout.container.Border',
+        'Ext.grid.plugin.CellEditing',
         'CB.paper.Panel',
         'CB.view.Spinner'
     ],
@@ -17,8 +18,6 @@ Ext.define('CB.view.location.Location', {
     viewModel: {
         type: 'cb-location'
     },
-    
-    session: true,
     
     title: 'Location',
     cls: 'cb-location',
@@ -51,7 +50,6 @@ Ext.define('CB.view.location.Location', {
         },
         items: [{
             xtype: 'tbtext',
-            reference: 'title',
             cls: 'title',
             bind: {
                 hidden: '{!location}',
@@ -128,7 +126,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Select Tool',
             glyph: 'xe62a@climbuddy',
             paperTool: 'select',
-            handler: 'setPaperTool',
+            handler: 'setTool',
             toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!editMode}'
@@ -140,7 +138,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Move Tool',
             glyph: 'xe63a@climbuddy',
             paperTool: 'move',
-            handler: 'setPaperTool',
+            handler: 'setTool',
             toggleGroup: 'paper-tools',
             pressed: true,
             bind: {
@@ -153,7 +151,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Pen Tool',
             glyph: 'xe628@climbuddy',
             paperTool: 'pen',
-            handler: 'setPaperTool',
+            handler: 'setTool',
             toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!editMode}'
@@ -195,6 +193,8 @@ Ext.define('CB.view.location.Location', {
         animCollapse: false,
         collapsible: true,
         collapseDirection: 'right',
+        stateful: true,
+        stateId: 'CB.view.location.Sidebar',
         resizable: {
             handles: 'w'
         },
@@ -215,33 +215,73 @@ Ext.define('CB.view.location.Location', {
         items: [{
             xtype: 'gridpanel',
             region: 'center',
+            itemId: 'routes',
             reference: 'routes',
-            allowDeselect: true,
             bind: {
                 store: '{location.routes}'
+            },
+            tbar: {
+                bind: {
+                    hidden: '{!hasUser}'
+                },
+                items: [{
+                    xtype: 'button',
+                    ui: 'blank',
+                    tooltip: 'Add route',
+                    glyph: 'xe618@climbuddy',
+                    handler: 'addRoute',
+                    bind: {
+                        hidden: '{!hasUser}'
+                    }
+                },{
+                    xtype: 'button',
+                    ui: 'blank',
+                    tooltip: 'Remove selected routes',
+                    glyph: 'xe617@climbuddy',
+                    handler: 'removeRoute',
+                    bind: {
+                        hidden: '{!hasUser}'
+                    }
+                }]
+            },
+            selType: 'cellmodel',
+            plugins: {
+                ptype: 'cellediting',
+                pluginId: 'cellediting',
+                clicksToEdit: 2
             },
             columns: [{
                 text: 'Name',
                 dataIndex: 'name',
-                flex: 1
+                flex: 1,
+                editor: {
+                    xtype: 'textfield',
+                    allowBlank: false
+                }
             }]
         },{
             xtype: 'panel',
             title: 'Mini Map',
             region: 'south',
-            itemId: 'minimap',
+            itemId: 'miniMap',
             height: 200,
-            collapsible: true,
+            minHeight: 160,
+            maxHeight: 360,
             split: true,
+            collapsible: true,
+            stateful: true,
+            stateId: 'CB.view.location.MiniMap',
+            layout: {
+                type: 'fit'
+            },
             listeners: {
-                afterrender: 'createMiniMap'
+                resize: 'resizeMiniMap'
             }
         }]
     }],
     
     items: [{
-        xtype: 'cb-paper',
-        reference: 'cb-paper'
+        xtype: 'cb-paper'
     }]
     
 });

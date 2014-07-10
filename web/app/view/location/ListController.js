@@ -1,10 +1,10 @@
 /**
- * Locations view controller
+ * Location list view controller
  */
-Ext.define('CB.view.locations.LocationsController', {
+Ext.define('CB.view.location.ListController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.cb-locations',
+    alias: 'controller.cb-location-list',
     
     gridItemDblClick: function(grid, record, item, index, e) {
         console.log('gridItemDblClick');

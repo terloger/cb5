@@ -87,7 +87,7 @@ Ext.define('CB.view.main.MainController', {
     locationsRoute: function() {
         console.log('locationsRoute');
         var view = this.getView(),
-            tab = view.setActiveTab(view.down('cb-locations'))
+            tab = view.setActiveTab(view.down('cb-location-list'))
     
         if (tab) {
             this.redirectTo('locations');

@@ -17,7 +17,7 @@ Ext.define('CB.view.location.LocationModel', {
             return get('hasLocation') && get('location').files().getCount() > 1;
         },
         editMode: function(get) {
-            return get('hasUser') && get('hasLocation') && get('routes').selection;
+            return get('hasUser') && get('hasLocation') && get('routes.selection');
         },
         fileCount: function(get) {
             return get('hasLocation') ? get('location').files().getCount() : 0;

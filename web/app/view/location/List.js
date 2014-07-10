@@ -1,16 +1,16 @@
 /**
- * Locations view
+ * Location list
  */
-Ext.define('CB.view.locations.Locations', {
+Ext.define('CB.view.location.List', {
     extend: 'Ext.panel.Panel',
     
     requires: [
         'Ext.grid.Panel'
     ],
     
-    xtype: 'cb-locations',
+    xtype: 'cb-location-list',
     
-    controller: 'cb-locations',
+    controller: 'cb-location-list',
     
     layout: {
         type: 'fit'

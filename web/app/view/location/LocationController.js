@@ -18,29 +18,72 @@ Ext.define('CB.view.location.LocationController', {
     
     showLocation: function(location) {
         if (!location) {
+            console.log('no location');
             return;
         }
         
         console.log('showLocation', location);
         
-        var view = this.getView(),
-            miniMap = this.getMiniMap(),
+        var me = this,
+            view = me.getView(),
+            miniMap = view.down('#miniMap'),
             vm = view.getViewModel(),
+            mainSession = view.up('cb-main').getSession(),
+            session = view.getSession(),
             rendered = view.rendered,
             visible = view.isVisible(),
             isLocation = location instanceof CB.model.Location,
             file = isLocation ? location.files().getAt(0) : null,
-            center = isLocation ? new google.maps.LatLng(location.get('lat'), location.get('lng')) : null,
+            lat = location.get('lat'),
+            lng = location.get('lng'),
+            marker, center, type, icon,
+            
             showLocation = function() {
                 vm.set('location', location);
                 vm.set('file', file);
                 
-                // set map center
-                if (miniMap && center) {
-                    miniMap.setCenter(center, 15);
+                me.createMiniMap();
+                
+                if (isLocation && miniMap && miniMap.map) {
+                    if (miniMap.getCollapsed()) {
+                        miniMap.on({
+                            expand: showMiniMap,
+                            single: true
+                        });
+                    } else {
+                        showMiniMap();
+                    }
                 }
-            };
+            },
             
+            showMiniMap = function() {
+                center = new google.maps.LatLng(lat, lng);
+                type = location.types().getAt(0);
+                icon = type ? type.get('type') : 'default';
+                marker = new google.maps.Marker({
+                    position: center,
+                    lat: lat,
+                    lng: lng,
+                    title: location.get('name'),
+                    icon: 'resources/types/' + icon + '.png',
+                    shadow: 'resources/types/shadow.png'
+                });
+                miniMap.map.setCenter(center, 15);
+                marker.setMap(miniMap.map);
+            };
+        
+        // destroy session
+        if (session) {
+            session.destroy();
+        }
+        
+        // create new session
+        if (isLocation) {
+            session = mainSession.spawn();
+            view.setSession(session);
+        }
+        
+        // show location
         if (!rendered) {
             view.on({
                 afterrender: showLocation
@@ -55,37 +98,72 @@ Ext.define('CB.view.location.LocationController', {
         }
     },
     
+    hideLocation: function() {
+        console.log('hideLocation');
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            session = view.getSession();
+    
+        vm.set('location', null);
+        vm.set('file', null);
+        
+        me.destroyMiniMap();
+        
+        if (session) {
+            session.destroy();
+        }
+    },
     
     createMiniMap: function() {
+        console.log('createMiniMap');
         // no google available
         if (typeof google === 'undefined') {
             console.log('no google');
             return false;
         }
         
-        var view = this.getView().down('#minimap'),
-            map = new google.maps.Map(view.body.dom, {
+        var me = this,
+            miniMap = me.getView().down('#miniMap');
+        
+        if (!miniMap.mapBody) {
+            miniMap.mapBody = miniMap.body.createChild({tag: 'div', cls: 'cb-map-body', style: 'width:100%;height:100%;'});
+        }
+        
+        if (!miniMap.map) {
+            miniMap.map = new google.maps.Map(miniMap.mapBody.dom, {
                 zoom: 15,
                 mapTypeId: 'satellite'
             });
-        
-        this.setMiniMap(map);
+        }
     },
     
-    hideLocation: function() {
-        console.log('hideLocation');
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            paper = view.down('cb-paper');
+    destroyMiniMap: function() {
+        console.log('destroyMiniMap');
+        var me = this,
+            miniMap = me.getView().down('#miniMap');
+        
+        if (miniMap.mapBody) {
+            miniMap.mapBody.destroy();
+            delete miniMap.mapBody;
+            delete miniMap.map;
+        }
+    },
     
-        vm.set('location', null);
-        vm.set('file', null);
+    resizeMiniMap: function(w, h) {
+        var miniMap = this.getView().down('#miniMap'),
+            center;
+        
+        if (miniMap.map) {
+            center = miniMap.map.getCenter();
+            google.maps.event.trigger(miniMap.map, 'resize');
+            miniMap.map.setCenter(center, 15);
+        }
     },
     
     prevFile: function() {
         var view = this.getView(),
             vm = view.getViewModel(),
-            paper = view.down('cb-paper'),
             file = this.getPrevFile();
         
         if (!file) {
@@ -98,7 +176,6 @@ Ext.define('CB.view.location.LocationController', {
     nextFile: function() {
         var view = this.getView(),
             vm = view.getViewModel(),
-            paper = view.down('cb-paper'),
             file = this.getNextFile();
         
         if (!file) {
@@ -174,11 +251,28 @@ Ext.define('CB.view.location.LocationController', {
         ctrl.zoomOut();
     },
     
-    setPaperTool: function(btn) {
+    setTool: function(btn) {
         var paper = this.getView().down('cb-paper'),
             ctrl = paper.getController();
     
         ctrl.setActiveTool(btn.paperTool);
+    },
+    
+    addRoute: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            routes = view.down('#routes'),
+            route = session.createRecord('Route', {});
+    
+        console.log('addRoute', route);
+    
+        routes.getStore().add(route);
+        
+        routes.getPlugin('cellediting').startEdit(route, 0);
+    },
+    
+    removeRoute: function() {
+        console.log('removeRoute');
     }
     
 });

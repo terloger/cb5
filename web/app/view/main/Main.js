@@ -12,8 +12,6 @@ Ext.define('CB.view.main.Main', {
         type: 'cb-main'
     },
     
-    reference: 'cb-main',
-    
     session: true,
     
     ui: 'navigation',
@@ -146,32 +144,10 @@ Ext.define('CB.view.main.Main', {
                 text: 'Loading application ...',
                 cls: 'title'
             }]
-        }/*,
-        items: [{
-            xtype: 'container',
-            plugins: 'responsive',
-            setImage: function(image) {
-                if (['big', 'medium', 'small'].indexOf(image) < 0) {
-                    image = 'medium';
-                }
-                this.update('<img id="cb-intro" src="resources/intro_' + image + '.jpg" />');
-            },
-            responsiveConfig: {
-                'width >= 1920 || width > 1280': {
-                    image: 'big'
-                },
-                'width <= 1280 && width > 640': {
-                    image: 'medium'
-                },
-                'width <= 640': {
-                    image: 'small'
-                }
-            }
-        }]*/
+        }
     },{
         title: 'Home',
         xtype: 'cb-home',
-        reference: 'cb-home',
         glyph: 'xe602@climbuddy',
         route: 'home',
         tabConfig: {
@@ -208,26 +184,22 @@ Ext.define('CB.view.main.Main', {
     },{
         title: 'Map',
         xtype: 'cb-map',
-        reference: 'cb-map',
         glyph: 'xe603@climbuddy',
         route: 'map'
     },{
         title: 'Location',
         xtype: 'cb-location',
-        reference: 'cb-location',
         glyph: 'xe605@climbuddy',
         tabConfig: {
             hidden: true
         }
     },{
         title: 'Locations',
-        xtype: 'cb-locations',
-        reference: 'cb-locations',
+        xtype: 'cb-location-list',
         glyph: 'xe605@climbuddy',
         route: 'locations'
     },{
         xtype: 'cb-user',
-        reference: 'cb-user',
         glyph: 'xe60f@climbuddy',
         route: 'user'
     }],

@@ -18,7 +18,6 @@ Ext.define('CB.view.map.MapController', {
         map: null,
         markers: null,
         overlay: null,
-        weatherLayer: null,
         markerClusterer: null,
         lastCenter: null,
         dropMarker: false
