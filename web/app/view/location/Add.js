@@ -47,7 +47,7 @@ Ext.define('CB.view.location.Add', {
         maxWidth: 600,
         margin: 10,
         style: {
-            float: 'left'
+            'float': 'left'
         }
     },
 

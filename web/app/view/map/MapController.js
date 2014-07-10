@@ -28,7 +28,7 @@ Ext.define('CB.view.map.MapController', {
      * Core
      */
     
-    afterRender: function() {
+    createMap: function() {
         // no google available
         if (typeof google === 'undefined') {
             this.getView().add({
@@ -72,7 +72,7 @@ Ext.define('CB.view.map.MapController', {
         }
     },
     
-    resize: function(w, h) {
+    resizeMap: function(w, h) {
         if (this.getMap()) {
             google.maps.event.trigger(this.getMap(), 'resize');
             

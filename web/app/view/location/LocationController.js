@@ -6,6 +6,10 @@ Ext.define('CB.view.location.LocationController', {
 
     alias: 'controller.cb-location',
     
+    config: {
+        miniMap: null
+    },
+    
     init: function() {
         var vm = this.getViewModel();
         
@@ -20,13 +24,21 @@ Ext.define('CB.view.location.LocationController', {
         console.log('showLocation', location);
         
         var view = this.getView(),
+            miniMap = this.getMiniMap(),
             vm = view.getViewModel(),
             rendered = view.rendered,
             visible = view.isVisible(),
-            file = location && location.files ? location.files().getAt(0) : null,
+            isLocation = location instanceof CB.model.Location,
+            file = isLocation ? location.files().getAt(0) : null,
+            center = isLocation ? new google.maps.LatLng(location.get('lat'), location.get('lng')) : null,
             showLocation = function() {
                 vm.set('location', location);
                 vm.set('file', file);
+                
+                // set map center
+                if (miniMap && center) {
+                    miniMap.setCenter(center, 15);
+                }
             };
             
         if (!rendered) {
@@ -41,6 +53,23 @@ Ext.define('CB.view.location.LocationController', {
         } else {
             showLocation();
         }
+    },
+    
+    
+    createMiniMap: function() {
+        // no google available
+        if (typeof google === 'undefined') {
+            console.log('no google');
+            return false;
+        }
+        
+        var view = this.getView().down('#minimap'),
+            map = new google.maps.Map(view.body.dom, {
+                zoom: 15,
+                mapTypeId: 'satellite'
+            });
+        
+        this.setMiniMap(map);
     },
     
     hideLocation: function() {
@@ -151,38 +180,5 @@ Ext.define('CB.view.location.LocationController', {
     
         ctrl.setActiveTool(btn.paperTool);
     }
-    
-    /*
-    toggleRoutes: function() {
-        return;
-        var body = Ext.getBody(),
-            view = this.getView(),
-            sidebar = view.down('#sidebar'),
-            hideOffset = body.getWidth(),
-            showOffset = body.getWidth() - 300,
-            duration = 200;
-    
-        if (sidebar.isVisible()) {
-            
-            sidebar.el.animate({
-                to: { left: hideOffset },
-                duration: duration,
-                callback: function() {
-                    sidebar.close();
-                }
-            });
-            
-        } else {
-            
-            sidebar.show();
-            sidebar.setX(hideOffset);
-            
-            sidebar.el.animate({
-                to: { x: showOffset },
-                duration: duration
-            });
-        }
-    }
-    */
     
 });

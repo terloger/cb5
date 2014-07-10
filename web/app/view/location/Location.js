@@ -190,9 +190,14 @@ Ext.define('CB.view.location.Location', {
         itemId: 'sidebar',
         cls: 'cb-location-sidebar',
         width: 300,
+        minWidth: 200,
+        maxWidth: 500,
         animCollapse: false,
         collapsible: true,
         collapseDirection: 'right',
+        resizable: {
+            handles: 'w'
+        },
         plugins: 'responsive',
         responsiveConfig: {
             'tall': {
@@ -224,9 +229,13 @@ Ext.define('CB.view.location.Location', {
             xtype: 'panel',
             title: 'Mini Map',
             region: 'south',
-            html: 'minimap',
+            itemId: 'minimap',
             height: 200,
-            collapsible: true
+            collapsible: true,
+            split: true,
+            listeners: {
+                afterrender: 'createMiniMap'
+            }
         }]
     }],
     

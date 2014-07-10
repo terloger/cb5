@@ -71,8 +71,8 @@ Ext.define('CB.view.map.Map', {
     },
     
     listeners: {
-        afterrender: 'afterRender',
-        resize: 'resize',
+        afterrender: 'createMap',
+        resize: 'resizeMap',
         scope: 'controller'
     },
     
