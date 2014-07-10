@@ -1,0 +1,197 @@
+/**
+ * Navigation header
+ */
+@include extjs-panel-ui(
+    $ui: 'navigation',
+    $ui-header-color: $cb-dark-background,
+    $ui-header-glyph-color: $cb-dark-background,
+    $ui-header-glyph-opacity: 1,
+    $ui-header-font-size: 22px,
+    $ui-header-line-height: 52px,
+    $ui-header-font-weight: 600,
+    $ui-header-icon-height: 32px,
+    $ui-header-icon-width: 32px,
+    $ui-header-icon-spacing: 12px,
+    $ui-header-background-color: $cb-yellow-color,
+    $ui-header-padding: 0,
+    $ui-header-text-margin: 10px 24px 10px 16px,
+    $ui-header-noborder-adjust: false
+);
+
+
+/**
+ * Navigation menu
+ */
+@include extjs-tab-panel-ui(
+    $ui: 'navigation',
+    $ui-tab-background-color: transparent,
+    $ui-tab-background-color-over: transparent,
+    $ui-tab-background-color-active: transparent,
+    $ui-tab-color: #fff,
+    $ui-tab-color-over: #fff,
+    $ui-tab-color-active: #fff,
+    $ui-tab-glyph-color: #fff,
+    $ui-tab-glyph-color-over: #fff,
+    $ui-tab-glyph-color-active: #fff,
+    $ui-tab-glyph-opacity: 1,
+    $ui-tab-border-radius: 0,
+    $ui-tab-border-width: 0,
+    $ui-tab-padding: 10px 24px,
+    $ui-tab-margin: 0,
+    $ui-tab-font-size: 14px,
+    $ui-tab-font-size-over: 14px,
+    $ui-tab-font-size-active: 14px,
+    $ui-tab-line-height: 20px,
+    $ui-tab-font-weight: 600,
+    $ui-tab-font-weight-over: 600,
+    $ui-tab-font-weight-active: 600,
+    $ui-tab-icon-width: 20px,
+    $ui-tab-icon-height: 20px,
+    $ui-tab-icon-spacing: 10px,
+    $ui-bar-background-color: $cb-dark-background,
+    $ui-bar-background-gradient: 'none',
+    $ui-bar-padding: 0,
+    $ui-strip-height: 0
+);
+
+.x-panel-header-title-navigation {
+    text-align: left;
+}
+
+.x-tab-navigation {
+    // TODO: add opacity support to extjs-tab-panel-ui mixin
+    @include opacity(0.5);
+
+    // Important added here to overcome background-color:transparent added by framing in IE8
+    // TODO: can we remove the !important rule from the framework?
+    &.x-tab-over {
+        background-color: mix(#000, $cb-dark-background, 10%) !important;
+        @include opacity(0.8);
+    }
+
+    &.x-tab-active {
+        background-color: mix(#000, $cb-dark-background, 20%) !important;
+        @include opacity(1);
+    }
+
+    &.x-tab-pressed {
+        background-color: mix(#000, $cb-dark-background, 20%) !important;
+        @include opacity(1);
+    }
+}
+
+.x-tab-inner-navigation {
+    white-space: normal;
+
+    .x-ie8 & {
+        font-size: 13px;
+    }
+}
+
+.cb-navigation {
+    
+    &.collapsed {
+        .x-title-text, .x-tab-inner {
+            opacity: 0;
+        }
+    }
+    
+    .x-tool-img {
+        background-color: transparent !important;
+        left: 34px;
+        width: 32px;
+        height: 32px;
+        position: relative;
+        top: 20px;
+    }
+    
+    .x-tool-gear {
+        background-image: url(icons/menu-disclosure.png) !important;
+        background-size: 70%;
+        background-repeat: no-repeat;
+        background-position: center center !important;
+        @include opacity(0.5);
+    }
+
+    &.x-ie8 .x-tool-gear {
+        background-image: url(icons/menu-disclosure-small.png) !important;
+    }
+
+    .x-tool {
+        background-color: $cb-dark-background;
+    }
+
+    .x-tool:hover {
+        .x-tool-gear {
+            @include opacity(1);
+        }
+        background-color: darken($cb-dark-background, 10%) !important;
+    }
+}
+
+.cb-navigation-menu {
+    
+    border: none;
+
+    .x-menu-body {
+        background-color: $cb-dark-background;
+        span {
+            color: white;
+            font-weight: $cb-font-semibold;
+            @include opacity(0.5);
+        }
+        a {
+            line-height: 50px;
+        }
+    }
+
+    .x-menu-item-icon {
+        width: 40px;
+        height: 40px;
+        margin: 5px;
+        top: 6px;
+        left: 10px;
+        @include opacity(0.5);
+        background-size: 70%;
+    }
+
+    .x-menu-item-text {
+        margin-left: 65px;
+        margin-right: 15px;
+    }
+
+    .x-menu-item-active {
+        background-color: darken($cb-dark-background, 10%) !important;
+        span {
+            @include opacity(1);
+        }
+        .x-menu-item-icon {
+            @include opacity(1);
+        }
+    }
+}
+
+.cb-collapser {
+    background: none !important;
+    border: none;
+    z-index: 999999;
+    position: absolute;
+    bottom: 18px;
+    left: 18px;
+    
+    opacity: 0.3;
+    
+    &.x-btn-over {
+        opacity: 1;
+    }
+    
+    .x-btn-inner {
+        font-family: 'Proxima Nova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-variant: normal;
+        font-weight: 600;
+        line-height: 20px;
+        -webkit-font-smoothing: antialiased;
+    }
+}

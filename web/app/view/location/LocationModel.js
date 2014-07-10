@@ -7,31 +7,20 @@ Ext.define('CB.view.location.LocationModel', {
     alias: 'viewmodel.cb-location',
     
     formulas: {
+        hasUser: function(get) {
+            return get('user') instanceof CB.model.User;
+        },
         hasLocation: function(get) {
             return get('location') instanceof CB.model.Location;
         },
         hasFiles: function(get) {
-            var location = get('location');
-            return location instanceof CB.model.Location ? location.files().getCount() > 1: false;
+            return get('hasLocation') && get('location').files().getCount() > 1;
         },
         editMode: function(get) {
-            var user = get('user'),
-                location = get('location');
-            return (user instanceof CB.model.User && location instanceof CB.model.Location);
+            return get('hasUser') && get('hasLocation') && get('routes').selection;
         },
         fileCount: function(get) {
-            var location = get('location');
-            return location instanceof CB.model.Location ? location.files().getCount() : 0;
-        },
-        currentFile: function(get) {
-            var location = get('location'),
-                current;
-            
-            if (location && location instanceof CB.model.Location && location.files().getCount()) {
-                return '';
-            }
-            
-            return '';
+            return get('hasLocation') ? get('location').files().getCount() : 0;
         }
     }
     

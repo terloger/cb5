@@ -5,6 +5,7 @@ Ext.define('CB.view.location.Location', {
     extend: 'Ext.panel.Panel',
     
     requires: [
+        'Ext.layout.container.Border',
         'CB.paper.Panel',
         'CB.view.Spinner'
     ],
@@ -20,6 +21,8 @@ Ext.define('CB.view.location.Location', {
     session: true,
     
     title: 'Location',
+    cls: 'cb-location',
+    bodyCls: 'cb-location-body',
     
     layout: {
         type: 'fit'
@@ -61,12 +64,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Add Photo',
             glyph: 'xe623@climbuddy',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!hasUser}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!hasUser}'
             }
         },{
             xtype: 'button',
@@ -126,6 +129,7 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe62a@climbuddy',
             paperTool: 'select',
             handler: 'setPaperTool',
+            toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!editMode}'
             }
@@ -137,6 +141,8 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe63a@climbuddy',
             paperTool: 'move',
             handler: 'setPaperTool',
+            toggleGroup: 'paper-tools',
+            pressed: true,
             bind: {
                 hidden: '{!editMode}'
             }
@@ -148,6 +154,7 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe628@climbuddy',
             paperTool: 'pen',
             handler: 'setPaperTool',
+            toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!editMode}'
             }
@@ -172,10 +179,56 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Settings',
             glyph: 'xe60a@climbuddy',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!hasUser}'
             }
         }]
     },
+    
+    dockedItems: [{
+        xtype: 'panel',
+        title: 'Routes',
+        itemId: 'sidebar',
+        cls: 'cb-location-sidebar',
+        width: 300,
+        animCollapse: false,
+        collapsible: true,
+        collapseDirection: 'right',
+        plugins: 'responsive',
+        responsiveConfig: {
+            'tall': {
+                dock: 'bottom',
+                height: 200
+            },
+            'wide': {
+                dock: 'right',
+                height: 'auto'
+            }
+        },
+        layout: {
+            type: 'border'
+        },
+        items: [{
+            xtype: 'gridpanel',
+            region: 'center',
+            reference: 'routes',
+            allowDeselect: true,
+            bind: {
+                store: '{location.routes}'
+            },
+            columns: [{
+                text: 'Name',
+                dataIndex: 'name',
+                flex: 1
+            }]
+        },{
+            xtype: 'panel',
+            title: 'Mini Map',
+            region: 'south',
+            html: 'minimap',
+            height: 200,
+            collapsible: true
+        }]
+    }],
     
     items: [{
         xtype: 'cb-paper',

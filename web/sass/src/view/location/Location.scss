@@ -19,3 +19,31 @@
     }
     
 }
+
+.cb-location {
+    
+    .cb-location-body {
+        background: #fff;
+    }
+    
+}
+
+.cb-location-sidebar {
+    
+    -webkit-box-shadow: -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow:         -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
+    
+    .x-panel-header {
+        background-color: rgba(245, 245, 235, 1);
+    }
+    
+    .x-panel-body {
+        background-color: rgba(252, 252, 252, 1);
+    }
+    
+    .x-panel-default-collapsed {
+        padding: 8px;
+    }
+    
+}

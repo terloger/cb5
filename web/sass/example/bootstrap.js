@@ -1195,6 +1195,8 @@ Ext.Loader.addClassPathMappings({
   "CB": "../../app",
   "CB.paper": "../../../packages/cb-paper-core/src",
   "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
+  "CB.paper.PanelController": "../../../packages/cb-paper-ext/src/PanelController.js",
+  "CB.paper.PanelModel": "../../../packages/cb-paper-ext/src/PanelModel.js",
   "Ext": "../../../ext/src",
   "Ext-more": "../../../ext/overrides/Ext-more.js",
   "Ext.AbstractManager": "../../../ext/packages/sencha-core/src/AbstractManager.js",
@@ -1284,6 +1286,8 @@ Ext.Loader.addClassPathMappings({
 Ext.ClassManager.addNameAlternateMappings({
   "CB.Application": [],
   "CB.Config": [],
+  "CB.data.Connection": [],
+  "CB.form.field.MultiFileButton": [],
   "CB.model.Base": [],
   "CB.model.Country": [],
   "CB.model.File": [],
@@ -1304,15 +1308,20 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.paper.Keyboard": [],
   "CB.paper.Layer": [],
   "CB.paper.Location": [],
+  "CB.paper.Mouse": [],
   "CB.paper.MouseWheel": [],
+  "CB.paper.PPath": [],
   "CB.paper.Panel": [],
+  "CB.paper.PanelController": [],
+  "CB.paper.PanelModel": [],
   "CB.paper.Path": [],
   "CB.paper.Route": [],
   "CB.paper.Selection": [],
   "CB.paper.Tools": [],
-  "CB.paper.tool.Hand": [],
+  "CB.paper.Touch": [],
   "CB.paper.tool.Move": [],
   "CB.paper.tool.Pen": [],
+  "CB.paper.tool.Select": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -1331,6 +1340,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
   "CB.view.locations.Locations": [],
+  "CB.view.locations.LocationsController": [],
   "CB.view.main.Main": [],
   "CB.view.main.MainController": [],
   "CB.view.main.MainModel": [],
@@ -2389,6 +2399,11 @@ Ext.ClassManager.addNameAlternateMappings({
 Ext.ClassManager.addNameAliasMappings({
   "CB.Application": [],
   "CB.Config": [],
+  "CB.data.Connection": [],
+  "CB.form.field.MultiFileButton": [
+    "widget.multifilebutton",
+    "widget.widget.multifilebutton"
+  ],
   "CB.model.Base": [],
   "CB.model.Country": [],
   "CB.model.File": [],
@@ -2409,17 +2424,26 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.paper.Keyboard": [],
   "CB.paper.Layer": [],
   "CB.paper.Location": [],
+  "CB.paper.Mouse": [],
   "CB.paper.MouseWheel": [],
+  "CB.paper.PPath": [],
   "CB.paper.Panel": [
     "widget.cb-paper"
+  ],
+  "CB.paper.PanelController": [
+    "controller.cb-paper"
+  ],
+  "CB.paper.PanelModel": [
+    "viewmodel.cb-paper"
   ],
   "CB.paper.Path": [],
   "CB.paper.Route": [],
   "CB.paper.Selection": [],
   "CB.paper.Tools": [],
-  "CB.paper.tool.Hand": [],
+  "CB.paper.Touch": [],
   "CB.paper.tool.Move": [],
   "CB.paper.tool.Pen": [],
+  "CB.paper.tool.Select": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -2455,6 +2479,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.locations.Locations": [
     "widget.cb-locations"
+  ],
+  "CB.view.locations.LocationsController": [
+    "controller.cb-locations"
   ],
   "CB.view.main.Main": [
     "widget.cb-main"

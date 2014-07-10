@@ -152,4 +152,37 @@ Ext.define('CB.view.location.LocationController', {
         ctrl.setActiveTool(btn.paperTool);
     }
     
+    /*
+    toggleRoutes: function() {
+        return;
+        var body = Ext.getBody(),
+            view = this.getView(),
+            sidebar = view.down('#sidebar'),
+            hideOffset = body.getWidth(),
+            showOffset = body.getWidth() - 300,
+            duration = 200;
+    
+        if (sidebar.isVisible()) {
+            
+            sidebar.el.animate({
+                to: { left: hideOffset },
+                duration: duration,
+                callback: function() {
+                    sidebar.close();
+                }
+            });
+            
+        } else {
+            
+            sidebar.show();
+            sidebar.setX(hideOffset);
+            
+            sidebar.el.animate({
+                to: { x: showOffset },
+                duration: duration
+            });
+        }
+    }
+    */
+    
 });

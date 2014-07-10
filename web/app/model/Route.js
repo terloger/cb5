@@ -9,6 +9,8 @@ Ext.define('CB.model.Route', {
         {name: 'name', type: 'string'},
         {name: 'created', type: 'date'},
         {name: 'fileId', type: 'int'}
-    ]
+    ],
+    
+    proxy: null
     
 });

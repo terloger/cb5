@@ -160,7 +160,7 @@ Ext.define('CB.view.main.MainController', {
         this.collapseButton = Ext.create('Ext.button.Button', {
             renderTo: header.el,
             cls: 'cb-collapser',
-            handler: 'onCollapseClick',
+            handler: 'collapseClick',
             glyph: header.isCollapsed ? expandGlyph : collapseGlyph,
             text: header.isCollapsed ? expandText : collapseText,
             collapseGlyph: collapseGlyph,

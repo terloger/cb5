@@ -1,0 +1,30 @@
+/*
+@keyframes introAnimation {
+	from { transform: translate(0,0) scale(1.2); }
+    to   { transform: translate(50px,-200px) scale(1.1); }
+}
+@-moz-keyframes introAnimation {
+	from { -moz-transform: translate(0,0) scale(1.2); }
+    to   { -moz-transform: translate(50px,-200px) scale(1.1); }
+}
+@-webkit-keyframes introAnimation {
+	from { -webkit-transform: translate(0,0) scale(1.2); }
+    to   { -webkit-transform: translate(50px,-200px) scale(1.1); }
+}
+@-ms-keyframes introAnimation {
+	from { -ms-transform: translate(0,0) scale(1.2); }
+    to   { -ms-transform: translate(50px,-200px) scale(1.1); }
+}
+@-o-keyframes introAnimation {
+	from { -o-transform: translate(0,0) scale(1.2); }
+    to   { -o-transform: translate(50px,-200px) scale(1.1); }
+}
+
+#cb-intro {
+	animation: introAnimation 15s linear;
+	-moz-animation: introAnimation 15s linear;
+	-webkit-animation: introAnimation 15s linear;
+	-ms-animation: introAnimation 15s linear;
+	-o-animation: introAnimation 15s linear;
+}
+*/

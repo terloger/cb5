@@ -28,7 +28,7 @@ Ext.define('CB.paper.PanelController', {
         
         imageWidth: 0,
         imageHeight: 0,
-        imagePadding: -72
+        imagePadding: 20
     },
     
     init: function() {
@@ -149,7 +149,8 @@ Ext.define('CB.paper.PanelController', {
             wr = (box.width - (pad * 2)) / image.width,
             hr = (box.height - (pad * 2)) / image.height,
             scale = wr > hr ? hr : wr,
-            translateX = (box.width - (image.width * scale)) / 2,
+            translateX = (box.width - (image.width * scale)) / 2, // center
+            //translateX = pad, // left
             translateY = pad;
     
         // create image
