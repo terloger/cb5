@@ -5,9 +5,11 @@ backup
 uploads
 
 # ext
-build
 ext
 touch
+build/development
+build/temp
+build/testing
 
 # ide
 nbproject

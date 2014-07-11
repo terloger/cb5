@@ -7,6 +7,7 @@ Ext.define('CB.view.location.Location', {
     requires: [
         'Ext.layout.container.Border',
         'Ext.grid.plugin.CellEditing',
+        'CB.form.field.MultiFileButton',
         'CB.paper.Panel'
     ],
     
@@ -55,7 +56,7 @@ Ext.define('CB.view.location.Location', {
                 text: '{location.name}'
             }
         },{
-            xtype: 'button',
+            xtype: 'multifilebutton',
             ui: 'blank',
             tooltip: 'Add Photo',
             overflowText: 'Add Photo',
