@@ -1,6 +1,7 @@
 # CB
-api/vendor
+api/config.ini
 api/composer.lock
+api/vendor
 backup
 uploads
 
