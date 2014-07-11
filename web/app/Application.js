@@ -14,6 +14,7 @@ Ext.define('CB.Application', {
         'Ext.state.CookieProvider',
         'Ext.direct.RemotingProvider',
         'Ext.MessageBox',
+        'CB.service.File',
         'CB.Config'
     ],
     
@@ -64,19 +65,8 @@ Ext.define('CB.Application', {
             scope: this
         });
         
+        // unmask body
         Ext.getBody().unmask();
-        
-        /**
-        var intro = Ext.get('cb-intro');
-        if (intro) {
-            intro.fadeOut({
-                opacity: 0,
-                easing: 'easeOut',
-                duration: 200,
-                remove: true
-            });
-        }
-        */
         
         // fire application event
         this.fireEvent('dataready');

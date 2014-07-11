@@ -1193,10 +1193,12 @@ Ext.Boot.loadSync([
 
 Ext.Loader.addClassPathMappings({
   "CB": "../../app",
+  "CB.data": "../../../packages/cb-core/src/data",
   "CB.paper": "../../../packages/cb-paper-core/src",
   "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
   "CB.paper.PanelController": "../../../packages/cb-paper-ext/src/PanelController.js",
   "CB.paper.PanelModel": "../../../packages/cb-paper-ext/src/PanelModel.js",
+  "CB.service": "../../../packages/cb-core/src/service",
   "Ext": "../../../ext/src",
   "Ext-more": "../../../ext/overrides/Ext-more.js",
   "Ext.AbstractManager": "../../../ext/packages/sencha-core/src/AbstractManager.js",
@@ -1322,6 +1324,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.paper.tool.Move": [],
   "CB.paper.tool.Pen": [],
   "CB.paper.tool.Select": [],
+  "CB.service.File": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -1854,6 +1857,7 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "Ext.grid.RowEditor": [],
   "Ext.grid.RowEditorButtons": [],
+  "Ext.grid.Scroller": [],
   "Ext.grid.View": [],
   "Ext.grid.ViewDropZone": [],
   "Ext.grid.column.Action": [
@@ -2442,6 +2446,7 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.paper.tool.Move": [],
   "CB.paper.tool.Pen": [],
   "CB.paper.tool.Select": [],
+  "CB.service.File": [],
   "CB.store.Countries": [],
   "CB.store.Files": [],
   "CB.store.GradeTypes": [],
@@ -3143,6 +3148,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.grid.RowEditorButtons": [
     "widget.roweditorbuttons"
   ],
+  "Ext.grid.Scroller": [],
   "Ext.grid.View": [
     "widget.gridview"
   ],
@@ -3854,6 +3860,7 @@ Ext.ClassManager.addNameAliasMappings({
   "ExtThemeNeptune.toolbar.Paging": [],
   "ExtThemeNeptune.toolbar.Toolbar": []
 });
+Ext.setVersion("cb-core", "1.0.0");
 Ext.setVersion("cb-paper-core", "1.0.0");
 Ext.setVersion("cb-paper-ext", "1.0.0");
 Ext.setVersion("ext", "5.0.0.970");

@@ -10,6 +10,10 @@ Ext.define('CB.view.location.LocationController', {
         miniMap: null
     },
     
+    /**
+     * Core
+     */
+    
     init: function() {
         var vm = this.getViewModel();
         
@@ -32,8 +36,7 @@ Ext.define('CB.view.location.LocationController', {
             session = view.getSession(),
             rendered = view.rendered,
             visible = view.isVisible(),
-            isLocation = location instanceof CB.model.Location,
-            file = isLocation ? location.files().getAt(0) : null,
+            file = location.files().getAt(0),
             lat = location.get('lat'),
             lng = location.get('lng'),
             marker, center, type, icon,
@@ -44,7 +47,14 @@ Ext.define('CB.view.location.LocationController', {
                 
                 me.createMiniMap();
                 
-                if (isLocation && miniMap && miniMap.map) {
+                me.refreshFileCount();
+                
+                location.files().on({
+                    datachanged: me.refreshFileCount,
+                    scope: me
+                });
+                
+                if (miniMap && miniMap.map) {
                     if (miniMap.getCollapsed()) {
                         miniMap.on({
                             expand: showMiniMap,
@@ -78,10 +88,8 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         // create new session
-        if (isLocation) {
-            session = mainSession.spawn();
-            view.setSession(session);
-        }
+        session = mainSession.spawn();
+        view.setSession(session);
         
         // show location
         if (!rendered) {
@@ -103,17 +111,36 @@ Ext.define('CB.view.location.LocationController', {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            session = view.getSession();
+            session = view.getSession(),
+            location = vm.get('location');
     
         vm.set('location', null);
         vm.set('file', null);
         
         me.destroyMiniMap();
         
+        location.files().un({
+            datachanged: me.refreshFileCount,
+            scope: me
+        });
+        
         if (session) {
             session.destroy();
         }
     },
+    
+    saveLocation: function() {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            session = view.getSession();
+    
+        console.log(session.getChanges());
+    },
+    
+    /**
+     * MiniMap
+     */
     
     createMiniMap: function() {
         console.log('createMiniMap');
@@ -161,9 +188,78 @@ Ext.define('CB.view.location.LocationController', {
         }
     },
     
+    /**
+     * Tools
+     */
+    
+    setTool: function(btn) {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.setActiveTool(btn.paperTool);
+    },
+    
+    /**
+     * Zoom
+     */
+    
+    zoomIn: function() {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.zoomIn();
+    },
+    
+    zoomOut: function() {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.zoomOut();
+    },
+    
+    /**
+     * Route
+     */
+    
+    addRoute: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            session = view.getSession(),
+            routes = view.down('#routes'),
+            route = session.createRecord('Route', {});
+    
+        console.log('addRoute', route);
+    
+        routes.getStore().add(route);
+        
+        routes.getPlugin('cellediting').startEdit(route, 0);
+        
+        vm.set('dirty', true);
+    },
+    
+    removeRoute: function() {
+        console.log('removeRoute');
+    },
+    
+    /**
+     * File
+     */
+    
+    refreshFileCount: function() {
+        var vm = this.getViewModel(),
+            location = vm.get('location'),
+            files = location.files(),
+            file = vm.get('file');
+    
+        vm.set('fileCount', files.getCount());
+        vm.set('fileIndex', files.indexOf(file) + 1);
+        vm.set('hasFiles', files.getCount() > 1);
+    },
+    
     prevFile: function() {
         var view = this.getView(),
             vm = view.getViewModel(),
+            location = vm.get('location'),
             file = this.getPrevFile();
         
         if (!file) {
@@ -171,11 +267,13 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         vm.set('file', file);
+        vm.set('fileIndex', location.files().indexOf(file) + 1);
     },
     
     nextFile: function() {
         var view = this.getView(),
             vm = view.getViewModel(),
+            location = vm.get('location'),
             file = this.getNextFile();
         
         if (!file) {
@@ -183,6 +281,7 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         vm.set('file', file);
+        vm.set('fileIndex', location.files().indexOf(file) + 1);
     },
     
     getPrevFile: function() {
@@ -237,42 +336,82 @@ Ext.define('CB.view.location.LocationController', {
         return files.getAt(next);
     },
     
-    zoomIn: function() {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.zoomIn();
-    },
-    
-    zoomOut: function() {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.zoomOut();
-    },
-    
-    setTool: function(btn) {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.setActiveTool(btn.paperTool);
-    },
-    
-    addRoute: function() {
+    saveFiles: function() {
         var view = this.getView(),
-            session = view.getSession(),
-            routes = view.down('#routes'),
-            route = session.createRecord('Route', {});
+            vm = view.getViewModel(),
+            location = vm.get('location'),
+            button = view.down('multifilebutton'),
+            files = button.fileInputEl.dom.files,
+            len = files.length,
+            i = 0;
     
-        console.log('addRoute', route);
+        this.fileCount = len;
+        this.fileErrors = [];
     
-        routes.getStore().add(route);
+        console.log('saveFiles', files);
         
-        routes.getPlugin('cellediting').startEdit(route, 0);
+        if (!len) {
+            this.saveFilesComplete();
+            return;
+        }
+        
+        view.mask('Saving Location Files ...');
+        
+        for (; i < len; i++) {
+            CB.service.File.upload({
+                file: files[i],
+                location: location,
+                scope: this,
+                success: function(result) {
+                    location.files().add(Ext.create('CB.model.File', result.data));
+
+                    if (--this.fileCount === 0) {
+                        if (this.fileErrors.length) {
+                            this.saveFilesException();
+                        } else {
+                            this.saveFilesComplete();
+                        }
+                    }
+                },
+                failure: function(msg) {
+                    this.fileErrors.push(msg);
+
+                    if (--this.fileCount === 0) {
+                        this.saveFilesException();
+                    }
+                }
+            });
+        }
     },
     
-    removeRoute: function() {
-        console.log('removeRoute');
+    saveFilesComplete: function() {
+        console.log('saveFilesComplete');
+        
+        this.getView().unmask();
+        
+        Ext.MessageBox.show({
+            title: 'Success',
+            msg: 'All files were successfully uploaded.',
+            icon: Ext.MessageBox.INFO,
+            buttons: Ext.MessageBox.OK
+        });
+    },
+    
+    saveFilesException: function() {
+        console.log('saveFilesExceptions');
+        
+        this.getView().unmask();
+        
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: this.fileErrors.join('<br />'),
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+    },
+    
+    removeFile: function() {
+        
     }
     
 });

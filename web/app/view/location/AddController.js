@@ -3,10 +3,6 @@
  */
 Ext.define('CB.view.location.AddController', {
     extend: 'Ext.app.ViewController',
-    
-    requires: [
-        'CB.data.Connection'
-    ],
 
     alias: 'controller.cb-location-add',
     
@@ -217,6 +213,8 @@ Ext.define('CB.view.location.AddController', {
     
     saveFiles: function() {
         var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location'),
             button = view.down('multifilebutton'),
             files = button.fileInputEl.dom.files,
             len = files.length,
@@ -232,10 +230,32 @@ Ext.define('CB.view.location.AddController', {
             return;
         }
         
-        this.getView().mask('Saving Location Files ...');
+        view.mask('Saving Location Files ...');
         
         for (; i < len; i++) {
-            this.saveFile(files[i]);
+            CB.service.File.upload({
+                file: files[i],
+                location: location,
+                scope: this,
+                success: function(result) {
+                    location.files().add(Ext.create('CB.model.File', result.data));
+
+                    if (--this.fileCount === 0) {
+                        if (this.fileErrors.length) {
+                            this.saveFilesException();
+                        } else {
+                            this.saveFilesComplete();
+                        }
+                    }
+                },
+                failure: function(msg) {
+                    this.fileErrors.push(msg);
+
+                    if (--this.fileCount === 0) {
+                        this.saveFilesException();
+                    }
+                }
+            });
         }
     },
     
@@ -256,71 +276,6 @@ Ext.define('CB.view.location.AddController', {
         });
         
         this.operationComplete('saveFiles');
-    },
-    
-    /**
-     * File
-     */
-    
-    saveFile: function(File) {
-        console.log('saveFile', File);
-        var view = this.getView(),
-            viewModel = view.getViewModel(),
-            location = viewModel.get('location'),
-            connection = Ext.create('CB.data.Connection', {
-                url: '/api/upload-file/'
-            });
-
-        connection.uploadFile(File, {
-            headers: {
-                'X-Location-Id': location.get('id'),
-                'X-File-Name': File.name
-            },
-            /*progress: function(e) {
-            },*/
-            success: function(response, operation) {
-                try {
-                    var result = Ext.JSON.decode(response.responseText, true);
-                    if (result.success) {
-                        this.saveFileComplete(result);
-                    } else {
-                        this.saveFileException(result.message ? result.message : 'Unable to upload File!');
-                    }
-                } catch (e) {
-                    this.saveFileException('Error processing response from server.');
-                }
-            },
-            failure: function(response, operation) {
-                this.saveFileException('Error ' + response.status + ': ' + response.statusText);
-            },
-            scope: this
-        });
-    },
-    
-    saveFileComplete: function(result) {
-        console.log('saveFileComplete', result);
-        var view = this.getView(),
-            viewModel = view.getViewModel(),
-            location = viewModel.get('location');
-    
-        location.files().add(Ext.create('CB.model.File', result.data));
-        
-        if (--this.fileCount === 0) {
-            if (this.fileErrors.length) {
-                this.saveFilesException();
-            } else {
-                this.saveFilesComplete();
-            }
-        }
-    },
-    
-    saveFileException: function(msg) {
-        console.log('saveFileException', msg);
-        this.fileErrors.push(msg);
-        
-        if (--this.fileCount === 0) {
-            this.saveFilesException();
-        }
     }
     
 });

@@ -62,14 +62,12 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Add Photo',
             glyph: 'xe623@climbuddy',
             bind: {
-                hidden: '{!hasUser}'
+                hidden: '{!user}'
+            },
+            listeners: {
+                change: 'saveFiles'
             }
-        },{
-            xtype: 'tbseparator',
-            bind: {
-                hidden: '{!hasUser}'
-            }
-        },{
+        },'-',{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Previous Photo',
@@ -78,6 +76,13 @@ Ext.define('CB.view.location.Location', {
             handler: 'prevFile',
             bind: {
                 hidden: '{!hasFiles}'
+            }
+        },{
+            xtype: 'tbtext',
+            text: '',
+            bind: {
+                hidden: '{!location}',
+                text: '{fileIndex} of {fileCount}'
             }
         },{
             xtype: 'button',
@@ -92,7 +97,7 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!hasFiles}'
+                hidden: '{!fileCount}'
             }
         },{
             xtype: 'button',
@@ -102,7 +107,7 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe63f@climbuddy',
             handler: 'zoomIn',
             bind: {
-                hidden: '{!hasLocation}'
+                hidden: '{!fileCount}'
             }
         },{
             xtype: 'button',
@@ -112,12 +117,12 @@ Ext.define('CB.view.location.Location', {
             glyph: 'xe63e@climbuddy',
             handler: 'zoomOut',
             bind: {
-                hidden: '{!hasLocation}'
+                hidden: '{!fileCount}'
             }
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!hasLocation}'
+                hidden: '{!editMode}'
             }
         },{
             xtype: 'button',
@@ -159,16 +164,16 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!dirty}'
             }
         },{
             xtype: 'button',
-            ui: 'blank',
-            tooltip: 'Print',
-            overflowText: 'Print',
-            glyph: 'xe62e@climbuddy',
+            ui: 'default',
+            text: 'Save',
+            glyph: 'xe647@climbuddy',
+            handler: 'saveLocation',
             bind: {
-                hidden: '{!hasLocation}'
+                hidden: '{!dirty}'
             }
         },'->',{
             xtype: 'button',
@@ -177,7 +182,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Settings',
             glyph: 'xe60a@climbuddy',
             bind: {
-                hidden: '{!hasUser}'
+                hidden: '{!user}'
             }
         }]
     },
@@ -222,7 +227,7 @@ Ext.define('CB.view.location.Location', {
             },
             tbar: {
                 bind: {
-                    hidden: '{!hasUser}'
+                    hidden: '{!user}'
                 },
                 items: [{
                     xtype: 'button',
@@ -231,7 +236,7 @@ Ext.define('CB.view.location.Location', {
                     glyph: 'xe618@climbuddy',
                     handler: 'addRoute',
                     bind: {
-                        hidden: '{!hasUser}'
+                        hidden: '{!user}'
                     }
                 },{
                     xtype: 'button',
@@ -240,7 +245,7 @@ Ext.define('CB.view.location.Location', {
                     glyph: 'xe617@climbuddy',
                     handler: 'removeRoute',
                     bind: {
-                        hidden: '{!hasUser}'
+                        hidden: '{!user}'
                     }
                 }]
             },
