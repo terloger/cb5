@@ -7,7 +7,8 @@ Ext.define('CB.view.location.LocationModel', {
     alias: 'viewmodel.cb-location',
     
     formulas: {
-        editor: function(get) {
+        draw: function(get) {
+            //console.log('draw', get('user') && get('location') && get('routes.selection'));
             return get('user') && get('location') && get('routes.selection');
         }
     }

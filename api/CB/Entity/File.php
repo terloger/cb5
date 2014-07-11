@@ -181,6 +181,7 @@ class File extends AbstractEntity
     public function setLocation($location)
     {
         $this->location = $location;
+        $this->locationId = $location->getId();
     }
 
     public function setValues($file)

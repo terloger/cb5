@@ -140,11 +140,13 @@ class Layer extends AbstractEntity
     public function setRoute($route)
     {
         $this->route = $route;
+        $this->routeId = $route->getId();
     }
 
     public function setFile($file)
     {
         $this->file = $file;
+        $this->fileId = $file->getId();
     }
 
     public function setValues($layer)

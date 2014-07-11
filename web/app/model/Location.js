@@ -48,8 +48,7 @@ Ext.define('CB.model.Location', {
             create:   'CB.api.Location.create',
             read:     'CB.api.Location.read',
             update:   'CB.api.Location.update',
-            destroy:  'CB.api.Location.destroy',
-            setTypes: 'CB.api.Location.setTypes'
+            destroy:  'CB.api.Location.destroy'
         },
         reader: {
             type: 'json',

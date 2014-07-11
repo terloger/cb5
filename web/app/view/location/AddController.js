@@ -70,7 +70,7 @@ Ext.define('CB.view.location.AddController', {
             
         console.log('saveLocation', session.getChanges());
         
-        this.getView().mask('Saving Location ...');
+        view.mask('Saving Location ...');
         
         if (!batch) {
             this.saveLocationComplete();
@@ -80,7 +80,6 @@ Ext.define('CB.view.location.AddController', {
         batch.on({
             complete: this.saveLocationComplete,
             exception: this.saveLocationException,
-            single: true,
             scope: this
         });
         

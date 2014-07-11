@@ -47,10 +47,15 @@ Ext.define('CB.view.location.LocationController', {
                 
                 me.createMiniMap();
                 
-                me.refreshFileCount();
+                me.fileDataChanged();
                 
                 location.files().on({
-                    datachanged: me.refreshFileCount,
+                    datachanged: me.fileDataChanged,
+                    scope: me
+                });
+                
+                location.routes().on({
+                    datachanged: me.routeDataChanged,
                     scope: me
                 });
                 
@@ -116,11 +121,17 @@ Ext.define('CB.view.location.LocationController', {
     
         vm.set('location', null);
         vm.set('file', null);
+        vm.set('dirty', false);
         
         me.destroyMiniMap();
         
         location.files().un({
-            datachanged: me.refreshFileCount,
+            datachanged: me.fileDataChanged,
+            scope: me
+        });
+        
+        location.routes().un({
+            datachanged: me.routeDataChanged,
             scope: me
         });
         
@@ -133,9 +144,43 @@ Ext.define('CB.view.location.LocationController', {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            session = view.getSession();
+            session = view.getSession(),
+            batch = session.getSaveBatch();
     
         console.log(session.getChanges());
+        
+        if (!batch) {
+            return;
+        }
+        
+        batch.on({
+            complete: this.saveLocationComplete,
+            exception: this.saveLocationException,
+            scope: this
+        });
+        
+        batch.start();
+    },
+    
+    saveLocationComplete: function(batch, operation) {
+        console.log('saveLocationComplete', batch);
+    },
+    
+    saveLocationException: function(batch, operation) {
+        console.log('saveLocationException', arguments);
+        var exceptions = batch.getExceptions(),
+            msg = [];
+    
+        Ext.each(exceptions, function(exception){
+            msg.push(exception.getError());
+        }, this);
+        
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: msg.length ? msg.join('<br />') : 'Unable to save Location!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
     },
     
     /**
@@ -223,7 +268,6 @@ Ext.define('CB.view.location.LocationController', {
     
     addRoute: function() {
         var view = this.getView(),
-            vm = view.getViewModel(),
             session = view.getSession(),
             routes = view.down('#routes'),
             route = session.createRecord('Route', {});
@@ -233,28 +277,24 @@ Ext.define('CB.view.location.LocationController', {
         routes.getStore().add(route);
         
         routes.getPlugin('cellediting').startEdit(route, 0);
-        
-        vm.set('dirty', true);
     },
     
     removeRoute: function() {
         console.log('removeRoute');
     },
     
+    routeDataChanged: function() {
+        var vm = this.getViewModel();
+        
+        console.log('routedata', arguments);
+        var getStackTrace = function() {var obj = {};Error.captureStackTrace(obj, getStackTrace);return obj.stack;};
+console.log(getStackTrace());
+        vm.set('dirty', true);
+    },
+    
     /**
      * File
      */
-    
-    refreshFileCount: function() {
-        var vm = this.getViewModel(),
-            location = vm.get('location'),
-            files = location.files(),
-            file = vm.get('file');
-    
-        vm.set('fileCount', files.getCount());
-        vm.set('fileIndex', files.indexOf(file) + 1);
-        vm.set('hasFiles', files.getCount() > 1);
-    },
     
     prevFile: function() {
         var view = this.getView(),
@@ -412,6 +452,17 @@ Ext.define('CB.view.location.LocationController', {
     
     removeFile: function() {
         
+    },
+    
+    fileDataChanged: function() {
+        var vm = this.getViewModel(),
+            location = vm.get('location'),
+            files = location.files(),
+            file = vm.get('file');
+    
+        vm.set('fileCount', files.getCount());
+        vm.set('fileIndex', files.indexOf(file) + 1);
+        vm.set('hasFiles', files.getCount() > 1);
     }
     
 });

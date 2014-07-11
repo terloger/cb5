@@ -100,6 +100,7 @@ class Grade extends AbstractEntity
     public function setType($type)
     {
         $this->type = $type;
+        $this->typeId = $type->getId();
     }
 
 }

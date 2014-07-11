@@ -17,7 +17,6 @@ Ext.define('CB.paper.PPath', {
     },
     
     constructor: function(config) {
-        console.log('construct pathh');
     },
     
     createPath: function(data, route) {

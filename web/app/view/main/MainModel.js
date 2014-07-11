@@ -18,23 +18,19 @@ Ext.define('CB.view.main.MainModel', {
     stores: {
         countries: {
             model: 'Country',
-            autoLoad: true,
-            session: true
+            autoLoad: true
         },
         gradeTypes: {
             model: 'GradeType',
-            autoLoad: true,
-            session: true 
+            autoLoad: true
         },
         locationTypes: {
             model: 'LocationType',
-            autoLoad: true,
-            session: true
+            autoLoad: true
         },
         locations: {
             model: 'Location',
-            autoLoad: true,
-            session: true
+            autoLoad: true
         }
     }
     

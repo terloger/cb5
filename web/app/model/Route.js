@@ -2,6 +2,7 @@ Ext.define('CB.model.Route', {
     extend: 'CB.model.Base',
 
     idProperty: 'id',
+    clientIdProperty: 'clientId',
 
     fields: [
         {name: 'locationId', reference: 'Location'},
@@ -11,6 +12,24 @@ Ext.define('CB.model.Route', {
         {name: 'fileId', type: 'int'}
     ],
     
-    proxy: null
+    proxy: {
+        type: 'direct',
+        api: {
+            create:   'CB.api.Route.create',
+            read:     'CB.api.Route.read',
+            update:   'CB.api.Route.update',
+            destroy:  'CB.api.Route.destroy'
+        },
+        reader: {
+            type: 'json',
+            idProperty: 'id',
+            rootProperty: 'data',
+            successProperty: 'success',
+            messageProperty: 'message'
+        },
+        writer: {
+            type: 'json'
+        }
+    }
     
 });

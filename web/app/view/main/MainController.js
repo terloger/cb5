@@ -218,7 +218,7 @@ Ext.define('CB.view.main.MainController', {
     showLocationAdd: function(country, lat, lng) {
         console.log('showLocationAdd');
         var view = this.getView(),
-            session = view.getSession().spawn(),
+            session = Ext.create('Ext.data.Session'),
             user = view.getViewModel().get('user'),
             addLocationView,
             location;

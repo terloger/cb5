@@ -56,18 +56,11 @@ Ext.define('CB.view.location.Location', {
                 text: '{location.name}'
             }
         },{
-            xtype: 'multifilebutton',
-            ui: 'blank',
-            tooltip: 'Add Photo',
-            overflowText: 'Add Photo',
-            glyph: 'xe623@climbuddy',
+            xtype: 'tbseparator',
             bind: {
-                hidden: '{!user}'
-            },
-            listeners: {
-                change: 'saveFiles'
+                hidden: '{!hasFiles}'
             }
-        },'-',{
+        },{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Previous Photo',
@@ -79,9 +72,8 @@ Ext.define('CB.view.location.Location', {
             }
         },{
             xtype: 'tbtext',
-            text: '',
             bind: {
-                hidden: '{!location}',
+                hidden: '{!hasFiles}',
                 text: '{fileIndex} of {fileCount}'
             }
         },{
@@ -97,7 +89,7 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!fileCount}'
+                hidden: '{!hasFiles}'
             }
         },{
             xtype: 'button',
@@ -122,7 +114,7 @@ Ext.define('CB.view.location.Location', {
         },{
             xtype: 'tbseparator',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!draw}'
             }
         },{
             xtype: 'button',
@@ -134,7 +126,7 @@ Ext.define('CB.view.location.Location', {
             handler: 'setTool',
             toggleGroup: 'paper-tools',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!draw}'
             }
         },{
             xtype: 'button',
@@ -147,7 +139,7 @@ Ext.define('CB.view.location.Location', {
             toggleGroup: 'paper-tools',
             pressed: true,
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!draw}'
             }
         },{
             xtype: 'button',
@@ -159,7 +151,24 @@ Ext.define('CB.view.location.Location', {
             handler: 'setTool',
             toggleGroup: 'paper-tools',
             bind: {
-                hidden: '{!editMode}'
+                hidden: '{!draw}'
+            }
+        },{
+            xtype: 'tbseparator',
+            bind: {
+                hidden: '{!user}'
+            }
+        },{
+            xtype: 'multifilebutton',
+            ui: 'blank',
+            tooltip: 'Add Photo',
+            overflowText: 'Add Photo',
+            glyph: 'xe623@climbuddy',
+            bind: {
+                hidden: '{!user}'
+            },
+            listeners: {
+                change: 'saveFiles'
             }
         },{
             xtype: 'tbseparator',
@@ -248,6 +257,9 @@ Ext.define('CB.view.location.Location', {
                         hidden: '{!user}'
                     }
                 }]
+            },
+            listeners: {
+                edit: 'routeDataChanged'
             },
             selType: 'cellmodel',
             plugins: {

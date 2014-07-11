@@ -171,14 +171,15 @@ class Route extends AbstractEntity
         $this->name = $name;
     }
 
-    public function setUser($User)
+    public function setUser($user)
     {
-        $this->user = $User;
+        $this->user = $user;
     }
 
-    public function setLocation($Location)
+    public function setLocation($location)
     {
-        $this->location = $Location;
+        $this->location = $location;
+        $this->locationId = $location->getId();
     }
 
     public function setValues($route)
