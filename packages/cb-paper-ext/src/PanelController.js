@@ -7,7 +7,7 @@ Ext.define('CB.paper.PanelController', {
     alias: 'controller.cb-paper',
     
     mixins: {
-        canvas: 'CB.paper.Canvas',
+        paper: 'CB.paper.Paper',
         location: 'CB.paper.Location',
         file: 'CB.paper.File',
         image: 'CB.paper.Image',
@@ -21,11 +21,6 @@ Ext.define('CB.paper.PanelController', {
         zoom: 'CB.paper.Zoom'
     },
     
-    config: {
-        paper: null,
-        canvas: null
-    },
-    
     init: function() {
         var vm = this.getViewModel().getParent();
         vm.bind('{location}', this.setLocation, this);
@@ -33,8 +28,8 @@ Ext.define('CB.paper.PanelController', {
     },
     
     initPaper: function() {
-        // init canvas
-        this.mixins.canvas.constructor.call(this);
+        // init paper
+        this.mixins.paper.constructor.call(this);
         
         // init touch/mouse
         if (Ext.supports.Touch) {
@@ -56,17 +51,6 @@ Ext.define('CB.paper.PanelController', {
         this.mixins.tools.constructor.call(this, {
             tools: ['move','select','pen']
         });
-    },
-    
-    resizePaper: function(a, b, c) {
-        var w = Ext.isNumber(a) ? a : b,
-            h = Ext.isNumber(a) ? b : c;
-    
-        if (this.getCanvas()) {
-            this.getCanvas().setWidth(w);
-            this.getCanvas().setHeight(h);
-            paper.view.viewSize = new paper.Size(w, h);
-        }
     }
     
 });

@@ -1299,7 +1299,6 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
-  "CB.paper.Canvas": [],
   "CB.paper.File": [],
   "CB.paper.Image": [],
   "CB.paper.Layer": [],
@@ -1308,6 +1307,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.paper.Panel": [],
   "CB.paper.PanelController": [],
   "CB.paper.PanelModel": [],
+  "CB.paper.Paper": [],
   "CB.paper.Path": [],
   "CB.paper.Route": [],
   "CB.paper.Tools": [],
@@ -2410,7 +2410,6 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
-  "CB.paper.Canvas": [],
   "CB.paper.File": [],
   "CB.paper.Image": [],
   "CB.paper.Layer": [],
@@ -2425,6 +2424,7 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.paper.PanelModel": [
     "viewmodel.cb-paper"
   ],
+  "CB.paper.Paper": [],
   "CB.paper.Path": [],
   "CB.paper.Route": [],
   "CB.paper.Tools": [],

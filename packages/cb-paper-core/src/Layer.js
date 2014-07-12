@@ -75,6 +75,20 @@ Ext.define('CB.paper.Layer', {
         
         paper.view.draw();
     },
+    
+    transformLayers: function(scale, cx, cy, dx, dy) {
+        var matrix = new paper.Matrix(),
+            center = new paper.Point(cx, cy);
+    
+        matrix.scale(scale, center);
+        matrix.translate(dx, dy);
+        
+        Ext.each(paper.project.layers, function(layer){
+            layer.transform(matrix);
+        });
+        
+        paper.view.draw();
+    },
 
     /**
      * OLD FUNCTIONS

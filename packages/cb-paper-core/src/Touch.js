@@ -75,9 +75,14 @@ Ext.define('CB.paper.Touch', {
                 var endX0 = e.touches[0].pageX;
                 var endY0 = e.touches[0].pageY;
                 
+                var dx = endX0 - this.startX0;
+                var dy = endY0 - this.startY0;
+                        
+                this.translateLayers(dx, dy);
+                
                 // calculate new translation points
-                var translateX = this.getTranslateX() + (endX0 - this.startX0);
-                var translateY = this.getTranslateY() + (endY0 - this.startY0);
+                var translateX = this.getTranslateX() + dx;
+                var translateY = this.getTranslateY() + dy;
                 
                 // set transform properties
                 this.setTranslateX(translateX);
@@ -133,14 +138,24 @@ Ext.define('CB.paper.Touch', {
                 var tx = endCenterX - this.startCenterX;
                 var ty = endCenterY - this.startCenterY;
                 
+                // get total translation difference
+                var dx = zx + tx;
+                var dy = zy + ty;
+                
                 // calculate new translation
-                var translateX = this.getTranslateX() + zx + tx;
-                var translateY = this.getTranslateY() + zy + ty;
+                var translateX = this.getTranslateX() + dx;
+                var translateY = this.getTranslateY() + dy;
                 
                 // set transform properties
                 this.setScale(newScale);
                 this.setTranslateX(translateX);
                 this.setTranslateY(translateY);
+                
+                // scale layers
+                var box = this.getCanvas().getBox();
+                var cx = endCenterX - box.x;
+                var cy = endCenterY - box.y;
+                this.transformLayers(ratio, cx, cy, tx, ty);
                 
                 // apply transform
                 this.applyTransform();
@@ -154,6 +169,8 @@ Ext.define('CB.paper.Touch', {
                 // reset start center
                 this.startCenterX = endCenterX;
                 this.startCenterY = endCenterY;
+                
+                
                 
                 break;
         }

@@ -26,6 +26,11 @@
         background: #fff;
     }
     
+    .loading {
+        background: transparent url(images/loadmask/loading-big.gif) no-repeat center center;
+        opacity: 0.5;
+    }
+    
 }
 
 .cb-location-sidebar {

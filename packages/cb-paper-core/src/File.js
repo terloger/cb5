@@ -25,6 +25,7 @@ Ext.define('CB.paper.File', {
             return null;
         }
         
+        // start loading image
         this.preloadImage(file);
         
         // confirm file change

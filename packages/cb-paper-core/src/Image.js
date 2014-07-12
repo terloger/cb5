@@ -11,8 +11,27 @@ Ext.define('CB.paper.Image', {
     },
     
     preloadImage: function(file) {
+        var view = this.getView(),
+            image = new Image();
+    
+        // show loading indicator
+        view.addCls('loading');
+        
+        // remove paper layer references
+        this.getLayers().removeAll();
+        
+        // remove existing project
+        if (paper.project) {
+            paper.project.remove();
+        }
+        
+        // setup new project
+        paper.setup(this.getCanvas().dom);
+        
+        // fit canvas to parent container
+        this.resizePaper(view.getWidth(), view.getHeight());
+        
         // preload image
-        var image = new Image();
         image.addEventListener('load', Ext.bind(this.loadImage, this, [image]));
         image.id = 'cb-image';
         image.className = 'cb-image';
@@ -28,10 +47,13 @@ Ext.define('CB.paper.Image', {
             scale = wr > hr ? hr : wr,
             translateX = (box.width - (image.width * scale)) / 2, // center
             //translateX = pad, // left
-            translateY = pad;
+            translateY = pad,
+            newImage = this.getPaper().insertFirst(image);
+            
+        // hide loading indicator
+        view.removeCls('loading');
     
         // create image
-        var newImage = this.getPaper().insertFirst(image);
         this.setImage(newImage);
 
         // apply image size
