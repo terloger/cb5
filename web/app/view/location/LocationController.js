@@ -32,7 +32,6 @@ Ext.define('CB.view.location.LocationController', {
             view = me.getView(),
             miniMap = view.down('#miniMap'),
             vm = view.getViewModel(),
-            mainSession = view.up('cb-main').getSession(),
             session = view.getSession(),
             rendered = view.rendered,
             visible = view.isVisible(),
@@ -45,8 +44,6 @@ Ext.define('CB.view.location.LocationController', {
                 vm.set('location', location);
                 vm.set('file', file);
                 
-                me.createMiniMap();
-                
                 me.fileDataChanged();
                 
                 location.files().on({
@@ -54,24 +51,30 @@ Ext.define('CB.view.location.LocationController', {
                     scope: me
                 });
                 
-                location.routes().on({
+                /*location.routes().on({
                     datachanged: me.routeDataChanged,
                     scope: me
-                });
+                });*/
                 
-                if (miniMap && miniMap.map) {
-                    if (miniMap.getCollapsed()) {
-                        miniMap.on({
-                            expand: showMiniMap,
-                            single: true
-                        });
-                    } else {
-                        showMiniMap();
-                    }
+                if (miniMap.getCollapsed()) {
+                    miniMap.on({
+                        expand: showMiniMap,
+                        single: true
+                    });
+                } else {
+                    showMiniMap();
                 }
             },
             
             showMiniMap = function() {
+                if (!miniMap.map) {
+                    me.createMiniMap();
+                }
+                
+                if (!miniMap.map) {
+                    return;
+                }
+                
                 center = new google.maps.LatLng(lat, lng);
                 type = location.types().getAt(0);
                 icon = type ? type.get('type') : 'default';
@@ -93,8 +96,28 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         // create new session
-        session = mainSession.spawn();
+        session = Ext.create('Ext.data.Session');
         view.setSession(session);
+        
+        // add location
+        session.adopt(location);
+        
+        // adopt location routes
+        location.routes().each(function(route){
+            session.adopt(route);
+        });
+        
+        // adopt location files
+        location.files().each(function(file){
+            session.adopt(file);
+        });
+        
+        // adopt location types
+        location.types().each(function(type){
+            session.adopt(type);
+        });
+        
+        console.log('locationSession', session);
         
         // show location
         if (!rendered) {
@@ -130,10 +153,10 @@ Ext.define('CB.view.location.LocationController', {
             scope: me
         });
         
-        location.routes().un({
+        /*location.routes().un({
             datachanged: me.routeDataChanged,
             scope: me
-        });
+        });*/
         
         if (session) {
             session.destroy();
@@ -148,6 +171,8 @@ Ext.define('CB.view.location.LocationController', {
             batch = session.getSaveBatch();
     
         console.log(session.getChanges());
+        
+        view.mask('Saving ...');
         
         if (!batch) {
             return;
@@ -164,12 +189,23 @@ Ext.define('CB.view.location.LocationController', {
     
     saveLocationComplete: function(batch, operation) {
         console.log('saveLocationComplete', batch);
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel();
+    
+        vm.set('dirty', false);
+        
+        view.unmask();
     },
     
     saveLocationException: function(batch, operation) {
         console.log('saveLocationException', arguments);
-        var exceptions = batch.getExceptions(),
+        var me = this,
+            view = me.getView(),
+            exceptions = batch.getExceptions(),
             msg = [];
+    
+        view.unmask();
     
         Ext.each(exceptions, function(exception){
             msg.push(exception.getError());
@@ -205,7 +241,15 @@ Ext.define('CB.view.location.LocationController', {
         if (!miniMap.map) {
             miniMap.map = new google.maps.Map(miniMap.mapBody.dom, {
                 zoom: 15,
-                mapTypeId: 'satellite'
+                minZoom: 12,
+                mapTypeId: 'satellite',
+                mapTypeControl: false,
+                overviewMapControl: false,
+                panControl: false,
+                rotateControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                zoomControl: true
             });
         }
     },
@@ -280,16 +324,23 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     removeRoute: function() {
-        console.log('removeRoute');
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            routes = view.down('#routes'),
+            selection = routes.getSelectionModel().getSelection();
+    
+        console.log('removeRoute', selection);
+        
+        Ext.each(selection, function(route){
+            route.drop();
+        });
+        
+        vm.set('dirty', true);
     },
     
     routeDataChanged: function() {
-        var vm = this.getViewModel();
-        
-        console.log('routedata', arguments);
-        var getStackTrace = function() {var obj = {};Error.captureStackTrace(obj, getStackTrace);return obj.stack;};
-console.log(getStackTrace());
-        vm.set('dirty', true);
+        this.getViewModel().set('dirty', true);
     },
     
     /**

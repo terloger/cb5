@@ -19,6 +19,7 @@ Ext.define('CB.view.user.User', {
     },
     
     title: 'User',
+    cls: 'cb-user',
     
     bind: {
         title: '{user.username}'

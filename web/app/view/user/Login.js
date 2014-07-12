@@ -22,6 +22,7 @@ Ext.define('CB.view.user.Login', {
         }]
     },
     
+    cls: 'cb-user-login',
     bodyPadding: '20 0 0 20',
     
     defaultType: 'textfield',

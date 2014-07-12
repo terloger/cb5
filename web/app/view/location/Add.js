@@ -21,6 +21,7 @@ Ext.define('CB.view.location.Add', {
     },
     
     title: 'Add location',
+    cls: 'cb-location-add',
     autoScroll: true,
     bodyPadding: 10,
     

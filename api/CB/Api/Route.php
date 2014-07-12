@@ -32,18 +32,13 @@ class Route extends AbstractController
      * Create route(s)
      * 
      * @access public
+     * @param array $routes
      * @return array
      */
     public function create($routes)
     {
         try
         {
-            // must be array
-            if (!is_array($routes))
-            {
-                $routes = array($routes);
-            }
-            
             // must be logged in
             if (null === $User = $this->getSessionUser())
             {
@@ -67,8 +62,7 @@ class Route extends AbstractController
                 $clientId = $route['id'];
                 
                 // must have location
-                $locationId = isset($route['locationId']) ? $route['locationId'] : null;
-                if (null === $Location = $em->getRepository('\CB\Entity\Location')->find($locationId))
+                if (!isset($route['locationId']) || null === $Location = $em->getRepository('\CB\Entity\Location')->find($route['locationId']))
                 {
                     return $this->error('Unable to find route location!');
                 }
@@ -110,18 +104,13 @@ class Route extends AbstractController
      * Update route(s)
      * 
      * @access public
+     * @param array $routes
      * @return array
      */
     public function update($routes)
     {
         try
         {
-            // must be array
-            if (!is_array($routes))
-            {
-                $routes = array($routes);
-            }
-            
             // must be logged in
             if (null === $User = $this->getSessionUser())
             {
@@ -138,22 +127,25 @@ class Route extends AbstractController
             foreach ($routes as $route)
             {
                 // load route
-                $routeId = isset($route['id']) ? $route['id'] : null;
-                if (null === $Route = $em->getRepository('\CB\Entity\Route')->find($routeId))
+                if (!isset($route['id']) || null === $Route = $em->getRepository('\CB\Entity\Route')->find($route['id']))
                 {
                     return $this->error('Unable to find route to update!');
                 }
+                $routeId = $route['id'];
                 
-                // must have location
-                $locationId = isset($route['locationId']) ? $route['locationId'] : null;
-                if (null === $Location = $em->getRepository('\CB\Entity\Location')->find($locationId))
-                {
-                    return $this->error('Unable to find route location!');
-                }
-
-                // create new route
+                // update values
                 $Route->setValues($route);
                 
+                // update location?
+                if (false && isset($route['locationId']))
+                {
+                    if (null === $Location = $em->getRepository('\CB\Entity\Location')->find($route['locationId']))
+                    {
+                        return $this->error('Unable to find route location!');
+                    }
+                    $Route->setLocation($Location);
+                }
+
                 // persist route
                 $em->persist($Route);
                 
@@ -183,11 +175,56 @@ class Route extends AbstractController
      * Destroy route(s)
      * 
      * @access public
+     * @param array $routes
      * @return array
      */
-    public function destroy()
+    public function destroy($routes)
     {
-        return $this->success('Update', []);
+        try
+        {
+            // must be logged in
+            if (null === $User = $this->getSessionUser())
+            {
+                return $this->error('You must be signed-in to perform this action!');
+            }
+            
+            // get entity manager
+            $em = $this->getEntityManager();
+            
+            // loop through all routes
+            foreach ($routes as $route)
+            {
+                // load route
+                if (!isset($route['id']) || null === $Route = $em->getRepository('\CB\Entity\Route')->find($route['id']))
+                {
+                    return $this->error('Unable to find route to destroy!');
+                }
+                
+                // remove grades
+                foreach ($Route->getGrades() as $Grade)
+                {
+                    $em->remove($Grade);
+                }
+                
+                // remove layers
+                foreach ($Route->getLayers() as $Layer)
+                {
+                    $em->remove($Layer);
+                }
+                
+                // remove route
+                $em->remove($Route);
+            }
+            
+            // save changes
+            $em->flush();
+            
+            return $this->success('Destroy');
+        }
+        catch (\Exception $e)
+        {
+            return $this->error($e->getMessage());
+        }
     }
 
 }

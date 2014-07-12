@@ -19,7 +19,7 @@ Ext.define('CB.model.File', {
     proxy: {
         type: 'direct',
         api: {
-            destroy : 'CB.api.Location.removeFile'
+            destroy: 'CB.api.Location.removeFile'
         }
     },
 

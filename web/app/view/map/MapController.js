@@ -19,8 +19,7 @@ Ext.define('CB.view.map.MapController', {
         markers: null,
         overlay: null,
         markerClusterer: null,
-        lastCenter: null,
-        dropMarker: false
+        lastCenter: null
     },
     
     /**
@@ -89,7 +88,7 @@ Ext.define('CB.view.map.MapController', {
                     var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
-                        drop = this.getDropMarker();
+                        drop = false;
                         
                     if (location.files().getCount() >= 0) {
                         this.addMarker(latLng, location, icon, drop);
@@ -138,12 +137,13 @@ Ext.define('CB.view.map.MapController', {
             latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
             type = location.types().getAt(0),
             icon = type ? type.get('type') : 'default',
-            drop = this.getDropMarker();
+            drop = true,
+            delay = 250;
     
         locations.add(location);
 
         if (location.files().getCount() >= 0) {
-            this.addMarker(latLng, location, icon, drop);
+            this.addMarker(latLng, location, icon, drop, delay);
         }
     },
     
@@ -335,7 +335,7 @@ Ext.define('CB.view.map.MapController', {
      * Marker
      */
     
-    addMarker: function(latLng, location, icon, drop) {
+    addMarker: function(latLng, location, icon, drop, delay) {
         // create new marker
         var marker = new google.maps.Marker({
             position: latLng,
@@ -363,7 +363,9 @@ Ext.define('CB.view.map.MapController', {
         this.getMarkers().add(location.get('id'), marker);
 
         // show on map
-        marker.setMap(this.getMap());
+        Ext.defer(function(){
+            marker.setMap(this.getMap());
+        }, delay || 0, this);
 
         // add event listeners
         google.maps.event.addListener(marker, 'click',      Ext.bind(this.markerClick, this, [marker], true));

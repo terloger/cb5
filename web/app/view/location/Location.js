@@ -7,6 +7,8 @@ Ext.define('CB.view.location.Location', {
     requires: [
         'Ext.layout.container.Border',
         'Ext.grid.plugin.CellEditing',
+        'Ext.grid.plugin.DragDrop',
+        'Ext.toolbar.Spacer',
         'CB.form.field.MultiFileButton',
         'CB.paper.Panel'
     ],
@@ -55,12 +57,7 @@ Ext.define('CB.view.location.Location', {
                 hidden: '{!location}',
                 text: '{location.name}'
             }
-        },{
-            xtype: 'tbseparator',
-            bind: {
-                hidden: '{!hasFiles}'
-            }
-        },{
+        },' ',{
             xtype: 'button',
             ui: 'blank',
             tooltip: 'Previous Photo',
@@ -206,7 +203,7 @@ Ext.define('CB.view.location.Location', {
         maxWidth: 500,
         animCollapse: false,
         collapsible: true,
-        collapseDirection: 'right',
+        collapseDirection: 'left',
         stateful: true,
         stateId: 'CB.view.location.Sidebar',
         resizable: {
@@ -231,6 +228,7 @@ Ext.define('CB.view.location.Location', {
             region: 'center',
             itemId: 'routes',
             reference: 'routes',
+            cls: 'cb-routes',
             bind: {
                 store: '{location.routes}'
             },
@@ -258,10 +256,13 @@ Ext.define('CB.view.location.Location', {
                     }
                 }]
             },
-            listeners: {
-                edit: 'routeDataChanged'
-            },
             selType: 'cellmodel',
+            viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragText: 'Drag and drop to reorganize'
+                }
+            },
             plugins: {
                 ptype: 'cellediting',
                 pluginId: 'cellediting',
@@ -275,12 +276,16 @@ Ext.define('CB.view.location.Location', {
                     xtype: 'textfield',
                     allowBlank: false
                 }
-            }]
+            }],
+            listeners: {
+                edit: 'routeDataChanged'
+            }
         },{
             xtype: 'panel',
             title: 'Mini Map',
             region: 'south',
             itemId: 'miniMap',
+            cls: 'cb-location-map',
             height: 200,
             minHeight: 160,
             maxHeight: 360,

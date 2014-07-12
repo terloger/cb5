@@ -12,6 +12,8 @@ Ext.define('CB.view.user.Home', {
         type: 'cb-user-home'
     },
     
+    cls: 'cb-user-home',
+    
     tbar: {
         ui: 'header',
         height: 72,

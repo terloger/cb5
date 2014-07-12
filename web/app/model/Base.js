@@ -13,7 +13,9 @@ Ext.define('CB.model.Base', {
             },
             reader: {
                 type: 'json',
-                rootProperty: 'data'
+                rootProperty: 'data',
+                successProperty: 'success',
+                messageProperty: 'message'
             }
         }
     }

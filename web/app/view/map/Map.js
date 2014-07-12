@@ -22,6 +22,7 @@ Ext.define('CB.view.map.Map', {
     },
     
     title: 'Map',
+    cls: 'cb-map',
     
     stateful: true,
     stateId: 'CB.view.map.Map',

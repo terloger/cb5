@@ -1,7 +1,6 @@
 Ext.define('CB.model.Route', {
     extend: 'CB.model.Base',
 
-    idProperty: 'id',
     clientIdProperty: 'clientId',
 
     fields: [
@@ -22,13 +21,13 @@ Ext.define('CB.model.Route', {
         },
         reader: {
             type: 'json',
-            idProperty: 'id',
             rootProperty: 'data',
             successProperty: 'success',
             messageProperty: 'message'
         },
         writer: {
-            type: 'json'
+            type: 'json',
+            allowSingle: false
         }
     }
     

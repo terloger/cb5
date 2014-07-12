@@ -122,7 +122,9 @@ Ext.define('CB.view.location.AddController', {
         var view = this.getView(),
             location = view.getViewModel().get('location');
     
-        location.types().removeAll();
+        location.types().each(function(type){
+            type.drop();
+        });
         
         if (records.length) {
             location.types().add(records);

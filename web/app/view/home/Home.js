@@ -11,7 +11,7 @@ Ext.define('CB.view.home.Home', {
     },
     
     title: 'Home',
-    
+    cls: 'cb-home',
     bodyPadding: 20,
     
     tbar: {

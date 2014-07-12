@@ -1,6 +1,8 @@
 Ext.define('CB.model.Location', {
     extend: 'CB.model.Base',
     
+    clientIdProperty: 'clientId',
+    
     requires: [
         'Ext.data.proxy.Direct',
         'Ext.data.validator.Presence',
@@ -52,13 +54,13 @@ Ext.define('CB.model.Location', {
         },
         reader: {
             type: 'json',
-            idProperty: 'id',
             rootProperty: 'data',
             successProperty: 'success',
             messageProperty: 'message'
         },
         writer: {
-            type: 'json'
+            type: 'json',
+            allowSingle: false
         }
     }
     

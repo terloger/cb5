@@ -12,12 +12,12 @@ Ext.define('CB.view.main.Main', {
         type: 'cb-main'
     },
     
-    session: true,
-    
     ui: 'navigation',
     
     stateful: true,
     stateId: 'CB.view.main.Main',
+    
+    cls: 'cb-main',
 
     tabBarHeaderPosition: 1,
     titleRotation: 0,
