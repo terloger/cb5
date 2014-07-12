@@ -16,7 +16,7 @@ Ext.define('CB.paper.File', {
     },
     
     updateFile: function(newFile, oldFile) {
-        this.fireEvent('filechange', this, newFile, oldFile);
+        //this.fireEvent('filechange', this, newFile, oldFile);
     }
 
 });

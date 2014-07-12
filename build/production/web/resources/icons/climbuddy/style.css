@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'climbuddy';
-	src:url('fonts/climbuddy.eot?hqs1a8');
-	src:url('fonts/climbuddy.eot?#iefixhqs1a8') format('embedded-opentype'),
-		url('fonts/climbuddy.woff?hqs1a8') format('woff'),
-		url('fonts/climbuddy.ttf?hqs1a8') format('truetype'),
-		url('fonts/climbuddy.svg?hqs1a8#climbuddy') format('svg');
+	src:url('fonts/climbuddy.eot?-mexb01');
+	src:url('fonts/climbuddy.eot?#iefix-mexb01') format('embedded-opentype'),
+		url('fonts/climbuddy.woff?-mexb01') format('woff'),
+		url('fonts/climbuddy.ttf?-mexb01') format('truetype'),
+		url('fonts/climbuddy.svg?-mexb01#climbuddy') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -229,6 +229,21 @@
 }
 .icon-menu:before {
 	content: "\e644";
+}
+.icon-disk:before {
+	content: "\e647";
+}
+.icon-undo:before {
+	content: "\e648";
+}
+.icon-redo:before {
+	content: "\e649";
+}
+.icon-forward:before {
+	content: "\e64a";
+}
+.icon-reply:before {
+	content: "\e64b";
 }
 .icon-filter:before {
 	content: "\e645";

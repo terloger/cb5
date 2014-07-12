@@ -13,7 +13,10 @@ Ext.define('CB.paper.Location', {
             return;
         }
         
+        // clear paper
         paper.project.clear();
+        
+        // remove paper layer references
         this.getLayers().removeAll();
         
         // clear location

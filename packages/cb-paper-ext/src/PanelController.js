@@ -13,7 +13,7 @@ Ext.define('CB.paper.PanelController', {
         image: 'CB.paper.Image',
         route: 'CB.paper.Route',
         layer: 'CB.paper.Layer',
-        ppath: 'CB.paper.PPath', // cannot use path ;)
+        path: 'CB.paper.Path', // cannot use path ;)
         tools: 'CB.paper.Tools',
         mouse: 'CB.paper.Mouse',
         touch: 'CB.paper.Touch',
@@ -49,7 +49,7 @@ Ext.define('CB.paper.PanelController', {
         this.mixins.file.constructor.call(this);
         this.mixins.route.constructor.call(this);
         this.mixins.layer.constructor.call(this);
-        this.mixins.ppath.constructor.call(this);
+        this.mixins.path.constructor.call(this);
         this.mixins.zoom.constructor.call(this);
         
         // init tools

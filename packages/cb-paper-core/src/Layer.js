@@ -174,71 +174,79 @@ Ext.define('CB.paper.Layer', {
         this.getFile().layers().insert(0, rec);
     },
     
-    importLayer: function(record) {
-        var layer = this.createLayer(record.get('id'), record.get('routeId'));
-        
-        // calculate de-normalized matrix
-        var wr = this.getCanvas().getWidth() / this.getNormalizedWidth(), // width ratio
-            hr = this.getCanvas().getHeight() / this.getNormalizedHeight(), // height ratio
-            nr = wr < hr ? wr : hr, // new ratio
-            matrix = new paper.Matrix(nr,0,0,nr,0,0);
-            
-        // decode layer data
-        var data = Ext.decode(record.get('data'));
-
-        // import paths
-        if (data.paths && data.paths.length) {
-            
-            for (var i = 0, len = data.paths.length; i < len; i++) {
-                var path = this.createPath(data.paths[i], record);
-                path.transform(matrix);
-                layer.addChild(path);
-            }
-            
-            var ghost = this.createGhostPath(data.paths);
-            ghost.transform(matrix);
-            layer.addChild(ghost);
-            
-        }
-
-        // import icons
-        /*
-        if (data.icons && data.icons.length) {
-            for (var i = 0, len = data.icons.length; i < len; i++) {
-                var icon = data.icons[i];
-                this.createIcon(icon.icon, icon.x * nr, icon.y * nr);
-            }
-        }
-        */
-    },
-    
-    importLayerJson: function(json) {
-        console.log('importPath', json);
-        var data = Ext.decode(json),
+    importLayer: function(layerRec) {
+        var data = Ext.decode(layerRec.get('data')),
+            layer = this.createLayer(layerRec.get('routeId')),
             matrix = this.getImportMatrix(),
-            layer = this.createLayer(666),
-            path;
+            path,
+            ghost;
     
+        // import paths
         if (data.paths && data.paths.length) {
             Ext.each(data.paths, function(segments){
                 path = this.createPath({
                     segments: segments
                 });
-                
                 layer.addChild(path);
-                
-                /*
-                var ghost = this.createGhostPath(data.paths);
-                ghost.transform(matrix);
-                layer.addChild(ghost);
-                */
-                
             }, this);
+            
+            ghost = this.createGhostPath(data.paths);
+            layer.addChild(ghost);
         }
 
+        // de-normalize layer
         layer.transform(matrix);
         
         paper.view.draw();
+    },
+    
+    exportLayer: function(layer) {
+        var matrix = this.getExportMatrix(),
+            clone = layer.clone(),
+            segments = [],
+            paths = [],
+            icons = [];
+    
+        // normalize layer
+        clone.transform(matrix);
+        
+        // loop through children
+        Ext.each(clone.children, function(child){
+            switch (child.data.type) {
+                case 'line':
+                    // store line
+                    segments = [];
+                    Ext.each(child.segments, function(segment){
+                        segments.push({
+                            point:     { x: segment.point.x,     y: segment.point.y },
+                            handleIn:  { x: segment.handleIn.x,  y: segment.handleIn.y },
+                            handleOut: { x: segment.handleOut.x, y: segment.handleOut.y }
+                        });
+                    });
+                    paths.push(segments);
+                    break;
+                case 'icon':
+                    // store icon
+                    icons.push({
+                        icon: child.data.icon,
+                        x: child.position.x,
+                        y: child.position.y
+                    });
+                    break;
+            }
+        });
+        
+        // remove clone
+        clone.remove();
+
+        // reactivate layer
+        layer.activate();
+
+        // return layer data
+        return {
+            paths: paths,
+            icons: icons
+        };
     },
     
     getImportMatrix: function() {
@@ -248,8 +256,6 @@ Ext.define('CB.paper.Layer', {
             wr = this.getImageScaledWidth() / this.getNormalizedWidth(),
             hr = this.getImageScaledHeight() / this.getNormalizedHeight(),
             scale = wr < hr ? wr : hr;
-    
-        console.log(scale, tx, ty);
     
         matrix.translate(tx, ty);
         matrix.scale(scale);
@@ -267,62 +273,10 @@ Ext.define('CB.paper.Layer', {
             hr = this.getNormalizedHeight() / this.getImageScaledHeight(),
             scale = wr > hr ? wr : hr;
             
-        console.log('tx', tx, tx2, 'ty', ty, ty2);
-            
         matrix.scale(scale);
         matrix.translate(tx, ty);
         
         return matrix;
-    },
-    
-    exportLayer: function(layer) {
-        var matrix = this.getExportMatrix(),
-            clone = layer.clone(),
-            segments = [],
-            paths = [],
-            icons = [];
-    
-        clone.transform(matrix);
-        
-        Ext.each(clone.children, function(child){
-            switch (child.data.type) {
-                case 'line':
-                    segments = [];
-                    Ext.each(child.segments, function(segment){
-                        segments.push({
-                            point:     { x: segment.point.x,     y: segment.point.y },
-                            handleIn:  { x: segment.handleIn.x,  y: segment.handleIn.y },
-                            handleOut: { x: segment.handleOut.x, y: segment.handleOut.y }
-                        });
-                    });
-                    paths.push(segments);
-                    break;
-                case 'icon':
-                    icons.push({
-                        icon: child.data.icon,
-                        x: child.position.x,
-                        y: child.position.y
-                    });
-                    break;
-            }
-        });
-        
-        // remove clone
-        clone.remove();
-
-        // reactivate layer
-        layer.activate();
-        
-        console.log(Ext.encode({
-            paths: paths,
-            icons: icons
-        }));
-
-        // return layer data
-        return {
-            paths: paths,
-            icons: icons
-        };
     }
 
 });
