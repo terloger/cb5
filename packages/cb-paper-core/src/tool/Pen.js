@@ -16,26 +16,38 @@ Ext.define('CB.paper.tool.Pen', {
     
     penToolMouseDown: function(e) {
         var oldPath = this.getSelectedItem(),
-            newPath = this.createPath({
-                segments: [e.point],
+            path = this.createPath({
+                segments: [],
                 fullySelected: true
-            });
-        
+            }),
+            box = this.getImage().getBox(),
+            x = e.event.x,
+            y = e.event.y;
+            
         if (oldPath) {
             oldPath.selected = false;
         }
         
-        this.setSelectedItem(newPath);
+        this.setSelectedItem(path);
+        
+        if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
+            path.add(e.point);
+        }
     },
     
     penToolMouseDrag: function(e) {
-        var path = this.getSelectedItem();
+        var path = this.getSelectedItem(),
+            box = this.getImage().getBox(),
+            x = e.event.x,
+            y = e.event.y;
         
         if (!path) {
             return;
         }
         
-        path.add(e.point);
+        if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
+            path.add(e.point);
+        }
     },
     
     penToolMouseUp: function(e) {
@@ -47,6 +59,8 @@ Ext.define('CB.paper.tool.Pen', {
         
         path.simplify(this.getSimplifyPath());
         path.fullySelected = true;
+        
+        this.fireEvent('paperdraw', this.getView(), path);
     }
     
     /*

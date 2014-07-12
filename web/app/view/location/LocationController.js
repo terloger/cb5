@@ -6,6 +6,14 @@ Ext.define('CB.view.location.LocationController', {
 
     alias: 'controller.cb-location',
     
+    listen: {
+        controller: {
+            '*': {
+                paperdraw: 'paperDraw'
+            }
+        }
+    },
+    
     config: {
         miniMap: null
     },
@@ -13,6 +21,10 @@ Ext.define('CB.view.location.LocationController', {
     /**
      * Core
      */
+    
+    paperDraw: function(view, Path) {
+        console.log('paperDraw', arguments);
+    },
     
     init: function() {
         var vm = this.getViewModel();
@@ -105,6 +117,11 @@ Ext.define('CB.view.location.LocationController', {
         // adopt location routes
         location.routes().each(function(route){
             session.adopt(route);
+            
+            // adopt route layers
+            route.layers().each(function(layer){
+                session.adopt(layer);
+            });
         });
         
         // adopt location files

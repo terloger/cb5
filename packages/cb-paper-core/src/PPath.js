@@ -19,13 +19,14 @@ Ext.define('CB.paper.PPath', {
     constructor: function(config) {
     },
     
-    createPath: function(data, route) {
-        var path = new paper.Path(data);
-        path.data.type = 'line';
-        path.strokeWidth = this.getStrokeWidth();
-        path.strokeColor = this.getStrokeColorNormal();
-        
-        return path;
+    createPath: function(data) {
+        return new paper.Path(Ext.apply(data, {
+            strokeColor: this.getStrokeColorNormal(),
+            strokeWidth: this.getStrokeWidth(),
+            data: {
+                type: 'line'
+            }
+        }));
     },
     
     createGhostPath: function(paths) {

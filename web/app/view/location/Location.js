@@ -256,7 +256,6 @@ Ext.define('CB.view.location.Location', {
                     }
                 }]
             },
-            selType: 'cellmodel',
             viewConfig: {
                 plugins: {
                     ptype: 'gridviewdragdrop',

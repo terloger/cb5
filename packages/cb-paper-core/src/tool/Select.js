@@ -6,7 +6,7 @@ Ext.define('CB.paper.tool.Select', {
     
     constructor: function() {
         var tool = new paper.Tool();
-
+        
         tool.name = 'select';
         
         tool.attach({
