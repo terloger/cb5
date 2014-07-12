@@ -15,29 +15,49 @@ Ext.define('CB.paper.tool.Pen', {
     },
     
     penToolMouseDown: function(e) {
-        var route = this.getSelectedRoute();
+        var route,
+            layer,
+            oldPath,
+            path,
+            box,
+            x,
+            y;
+        
+        // must have route
+        route = this.getSelectedRoute();
         if (!route) {
             return;
         }
         
-        var layer = this.getRouteLayer(route.get('id')),
-            oldPath = this.getSelectedItem(),
-            path = this.createPath({
-                segments: [],
-                fullySelected: true
-            }),
-            box = this.getImage().getBox(),
-            x = e.event.x,
-            y = e.event.y;
-            
+        // make sure we have route layer before we add path
+        layer = this.getLayers().get(route.get('id'));
+        if (!layer) {
+            layer = this.createLayer(route.get('id'));
+        }
+        
+        // activate layer
+        layer.activate();
+        this.setActiveLayer(layer);
+        
+        // deselect old path
+        oldPath = this.getSelectedItem();
         if (oldPath) {
             oldPath.selected = false;
         }
         
-        layer.activate();
-        this.setActiveLayer(layer);
+        // create new path
+        path = this.createPath({
+            segments: [],
+            fullySelected: true
+        });
+        
+        // set selected item
         this.setSelectedItem(path);
         
+        // add point if event withing image box
+        box = this.getImage().getBox();
+        x = e.event.x;
+        y = e.event.y;
         if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
             path.add(e.point);
         }
@@ -49,28 +69,37 @@ Ext.define('CB.paper.tool.Pen', {
             x = e.event.x,
             y = e.event.y;
         
+        // no path
         if (!path) {
             return;
         }
         
+        // add point if event withing image box
         if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
             path.add(e.point);
         }
     },
     
     penToolMouseUp: function(e) {
-        var path = this.getSelectedItem();
+        var view = this.getView(),
+            path = this.getSelectedItem();
         
+        // no path
         if (!path) {
             return;
         }
         
+        // simplify path
         path.simplify(this.getSimplifyPath());
+        
+        // fully select path
         path.fullySelected = true;
         
-        this.fireEvent('paperdraw', this.getView(), path);
+        // commit layer
+        this.commitLayer(this.getActiveLayer());
         
-        this.exportLayer(this.getActiveLayer());
+        // fire draw event
+        this.fireEvent('paperchanged', view, path);
     }
     
     /*

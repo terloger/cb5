@@ -9,7 +9,7 @@ Ext.define('CB.view.location.LocationController', {
     listen: {
         controller: {
             '*': {
-                paperdraw: 'paperDraw'
+                paperchanged: 'paperChanged'
             }
         }
     },
@@ -21,10 +21,6 @@ Ext.define('CB.view.location.LocationController', {
     /**
      * Core
      */
-    
-    paperDraw: function(view, Path) {
-        console.log('paperDraw', arguments);
-    },
     
     init: function() {
         var vm = this.getViewModel();
@@ -237,6 +233,21 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     /**
+     * Paper
+     */
+    
+    setTool: function(btn) {
+        var paper = this.getView().down('cb-paper'),
+            ctrl = paper.getController();
+    
+        ctrl.setActiveTool(btn.paperTool);
+    },
+    
+    paperChanged: function(paper, Path) {
+        this.getViewModel().set('dirty', true);
+    },
+    
+    /**
      * MiniMap
      */
     
@@ -292,17 +303,6 @@ Ext.define('CB.view.location.LocationController', {
             google.maps.event.trigger(miniMap.map, 'resize');
             miniMap.map.setCenter(center, 15);
         }
-    },
-    
-    /**
-     * Tools
-     */
-    
-    setTool: function(btn) {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.setActiveTool(btn.paperTool);
     },
     
     /**

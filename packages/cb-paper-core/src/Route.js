@@ -44,16 +44,6 @@ Ext.define('CB.paper.Route', {
         return route;
     },
     
-    getRouteLayer: function(routeId) {
-        var layer = this.getLayers().get(routeId);
-    
-        if (!layer) {
-            layer = this.createLayer(routeId);
-        }
-        
-        return layer;
-    },
-    
     getSelectedRoute: function() {
         return this.getViewModel().get('routes.selection');
     }

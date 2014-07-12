@@ -1,8 +1,6 @@
 Ext.define('CB.model.Grade', {
     extend: 'CB.model.Base',
     
-    idProperty: 'id',
-
     fields: [
         {name: 'routeId', reference: 'Route'},
         {name: 'typeId', reference: 'GradeType'},

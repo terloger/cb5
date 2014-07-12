@@ -22,7 +22,7 @@ Ext.define('CB.paper.Layer', {
             }
         });
         
-        // add to collection
+        // add layer to collection
         this.getLayers().add(routeId, layer);
         
         // this is active layer
@@ -33,6 +33,51 @@ Ext.define('CB.paper.Layer', {
         */
         
         return layer;
+    },
+    
+    commitLayer: function(layer) {
+        var view = this.getView(),
+            parentView = view.up('cb-location'),
+            vm = view.getViewModel(),
+            session = parentView.getSession(),
+            route = vm.get('routes.selection'),
+            file = vm.get('file'),
+            layerRec = file.layers().getAt(file.layers().find('routeId', route.get('id'))),
+            layerData = this.exportLayer(layer);
+        
+        if (!layerRec) {
+            
+            // create layer record
+            layerRec = session.createRecord('Layer', {
+                data: Ext.encode(layerData)
+            });
+            layerRec.setFile(file);
+            layerRec.setRoute(route);
+            
+        } else {
+            
+            // update layer record
+            layerRec.set('data', Ext.encode(layerData));
+            
+        }
+        
+        /*
+        console.log('session', session);
+        console.log('route', route);
+        console.log('file', file);
+        console.log('layer', layer);
+        console.log('layerRec', layerRec);
+        console.log('layerData', layerData);
+        */
+        
+        // associate layer record to file
+        file.layers().insert(0, layerRec);
+    },
+    
+    commitLayers: function() {
+        this.getLayers().each(function(layer) {
+            this.commitLayer(layer);
+        }, this);
     },
     
     colorLayer: function(layer, color) {
@@ -51,48 +96,6 @@ Ext.define('CB.paper.Layer', {
             paper.view.draw();
         }
     },
-    
-    scaleLayers: function(scale, cx, cy) {
-        var matrix = new paper.Matrix();
-            
-        matrix.scale(scale, new paper.Point(cx, cy));
-        
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
-        });
-        
-        paper.view.draw();
-    },
-    
-    translateLayers: function(dx, dy) {
-        var matrix = new paper.Matrix();
-        
-        matrix.translate(dx, dy);
-        
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
-        });
-        
-        paper.view.draw();
-    },
-    
-    transformLayers: function(scale, cx, cy, dx, dy) {
-        var matrix = new paper.Matrix(),
-            center = new paper.Point(cx, cy);
-    
-        matrix.scale(scale, center);
-        matrix.translate(dx, dy);
-        
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
-        });
-        
-        paper.view.draw();
-    },
-
-    /**
-     * OLD FUNCTIONS
-     */
 
     clearLayer: function(layer) {
 
@@ -162,35 +165,57 @@ Ext.define('CB.paper.Layer', {
         redo();
     },
     
-    commitLayers: function() {
-        this.getLayers().each(function(layer) {
-            this.commitLayer(layer);
-        }, this);
+    /**
+     * Transform
+     */
+    
+    scaleLayers: function(scale, cx, cy) {
+        var matrix = new paper.Matrix();
+            
+        matrix.scale(scale, new paper.Point(cx, cy));
+        
+        Ext.each(paper.project.layers, function(layer){
+            layer.transform(matrix);
+        });
+        
+        paper.view.draw();
+    },
+    
+    translateLayers: function(dx, dy) {
+        var matrix = new paper.Matrix();
+        
+        matrix.translate(dx, dy);
+        
+        Ext.each(paper.project.layers, function(layer){
+            layer.transform(matrix);
+        });
+        
+        paper.view.draw();
+    },
+    
+    transformLayers: function(scale, cx, cy, dx, dy) {
+        var matrix = new paper.Matrix(),
+            center = new paper.Point(cx, cy);
+    
+        matrix.scale(scale, center);
+        matrix.translate(dx, dy);
+        
+        Ext.each(paper.project.layers, function(layer){
+            layer.transform(matrix);
+        });
+        
+        paper.view.draw();
     },
 
-    commitLayer: function(layer) {
-        // export route
-        var data = this.exportLayer(layer);
-        //var json = this.exportLayerJson(this.getActiveLayer());
-        
-        // update/create layer record
-        var rec = this.getFile().layers().getById(layer.layerId);
-        if (rec) {
-            rec.set('data', Ext.encode(data));
-        } else {
-            rec = Ext.create('CB.model.Layer', {
-                id: layer.layerId,
-                routeId: layer.routeId,
-                data: Ext.encode(data)
-            });
-        }
-        
-        this.getFile().layers().insert(0, rec);
-    },
+    
+    
+    /**
+     * Import/export
+     */
     
     importLayer: function(layerRec) {
         var data = Ext.decode(layerRec.get('data')),
-            layer = this.createLayer(layerRec.get('routeId')),
+            layer = this.createLayer(layerRec),
             matrix = this.getImportMatrix(),
             path,
             ghost;
