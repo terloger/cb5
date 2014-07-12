@@ -13,6 +13,9 @@ Ext.define('CB.paper.Location', {
             return;
         }
         
+        paper.project.clear();
+        this.getLayers().removeAll();
+        
         // clear location
         if (!location || !(location instanceof CB.model.Location)) {
             return null;

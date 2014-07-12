@@ -21,7 +21,7 @@ Ext.define('CB.service.File', {
             },
             success: function(response, operation) {
                 try {
-                    var result = Ext.JSON.decode(response.responseText, true);
+                    var result = Ext.decode(response.responseText, true);
                     if (result.success) {
                         if (config.success) {
                             config.success.apply(config.scope, [result]);

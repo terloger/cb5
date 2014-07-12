@@ -52,24 +52,13 @@ Ext.define('CB.paper.Layer', {
         }
     },
     
-    scaleLayers: function(ratio, cx, cy) {
-        var matrix = new paper.Matrix(),
-            center = new paper.Point(cx, cy);
+    scaleLayers: function(scale, cx, cy) {
+        var matrix = new paper.Matrix();
             
-        matrix.scale(ratio, ratio, center);
+        matrix.scale(scale, new paper.Point(cx, cy));
         
         Ext.each(paper.project.layers, function(layer){
-            Ext.each(layer.children, function(child){
-                switch (child.data.type) {
-                    case 'line':
-                    case 'ghost':
-                        child.transform(matrix);
-                        break;
-                    /*case 'icon':
-                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
-                        break;*/
-                }
-            });
+            layer.transform(matrix);
         });
         
         paper.view.draw();
@@ -81,42 +70,12 @@ Ext.define('CB.paper.Layer', {
         matrix.translate(dx, dy);
         
         Ext.each(paper.project.layers, function(layer){
-            Ext.each(layer.children, function(child){
-                switch (child.data.type) {
-                    case 'line':
-                    case 'ghost':
-                        child.transform(matrix);
-                        break;
-                    /*case 'icon':
-                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
-                        break;*/
-                }
-            });
+            layer.transform(matrix);
         });
         
         paper.view.draw();
     },
 
-    transformLayers: function(matrix) {
-        Ext.each(paper.project.layers, function(layer){
-            Ext.each(layer.children, function(child){
-                switch (child.data.type) {
-                    case 'line':
-                    case 'ghost':
-                        child.transform(matrix);
-                        break;
-                    /*case 'icon':
-                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
-                        break;*/
-                }
-            });
-        });
-        
-        paper.view.draw();
-    },
-
-    
-    
     /**
      * OLD FUNCTIONS
      */
@@ -215,11 +174,6 @@ Ext.define('CB.paper.Layer', {
         this.getFile().layers().insert(0, rec);
     },
     
-    /**
-     * Imports from normalized export.
-     *
-     * @param {CB.model.Layer} record
-     */
     importLayer: function(record) {
         var layer = this.createLayer(record.get('id'), record.get('routeId'));
         
@@ -257,118 +211,118 @@ Ext.define('CB.paper.Layer', {
         }
         */
     },
+    
+    importLayerJson: function(json) {
+        console.log('importPath', json);
+        var data = Ext.decode(json),
+            matrix = this.getImportMatrix(),
+            layer = this.createLayer(666),
+            path;
+    
+        if (data.paths && data.paths.length) {
+            Ext.each(data.paths, function(segments){
+                path = this.createPath({
+                    segments: segments
+                });
+                
+                layer.addChild(path);
+                
+                /*
+                var ghost = this.createGhostPath(data.paths);
+                ghost.transform(matrix);
+                layer.addChild(ghost);
+                */
+                
+            }, this);
+        }
 
+        layer.transform(matrix);
+        
+        paper.view.draw();
+    },
+    
+    getImportMatrix: function() {
+        var matrix = new paper.Matrix(),
+            tx = Math.round(this.getTranslateX()),
+            ty = Math.round(this.getTranslateY()),
+            wr = this.getImageScaledWidth() / this.getNormalizedWidth(),
+            hr = this.getImageScaledHeight() / this.getNormalizedHeight(),
+            scale = wr < hr ? wr : hr;
+    
+        console.log(scale, tx, ty);
+    
+        matrix.translate(tx, ty);
+        matrix.scale(scale);
+        
+        return matrix;
+    },
+    
+    getExportMatrix: function() {
+        var matrix = new paper.Matrix(),
+            tx = Math.round(-this.getTranslateX()),
+            ty = Math.round(-this.getTranslateY()),
+            tx2 = this.getCanvas().getX() - this.getImage().getX(),
+            ty2 = this.getCanvas().getY() - this.getImage().getY(),
+            wr = this.getNormalizedWidth() / this.getImageScaledWidth(),
+            hr = this.getNormalizedHeight() / this.getImageScaledHeight(),
+            scale = wr > hr ? wr : hr;
+            
+        console.log('tx', tx, tx2, 'ty', ty, ty2);
+            
+        matrix.scale(scale);
+        matrix.translate(tx, ty);
+        
+        return matrix;
+    },
+    
     exportLayer: function(layer) {
-
-        /**
-         * Exports layer to normalized paperjs array of paths and icons which we can store into db.
-         *
-         * @argument {object} paperjs layer http://paperjs.org/reference/layer
-         */
-
-        // calculate normalized matrix
-        var imageWidth  = this.getImage().getWidth(),
-            imageHeight = this.getImage().getHeight(),
-            widthRatio  = this.normalizedWidth / imageWidth,
-            heightRatio = this.normalizedHeight / imageHeight,
-            newRatio    = widthRatio > heightRatio ? widthRatio : heightRatio,
-            matrix      = new paper.Matrix(newRatio,0,0,newRatio,0,0);
-
-        // prepare export
-        var paths = [];
-        var icons = [];
-
-        // clone entire layer
-        var clone = layer.clone();
-
-        // loop through children
-        for (var i = 0, ilen = clone.children.length; i < ilen; i++) {
-            var cloned = clone.children[i];
-            var original = layer.children[i];
-            cloned.data = original.data;
-            switch (cloned.data.type) {
+        var matrix = this.getExportMatrix(),
+            clone = layer.clone(),
+            segments = [],
+            paths = [],
+            icons = [];
+    
+        clone.transform(matrix);
+        
+        Ext.each(clone.children, function(child){
+            switch (child.data.type) {
                 case 'line':
-                    cloned.transform(matrix);
-                    var segments = [];
-                    for (var j = 0, jlen = cloned.segments.length; j < jlen; j++) {
-                        var segment = cloned.segments[j];
+                    segments = [];
+                    Ext.each(child.segments, function(segment){
                         segments.push({
                             point:     { x: segment.point.x,     y: segment.point.y },
                             handleIn:  { x: segment.handleIn.x,  y: segment.handleIn.y },
                             handleOut: { x: segment.handleOut.x, y: segment.handleOut.y }
                         });
-                    }
+                    });
                     paths.push(segments);
                     break;
                 case 'icon':
                     icons.push({
-                        icon: cloned.data.icon,
-                        x: cloned.position.x * newRatio,
-                        y: cloned.position.y * newRatio
+                        icon: child.data.icon,
+                        x: child.position.x,
+                        y: child.position.y
                     });
                     break;
             }
-        }
-
+        });
+        
         // remove clone
         clone.remove();
 
         // reactivate layer
         layer.activate();
-        this.getActiveLayer(layer);
+        
+        console.log(Ext.encode({
+            paths: paths,
+            icons: icons
+        }));
 
-        var retVal = {
+        // return layer data
+        return {
             paths: paths,
             icons: icons
         };
-
-        return retVal;
-    },
-
-    exportLayerJson: function(layer) {
-
-        /**
-         * Exports layer to normalized paperjs array of paths which we can store into db.
-         *
-         * @argument {object} paperjs layer http://paperjs.org/reference/layer
-         */
-
-        // calculate normalized matrix
-        var imageWidth  = this.getImage().getWidth(),
-            imageHeight = this.getImage().getHeight(),
-            widthRatio  = this.getNormalizedWidth() / imageWidth,
-            heightRatio = this.getNormalizedHeight() / imageHeight,
-            newRatio    = widthRatio > heightRatio ? widthRatio : heightRatio,
-            matrix      = new paper.Matrix(newRatio,0,0,newRatio,0,0);
-
-        // clone entire layer
-        var clone = layer.clone();
-
-        // loop through paths
-        for (var i = 0, ilen = clone.children.length; i < ilen; i++) {
-            var cloned = clone.children[i];
-            var original = layer.children[i];
-            cloned.data = original.data;
-            switch (cloned.data.type) {
-                case 'line':
-                    cloned.transform(matrix);
-                    break;
-                case 'icon':
-                    cloned.position = new paper.Point(cloned.position.x * newRatio, cloned.position.y * newRatio);
-                    break;
-            }
-        }
-
-        var json = clone.exportJSON();
-
-        // remove clone
-        clone.remove();
-
-        // reactivate layer
-        layer.activate();
-        this.getActiveLayer(layer);
-
-        return json;
     }
 
 });

@@ -69,6 +69,8 @@ Ext.define('CB.paper.tool.Pen', {
         path.fullySelected = true;
         
         this.fireEvent('paperdraw', this.getView(), path);
+        
+        this.exportLayer(this.getActiveLayer());
     }
     
     /*
