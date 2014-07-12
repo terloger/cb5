@@ -1,13 +1,61 @@
+/**
+ * Climbuddy paperjs route mixin
+ */
 Ext.define('CB.paper.Route', {
     
     config: {
         route: null
     },
     
-    getRouteLayer: function() {
-        var layer = this.layers.get(this.getRoute().get('id'));
-        if (!layer) layer = this.createLayer(Ext.data.StoreManager.lookup('layers').getNextId(), this.getRoute().get('id'));
+    constructor: function() {
+        this.getViewModel().bind('{routes.selection}', this.setRoute, this);
+    },
+    
+    applyRoute: function(route) {
+        // route not changed
+        if (route === this.getRoute()) {
+            return;
+        }
+        
+        // get old route
+        var oldRoute = this.getRoute(),
+            layer;
+        
+        // unhighlight old
+        if (oldRoute) {
+            layer = this.getLayers().get(oldRoute.get('id'));
+            if (layer) {
+                this.colorLayer(layer, this.getStrokeColorNormal());
+            }
+        }
+        
+        // clear route
+        if (!route || !(route instanceof CB.model.Route)) {
+            return null;
+        }
+        
+        // highlight new
+        layer = this.getLayers().get(route.get('id'));
+        if (layer) {
+            this.colorLayer(layer, this.getStrokeColorActive());
+        }
+        
+        // confirm change
+        return route;
+    },
+    
+    getRouteLayer: function(routeId) {
+        var layer = this.getLayers().get(routeId);
+    
+        if (!layer) {
+            layer = this.createLayer(routeId);
+        }
+        
         return layer;
+    },
+    
+    getSelectedRoute: function() {
+        return this.getViewModel().get('routes.selection');
     }
     
     /*

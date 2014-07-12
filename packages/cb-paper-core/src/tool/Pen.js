@@ -15,7 +15,13 @@ Ext.define('CB.paper.tool.Pen', {
     },
     
     penToolMouseDown: function(e) {
-        var oldPath = this.getSelectedItem(),
+        var route = this.getSelectedRoute();
+        if (!route) {
+            return;
+        }
+        
+        var layer = this.getRouteLayer(route.get('id')),
+            oldPath = this.getSelectedItem(),
             path = this.createPath({
                 segments: [],
                 fullySelected: true
@@ -28,6 +34,8 @@ Ext.define('CB.paper.tool.Pen', {
             oldPath.selected = false;
         }
         
+        layer.activate();
+        this.setActiveLayer(layer);
         this.setSelectedItem(path);
         
         if (x > box.left && x < box.right && y > box.top && y < box.bottom) {

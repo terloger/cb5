@@ -1,5 +1,5 @@
 /**
- * Climbuddy paperjs tools
+ * Climbuddy paperjs tools mixin
  */
 Ext.define('CB.paper.Tools', {
     requires: [

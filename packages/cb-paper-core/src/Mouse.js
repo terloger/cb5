@@ -11,11 +11,12 @@ Ext.define('CB.paper.Mouse', {
     
     constructor: function() {
         this.on({
-            toolchange: this.toolChange
+            toolchange: this.paperMouseToolChange,
+            scope: this
         });
     },
     
-    toolChange: function(name, tool) {
+    paperMouseToolChange: function(name, tool) {
         switch (name) {
             case 'pen':
             case 'select':
@@ -95,16 +96,16 @@ Ext.define('CB.paper.Mouse', {
         this.setTranslateX(translateX);
         this.setTranslateY(translateY);
         
+        // apply transformation
         this.applyTransform();
         
-        /*
-        var path = this.path;
-        var matrix = new paper.Matrix();
+        // calculate layer ratio and center xy
         var box = this.getCanvas().getBox();
-        matrix.scale(ratio, ratio, new paper.Point(e.getX() - box.x, e.getY() - box.y));
-        path.transform(matrix);
-        paper.view.draw();
-        */
+        var cx = e.getX() - box.x;
+        var cy = e.getY() - box.y;
+        
+        // scale layers
+        this.scaleLayers(ratio, cx, cy);
     },
     
     onPaperMouseDown: function(e, t) {
@@ -116,14 +117,8 @@ Ext.define('CB.paper.Mouse', {
             
             var dx = e.getX() - this.paperMouseMoveXY[0];
             var dy = e.getY() - this.paperMouseMoveXY[1];
-
-            /*
-            var path = this.path;
-            var matrix = new paper.Matrix();
-            matrix.translate(dx, dy);
-            path.transform(matrix);
-            paper.view.draw();
-            */
+            
+            this.translateLayers(dx, dy);
             
             var translateX = this.getTranslateX() + dx;
             var translateY = this.getTranslateY() + dy;

@@ -1,5 +1,5 @@
 /**
- * Climbuddy paper layer mixin
+ * Climbuddy paperjs layer mixin
  */
 Ext.define('CB.paper.Layer', {
 
@@ -10,29 +10,31 @@ Ext.define('CB.paper.Layer', {
         normalizedHeight: 800
     },
     
-    constructor: function(config) {
+    constructor: function() {
         this.setLayers(Ext.create('Ext.util.MixedCollection'));
     },
-
-    transformLayers: function(ratio) {
-        var matrix = new paper.Matrix(ratio,0,0,ratio,0,0);
-        for (var i = 0, ilen = paper.project.layers.length; i < ilen; i++) {
-            var layer = paper.project.layers[i];
-            for (var j = 0, jlen = layer.children.length; j < jlen; j++) {
-                var child = layer.children[j];
-                switch (child.data.type) {
-                    case 'line':
-                    case 'ghost':
-                        child.transform(matrix);
-                        break;
-                    case 'icon':
-                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
-                        break;
-                }
+    
+    createLayer: function(routeId) {
+        // create paper layer
+        var layer = new paper.Layer({
+            data: {
+                routeId: routeId
             }
+        });
+        
+        // add to collection
+        this.getLayers().add(routeId, layer);
+        
+        // this is active layer
+        /*
+        if (this.getRoute() && this.getRoute().get('id') === layer.routeId) {
+            this.setActiveLayer(layer);
         }
+        */
+        
+        return layer;
     },
-
+    
     colorLayer: function(layer, color) {
         if (layer) {
             for (var i = 0, len = layer.children.length; i < len; i++) {
@@ -45,8 +47,79 @@ Ext.define('CB.paper.Layer', {
                         break;
                 }
             }
+            
+            paper.view.draw();
         }
     },
+    
+    scaleLayers: function(ratio, cx, cy) {
+        var matrix = new paper.Matrix(),
+            center = new paper.Point(cx, cy);
+            
+        matrix.scale(ratio, ratio, center);
+        
+        Ext.each(paper.project.layers, function(layer){
+            Ext.each(layer.children, function(child){
+                switch (child.data.type) {
+                    case 'line':
+                    case 'ghost':
+                        child.transform(matrix);
+                        break;
+                    /*case 'icon':
+                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
+                        break;*/
+                }
+            });
+        });
+        
+        paper.view.draw();
+    },
+    
+    translateLayers: function(dx, dy) {
+        var matrix = new paper.Matrix();
+        
+        matrix.translate(dx, dy);
+        
+        Ext.each(paper.project.layers, function(layer){
+            Ext.each(layer.children, function(child){
+                switch (child.data.type) {
+                    case 'line':
+                    case 'ghost':
+                        child.transform(matrix);
+                        break;
+                    /*case 'icon':
+                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
+                        break;*/
+                }
+            });
+        });
+        
+        paper.view.draw();
+    },
+
+    transformLayers: function(matrix) {
+        Ext.each(paper.project.layers, function(layer){
+            Ext.each(layer.children, function(child){
+                switch (child.data.type) {
+                    case 'line':
+                    case 'ghost':
+                        child.transform(matrix);
+                        break;
+                    /*case 'icon':
+                        child.position = new paper.Point(child.position.x * ratio, child.position.y * ratio);
+                        break;*/
+                }
+            });
+        });
+        
+        paper.view.draw();
+    },
+
+    
+    
+    /**
+     * OLD FUNCTIONS
+     */
 
     clearLayer: function(layer) {
 
@@ -142,25 +215,6 @@ Ext.define('CB.paper.Layer', {
         this.getFile().layers().insert(0, rec);
     },
     
-    createLayer: function(layerId, routeId) {
-        // create paper layer
-        var layer = new paper.Layer();
-        layer.layerId = layerId || -1;
-        layer.routeId = routeId || -1;
-        
-        // add to collection
-        this.getLayers().add(layer.routeId, layer);
-        
-        // this is active layer
-        /*
-        if (this.getRoute() && this.getRoute().get('id') === layer.routeId) {
-            this.setActiveLayer(layer);
-        }
-        */
-        
-        return layer;
-    },
-
     /**
      * Imports from normalized export.
      *
@@ -282,14 +336,10 @@ Ext.define('CB.paper.Layer', {
         // calculate normalized matrix
         var imageWidth  = this.getImage().getWidth(),
             imageHeight = this.getImage().getHeight(),
-            widthRatio  = this.normalizedWidth / imageWidth,
-            heightRatio = this.normalizedHeight / imageHeight,
+            widthRatio  = this.getNormalizedWidth() / imageWidth,
+            heightRatio = this.getNormalizedHeight() / imageHeight,
             newRatio    = widthRatio > heightRatio ? widthRatio : heightRatio,
             matrix      = new paper.Matrix(newRatio,0,0,newRatio,0,0);
-
-        // prepare export
-        var paths = [];
-        var icons = [];
 
         // clone entire layer
         var clone = layer.clone();
