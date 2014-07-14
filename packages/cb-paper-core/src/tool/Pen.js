@@ -46,6 +46,7 @@ Ext.define('CB.paper.tool.Pen', {
         // create new path
         path = this.createPath({
             segments: [],
+            strokeColor: this.getPathColorActive(),
             fullySelected: true
         });
         

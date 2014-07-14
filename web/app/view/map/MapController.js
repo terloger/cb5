@@ -31,8 +31,8 @@ Ext.define('CB.view.map.MapController', {
         if (typeof google === 'undefined') {
             this.getView().add({
                 xtype: 'container',
-                margin: '0 20',
-                html: '<p>Looks like Google Maps services are not available at the moment.</p><p>Please try again later.</p>'
+                style: 'padding: 0 1em',
+                html: '<p>Looks like Google Maps services are not available at the moment.</p>'
             });
             return;
         }

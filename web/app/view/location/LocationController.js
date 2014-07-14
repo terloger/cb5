@@ -51,16 +51,6 @@ Ext.define('CB.view.location.LocationController', {
                 
                 me.fileDataChanged();
                 
-                location.files().on({
-                    datachanged: me.fileDataChanged,
-                    scope: me
-                });
-                
-                /*location.routes().on({
-                    datachanged: me.routeDataChanged,
-                    scope: me
-                });*/
-                
                 if (miniMap.getCollapsed()) {
                     miniMap.on({
                         expand: showMiniMap,
@@ -128,8 +118,6 @@ Ext.define('CB.view.location.LocationController', {
             session.adopt(type);
         });
         
-        console.log('locationSession', session);
-        
         // show location
         if (!rendered) {
             view.on({
@@ -158,16 +146,6 @@ Ext.define('CB.view.location.LocationController', {
         vm.set('dirty', false);
         
         me.destroyMiniMap();
-        
-        location.files().un({
-            datachanged: me.fileDataChanged,
-            scope: me
-        });
-        
-        /*location.routes().un({
-            datachanged: me.routeDataChanged,
-            scope: me
-        });*/
         
         if (session) {
             session.destroy();
@@ -247,18 +225,26 @@ Ext.define('CB.view.location.LocationController', {
      */
     
     createMiniMap: function() {
-        console.log('createMiniMap');
-        // no google available
-        if (typeof google === 'undefined') {
-            console.log('no google');
-            return false;
-        }
-        
         var me = this,
             miniMap = me.getView().down('#miniMap');
+    
+        console.log('createMiniMap');
+        
+        // no google available
+        if (typeof google === 'undefined') {
+            miniMap.mapBody = miniMap.body.createChild({
+                cls: 'cb-map-body',
+                style: 'width:100%;height:100%;padding: 0 1em;',
+                html: '<p>Looks like Google Maps services are not available at the moment.</p>'
+            });
+            return;
+        }
         
         if (!miniMap.mapBody) {
-            miniMap.mapBody = miniMap.body.createChild({tag: 'div', cls: 'cb-map-body', style: 'width:100%;height:100%;'});
+            miniMap.mapBody = miniMap.body.createChild({
+                cls: 'cb-map-body',
+                style: 'width:100%;height:100%;'
+            });
         }
         
         if (!miniMap.map) {
@@ -512,6 +498,8 @@ Ext.define('CB.view.location.LocationController', {
                 scope: this,
                 success: function(result) {
                     location.files().add(Ext.create('CB.model.File', result.data));
+                    
+                    this.fileDataChanged();
 
                     if (--this.fileCount === 0) {
                         if (this.fileErrors.length) {
@@ -523,6 +511,8 @@ Ext.define('CB.view.location.LocationController', {
                 },
                 failure: function(msg) {
                     this.fileErrors.push(msg);
+                    
+                    this.fileDataChanged();
 
                     if (--this.fileCount === 0) {
                         this.saveFilesException();

@@ -15,13 +15,13 @@ Ext.define('CB.paper.Path', {
     },
     
     createPath: function(data) {
-        return new paper.Path(Ext.apply(data, {
+        return new paper.Path(Ext.apply({
             strokeColor: this.getPathColorNormal(),
             strokeWidth: this.getPathWidth(),
             data: {
                 type: 'line'
             }
-        }));
+        },data));
     },
     
     createGhostPath: function(paths) {
