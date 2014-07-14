@@ -37,7 +37,7 @@ Ext.define('CB.paper.Layer', {
     },
     
     /**
-     * Craete/clear
+     * Crate/remove
      */
     
     createLayer: function(record, route) {
@@ -60,20 +60,28 @@ Ext.define('CB.paper.Layer', {
         return layer;
     },
     
+    removeLayer: function(layer) {
+        if (layer) {
+            this.getLayers().remove(layer);
+            layer.remove();
+        }
+    },
+    
     remapLayers: function() {
-        console.log('remap layers');
-        this.getLayers().eachKey(function(routeId, layer, index){
+        this.getLayers().eachKey(function(routeId, layer){
             var route = layer.data.route;
             
             if (!route) {
                 return;
             }
             
+            // ext assigns dynamic id for newly created records
+            // example: Route-1, Route-2, Route-3, ...
+            // when records are saved, the receive id from the server
+            // this is where we check if the id changed and update it
             if (route.get('id') !== routeId) {
-                console.log('remap layer', routeId, route.get('id'));
                 this.getLayers().updateKey(routeId, route.get('id'));
             }
-            //console.log(layer.data.route.get('id'));
         }, this);
     },
     
@@ -160,11 +168,7 @@ Ext.define('CB.paper.Layer', {
             
         matrix.scale(scale, center);
         
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
-        });
-        
-        paper.view.draw();
+        this.transformLayers(matrix);
     },
     
     translateLayers: function(dx, dy) {
@@ -172,20 +176,10 @@ Ext.define('CB.paper.Layer', {
         
         matrix.translate(dx, dy);
         
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
-        });
-        
-        paper.view.draw();
+        this.transformLayers(matrix);
     },
     
-    transformLayers: function(scale, cx, cy, dx, dy) {
-        var matrix = new paper.Matrix(),
-            center = new paper.Point(cx, cy);
-    
-        matrix.scale(scale, center);
-        matrix.translate(dx, dy);
-        
+    transformLayers: function(matrix) {
         Ext.each(paper.project.layers, function(layer){
             layer.transform(matrix);
         });

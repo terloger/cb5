@@ -188,8 +188,6 @@ Ext.define('CB.view.location.LocationController', {
         view.unmask();
         
         paper.remapLayers();        
-        console.log('batch', batch);
-        console.log('operation', operation);
     },
     
     saveLocationException: function(batch, operation) {
@@ -221,7 +219,7 @@ Ext.define('CB.view.location.LocationController', {
         this.getView().down('cb-paper').setActiveTool(btn.paperTool);
     },
     
-    paperChanged: function(paper, Path) {
+    paperChanged: function(paper, item) {
         this.getViewModel().set('dirty', true);
     },
     
@@ -238,6 +236,7 @@ Ext.define('CB.view.location.LocationController', {
         // no google available
         if (typeof google === 'undefined') {
             miniMap.mapBody = miniMap.body.createChild({
+                tag: 'div',
                 cls: 'cb-map-body',
                 style: 'width:100%;height:100%;padding: 0 1em;',
                 html: '<p>Looks like Google Maps services are not available at the moment.</p>'
@@ -247,6 +246,7 @@ Ext.define('CB.view.location.LocationController', {
         
         if (!miniMap.mapBody) {
             miniMap.mapBody = miniMap.body.createChild({
+                tag: 'div',
                 cls: 'cb-map-body',
                 style: 'width:100%;height:100%;'
             });

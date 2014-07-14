@@ -61,9 +61,7 @@ Ext.define('CB.paper.Route', {
     
     removeRoute: function(route) {
         var layer = this.getRouteLayer(route);
-        if (layer) {
-            layer.remove();
-        }
+        this.removeLayer(layer);
     },
     
     routeMouseEnter: function(route) {
