@@ -177,18 +177,23 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocationComplete: function(batch, operation) {
-        console.log('saveLocationComplete', batch);
+        console.log('saveLocationComplete');
         var me = this,
             view = me.getView(),
-            vm = view.getViewModel();
+            vm = view.getViewModel(),
+            paper = view.down('cb-paper');
     
         vm.set('dirty', false);
         
         view.unmask();
+        
+        paper.remapLayers();        
+        console.log('batch', batch);
+        console.log('operation', operation);
     },
     
     saveLocationException: function(batch, operation) {
-        console.log('saveLocationException', arguments);
+        console.log('saveLocationException');
         var me = this,
             view = me.getView(),
             exceptions = batch.getExceptions(),

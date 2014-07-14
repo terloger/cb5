@@ -15,7 +15,13 @@ Ext.define('CB.paper.Layer', {
      */
     
     constructor: function() {
+        // create layer collection
         this.setLayers(Ext.create('Ext.util.MixedCollection'));
+        
+        var view = this.getView();
+        
+        // provide functions for the view
+        view.remapLayers = Ext.bind(this.remapLayers, this);
     },
     
     getRouteLayer: function(route) {
@@ -52,6 +58,23 @@ Ext.define('CB.paper.Layer', {
         this.getLayers().add(route.get('id'), layer);
         
         return layer;
+    },
+    
+    remapLayers: function() {
+        console.log('remap layers');
+        this.getLayers().eachKey(function(routeId, layer, index){
+            var route = layer.data.route;
+            
+            if (!route) {
+                return;
+            }
+            
+            if (route.get('id') !== routeId) {
+                console.log('remap layer', routeId, route.get('id'));
+                this.getLayers().updateKey(routeId, route.get('id'));
+            }
+            //console.log(layer.data.route.get('id'));
+        }, this);
     },
     
     /**
