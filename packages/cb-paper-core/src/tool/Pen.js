@@ -18,10 +18,7 @@ Ext.define('CB.paper.tool.Pen', {
         var route,
             layer,
             oldPath,
-            path,
-            box,
-            x,
-            y;
+            path;
         
         // must have route
         route = this.getSelectedRoute();
@@ -29,10 +26,11 @@ Ext.define('CB.paper.tool.Pen', {
             return;
         }
         
-        // make sure we have route layer before we add path
-        layer = this.getLayers().get(route.get('id'));
+        // make sure we have route layer before we create path
+        layer = this.getRouteLayer(route.get('id'));
         if (!layer) {
-            layer = this.createLayer(route.get('id'));
+            // we will assign record when we commit layer in penToolMouseUp
+            layer = this.createLayer(null, route);
         }
         
         // activate layer
@@ -55,29 +53,20 @@ Ext.define('CB.paper.tool.Pen', {
         this.setSelectedItem(path);
         
         // add point if event withing image box
-        box = this.getImage().getBox();
-        x = e.event.x;
-        y = e.event.y;
-        if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
+        if (this.withinImage(e.event.x, e.event.y)) {
             path.add(e.point);
         }
     },
     
     penToolMouseDrag: function(e) {
-        var path = this.getSelectedItem(),
-            box = this.getImage().getBox(),
-            x = e.event.x,
-            y = e.event.y;
+        var path = this.getSelectedItem();
         
-        // no path
-        if (!path) {
+        // no path or not within image
+        if (!path || !this.withinImage(e.event.x, e.event.y)) {
             return;
         }
         
-        // add point if event withing image box
-        if (x > box.left && x < box.right && y > box.top && y < box.bottom) {
-            path.add(e.point);
-        }
+        path.add(e.point);
     },
     
     penToolMouseUp: function(e) {
@@ -90,124 +79,16 @@ Ext.define('CB.paper.tool.Pen', {
         }
         
         // simplify path
-        path.simplify(this.getSimplifyPath());
+        path.simplify(this.getPathSimplify());
         
         // fully select path
-        path.fullySelected = true;
+        path.fullySelected = false;
         
-        // commit layer
+        // commit active layer
         this.commitLayer(this.getActiveLayer());
         
         // fire draw event
         this.fireEvent('paperchanged', view, path);
     }
-    
-    /*
-    tool.onMouseDown = Ext.bind(function(e) {
-        if (!this.file || !this.route) return false;
-
-        switch (e.event.button) {
-            // leftclick
-            case 0:
-                // load route layer
-                var layer = this.getRouteLayer();
-                layer.activate();
-                this.activeLayer = layer;
-
-                // if we produced a path before, deselect it
-                if (this.selectedItem) {
-                    this.selectedItem.selected = false;
-                }
-
-                // create a new path and set its stroke color to black:
-                this.activePath = this.createPath(null, this.route);
-                this.activePath.add(e.point);
-                this.activePath.data.type = 'line';
-                this.activePath.strokeWidth = this.strokeWidth;
-                this.activePath.strokeColor = this.strokeColorActive;
-
-                // select the path, so we can see its segment points:
-                this.activePath.fullySelected = true;
-                break;
-            // rightclick
-            case 2:
-                break;
-        }
-    }, this);
-
-    tool.onMouseDrag = Ext.bind(function(e) {
-        if (!this.file || !this.route || !this.activePath) return false;
-
-        switch (e.event.button) {
-            // leftclick
-            case 0:
-                this.activePath.add(e.point);
-                break;
-            // rightclick
-            case 2:
-                break;
-        }
-    }, this);
-
-    tool.onMouseUp = Ext.bind(function(e) {
-        if (!this.file || !this.route || !this.activePath) return false;
-
-        switch (e.event.button) {
-            // leftclick
-            case 0:
-                // when the mouse is released, simplify it:
-                this.activePath.simplify(this.simplifyPath);
-
-                // select the path, so we can see its segments:
-                this.activePath.fullySelected = true;
-
-                // create history point
-                var path = this.activePath,
-                    parent = this.activePath.parent,
-                    selectedItem = this.selectedItem;
-
-                var undo = Ext.bind(function() {
-                    this.selectedItem = null;
-                    path.selected = false;
-                    path.remove();
-                    if (selectedItem) {
-                        this.selectedItem = selectedItem;
-                        this.selectedItem.selected = true;
-                    }
-                    paper.view.draw();
-                    this.fireEvent('change', this);
-                }, this);
-
-                var redo = Ext.bind(function() {
-                    if (this.selectedItem) {
-                        this.selectedItem.selected = false;
-                        this.selectedItem = null;
-                    }
-                    this.selectedItem = path;
-                    path.selected = true;
-                    path.parent = parent;
-                    paper.view.draw();
-                    this.fireEvent('change', this);
-                }, this);
-
-                this.addHistory(undo, redo);
-
-                // select path
-                this.selectedItem = this.activePath;
-                this.selectedItem.selected = true;
-
-                // finish drawing
-                this.activePath = null;
-
-                this.fireEvent('change', this);
-
-                break;
-            // rightclick
-            case 2:
-                break;
-        }
-    }, this);
-
-    */
 
 });

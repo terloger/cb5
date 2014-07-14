@@ -11,56 +11,54 @@ Ext.define('CB.paper.Mouse', {
     
     constructor: function() {
         this.on({
-            toolchange: this.paperMouseToolChange,
+            toolchange: this.toolChange,
             scope: this
         });
     },
     
-    paperMouseToolChange: function(name, tool) {
+    toolChange: function(name, tool) {
         switch (name) {
             case 'pen':
             case 'select':
-                this.suspendPaperMouseEvents();
+                this.suspendMouseEvents();
                 break;
             case 'move':
-                this.resumePaperMouseEvents();
+                this.resumeMouseEvents();
                 break;
         }
     },
     
-    suspendPaperMouseEvents: function() {
-        console.log('suspendPaperMouseEvents');
+    suspendMouseEvents: function() {
         this.getCanvas().un({
-            mousewheel: this.onPaperMouseWheel,
-            mousedown: this.onPaperMouseDown,
-            mousemove: this.onPaperMouseMove,
-            mouseup: this.onPaperMouseUp,
+            mousewheel: this.paperMouseWheel,
+            mousedown: this.paperMouseDown,
+            mousemove: this.paperMouseMove,
+            mouseup: this.paperMouseUp,
             scope: this
         });
         // fix mouseup when out of window
         Ext.getDoc().un({
-            mouseup: this.onPaperMouseUp,
+            mouseup: this.paperMouseUp,
             scope: this
         });
     },
     
-    resumePaperMouseEvents: function() {
-        console.log('resumePaperMouseEvents');
+    resumeMouseEvents: function() {
         this.getCanvas().on({
-            mousewheel: this.onPaperMouseWheel,
-            mousedown: this.onPaperMouseDown,
-            mousemove: this.onPaperMouseMove,
-            mouseup: this.onPaperMouseUp,
+            mousewheel: this.paperMouseWheel,
+            mousedown: this.paperMouseDown,
+            mousemove: this.paperMouseMove,
+            mouseup: this.paperMouseUp,
             scope: this
         });
         // fix mouseup when out of window
         Ext.getDoc().on({
-            mouseup: this.onPaperMouseUp,
+            mouseup: this.paperMouseUp,
             scope: this
         });
     },
     
-    onPaperMouseWheel: function(e, el) {
+    paperMouseWheel: function(e, el) {
         // calculate new scale and ratio
         var scale = this.getScale(),
             newScale = e.getWheelDelta() > 0 ? scale * 1.1 : scale / 1.1,
@@ -74,10 +72,12 @@ Ext.define('CB.paper.Mouse', {
         // get mouse position within image
         var mx = e.getX() - this.getImage().getX();
         var my = e.getY() - this.getImage().getY();
+        /*
         if (mx < 0) mx = 100;
         if (my < 0) my = 100;
         if (mx > (this.getImageWidth() * scale)) mx = this.getImageWidth() * scale - 100;
         if (my > (this.getImageHeight() * scale)) my = this.getImageHeight() * scale - 100;
+        */
         
         // get mouse position within image after resize
         var nx = mx * ratio;
@@ -108,11 +108,11 @@ Ext.define('CB.paper.Mouse', {
         this.scaleLayers(ratio, cx, cy);
     },
     
-    onPaperMouseDown: function(e, t) {
+    paperMouseDown: function(e, t) {
         this.paperMouseMoveXY = e.getXY();
     },
     
-    onPaperMouseMove: function(e, t) {
+    paperMouseMove: function(e, t) {
         if (this.paperMouseMoveXY) {
             
             var dx = e.getX() - this.paperMouseMoveXY[0];
@@ -132,7 +132,7 @@ Ext.define('CB.paper.Mouse', {
         }
     },
     
-    onPaperMouseUp: function(e, t) {
+    paperMouseUp: function(e, t) {
         this.paperMouseMoveXY = null;
     }
 

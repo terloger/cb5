@@ -10,6 +10,10 @@ Ext.define('CB.model.Layer', {
         {name: 'created', type: 'date'}
     ],
     
+    config: {
+        paperLayer: null
+    },
+    
     proxy: {
         type: 'direct',
         api: {
@@ -27,6 +31,12 @@ Ext.define('CB.model.Layer', {
         writer: {
             type: 'json',
             allowSingle: false
+        }
+    },
+    
+    listeners: {
+        idchanged: function() {
+            console.log('idchanged');
         }
     }
     

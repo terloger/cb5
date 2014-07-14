@@ -120,7 +120,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Select Tool',
             glyph: 'xe62a@climbuddy',
             paperTool: 'select',
-            handler: 'setTool',
+            handler: 'setPaperTool',
             toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!draw}'
@@ -132,7 +132,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Move Tool',
             glyph: 'xe63a@climbuddy',
             paperTool: 'move',
-            handler: 'setTool',
+            handler: 'setPaperTool',
             toggleGroup: 'paper-tools',
             pressed: true,
             bind: {
@@ -145,7 +145,7 @@ Ext.define('CB.view.location.Location', {
             overflowText: 'Pen Tool',
             glyph: 'xe628@climbuddy',
             paperTool: 'pen',
-            handler: 'setTool',
+            handler: 'setPaperTool',
             toggleGroup: 'paper-tools',
             bind: {
                 hidden: '{!draw}'
@@ -277,7 +277,9 @@ Ext.define('CB.view.location.Location', {
                 }
             }],
             listeners: {
-                edit: 'routeDataChanged'
+                edit: 'routeDataChanged',
+                itemmouseenter: 'routeMouseEnter',
+                itemmouseleave: 'routeMouseLeave'
             }
         },{
             xtype: 'panel',
@@ -302,7 +304,16 @@ Ext.define('CB.view.location.Location', {
     }],
     
     items: [{
-        xtype: 'cb-paper'
-    }]
+        xtype: 'cb-paper',
+        listeners: {
+            routeclick: 'routeClick',
+            routemouseenter: 'paperRouteMouseEnter',
+            routemouseleave: 'paperRouteMouseLeave'
+        }
+    }],
+
+    showLocation: function(location) {
+        this.getViewModel().set('location', location);
+    }
     
 });

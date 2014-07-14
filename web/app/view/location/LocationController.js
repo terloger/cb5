@@ -14,10 +14,6 @@ Ext.define('CB.view.location.LocationController', {
         }
     },
     
-    config: {
-        miniMap: null
-    },
-    
     /**
      * Core
      */
@@ -39,6 +35,7 @@ Ext.define('CB.view.location.LocationController', {
         var me = this,
             view = me.getView(),
             miniMap = view.down('#miniMap'),
+            paper = view.down('cb-paper'),
             vm = view.getViewModel(),
             session = view.getSession(),
             rendered = view.rendered,
@@ -106,6 +103,7 @@ Ext.define('CB.view.location.LocationController', {
         // create new session
         session = Ext.create('Ext.data.Session');
         view.setSession(session);
+        paper.setSession(session);
         
         // add location
         session.adopt(location);
@@ -113,16 +111,16 @@ Ext.define('CB.view.location.LocationController', {
         // adopt location routes
         location.routes().each(function(route){
             session.adopt(route);
-            
-            // adopt route layers
-            route.layers().each(function(layer){
-                session.adopt(layer);
-            });
         });
         
         // adopt location files
         location.files().each(function(file){
             session.adopt(file);
+            
+            // adopt file layers
+            file.layers().each(function(layer){
+                session.adopt(layer);
+            });
         });
         
         // adopt location types
@@ -185,11 +183,11 @@ Ext.define('CB.view.location.LocationController', {
     
         console.log(session.getChanges());
         
-        view.mask('Saving ...');
-        
         if (!batch) {
             return;
         }
+        
+        view.mask('Saving ...');
         
         batch.on({
             complete: this.saveLocationComplete,
@@ -236,11 +234,8 @@ Ext.define('CB.view.location.LocationController', {
      * Paper
      */
     
-    setTool: function(btn) {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.setActiveTool(btn.paperTool);
+    setPaperTool: function(btn) {
+        this.getView().down('cb-paper').setActiveTool(btn.paperTool);
     },
     
     paperChanged: function(paper, Path) {
@@ -310,17 +305,11 @@ Ext.define('CB.view.location.LocationController', {
      */
     
     zoomIn: function() {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.zoomIn();
+        this.getView().down('cb-paper').zoomIn();
     },
     
     zoomOut: function() {
-        var paper = this.getView().down('cb-paper'),
-            ctrl = paper.getController();
-    
-        ctrl.zoomOut();
+        this.getView().down('cb-paper').zoomOut();
     },
     
     /**
@@ -341,23 +330,74 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     removeRoute: function() {
-        var me = this,
-            view = me.getView(),
+        var view = this.getView(),
             vm = view.getViewModel(),
-            routes = view.down('#routes'),
-            selection = routes.getSelectionModel().getSelection();
+            paper = view.down('cb-paper'),
+            file = vm.get('file'),
+            route = vm.get('routes.selection'),
+            layer = file.getRouteLayer(route);
     
-        console.log('removeRoute', selection);
+        if (!route) {
+            return;
+        }
         
-        Ext.each(selection, function(route){
-            route.drop();
-        });
-        
+        // remove paper route
+        paper.removeRoute(route);
+
+        // drop route record
+        route.drop();
+
+        if (layer) {
+            layer.drop();
+        }
+
+        // mark view as dirty
         vm.set('dirty', true);
+    },
+    
+    routeClick: function(paper, route) {
+        var view = this.getView(),
+            routes = view.down('#routes');
+    
+        routes.getSelectionModel().select(route);
     },
     
     routeDataChanged: function() {
         this.getViewModel().set('dirty', true);
+    },
+    
+    routeMouseEnter: function(grid, route, item, index, e) {
+        var view = this.getView(),
+            paper = view.down('cb-paper');
+    
+        paper.routeMouseEnter(route);
+    },
+    
+    routeMouseLeave: function(grid, route, item, index, e) {
+        var view = this.getView(),
+            paper = view.down('cb-paper');
+    
+        paper.routeMouseLeave(route);
+    },
+    
+    paperRouteMouseEnter: function(paper, route) {
+        var view = this.getView(),
+            routes = view.down('#routes'),
+            node = routes.getView().getNode(route);
+    
+        if (node) {
+            Ext.fly(node).addCls('x-grid-item-over');
+        }
+    },
+    
+    paperRouteMouseLeave: function(paper, route) {
+        var view = this.getView(),
+            routes = view.down('#routes'),
+            node = routes.getView().getNode(route);
+    
+        if (node) {
+            Ext.fly(node).removeCls('x-grid-item-over');
+        }
     },
     
     /**

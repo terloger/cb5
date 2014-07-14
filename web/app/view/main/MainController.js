@@ -131,7 +131,7 @@ Ext.define('CB.view.main.MainController', {
             location = store.getById(id);
         
         view.setActiveTab(locationView);
-        vm.set('location', location);
+        locationView.showLocation(location);
         this.redirectTo('location/' + id);
     },
     

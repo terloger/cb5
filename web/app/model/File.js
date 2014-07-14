@@ -33,6 +33,10 @@ Ext.define('CB.model.File', {
         return CB.Config.get('url.uploads') + '/' +
                 Ext.Date.format(this.get('created'), 'Y/m/d') + '/' +
                 this.get('fileName') + (size ? '_' + size : '') + '.' + this.get('extension');
+    },
+    
+    getRouteLayer: function(route) {
+        return this.layers().findRecord('routeId', route.get('id'));
     }
 
 });

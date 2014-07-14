@@ -14,13 +14,21 @@ Ext.define('CB.paper.File', {
             return;
         }
         
+        // remove existing project
+        if (paper.project) {
+            paper.project.remove();
+        }
+        
+        // setup new project
+        paper.setup(this.getCanvas().dom);
+        
         // clear image
         if (this.getImage()) {
             this.getImage().destroy();
             this.setImage(null);
         }
         
-        // must be a valid file
+        // must be a valid file or we're passing null
         if (!file || !(file instanceof CB.model.File)) {
             return null;
         }

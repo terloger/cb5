@@ -27,7 +27,6 @@ Ext.define('CB.paper.Touch', {
     },
     
     onPaperTouchStart: function(e) {
-        console.log('onTouchStart');
         e = e.event;
         
         switch (e.touches.length) {
@@ -65,7 +64,6 @@ Ext.define('CB.paper.Touch', {
     },
     
     onPaperTouchMove: function(e) {
-        console.log('onTouchMove');
         e = e.event;
         
         switch (this.touchAction) {

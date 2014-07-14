@@ -34,6 +34,9 @@ Ext.define('CB.paper.Tools', {
                 }
             }
         }
+        
+        // provide functions for the view
+        this.getView().setActiveTool = Ext.bind(this.setActiveTool, this);
     },
     
     applyActiveTool: function(name) {

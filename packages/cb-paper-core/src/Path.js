@@ -4,23 +4,20 @@
 Ext.define('CB.paper.Path', {
 
     config: {
-        simplifyPath: 10, // how much to "simplify" paths when user ends drawing a line
+        pathSimplify: 10, // how much to "simplify" paths when user ends drawing a line
 
-        strokeWidth: 2,
-        ghostStrokeWidth: 30,
+        pathWidth: 2,
+        pathGhostWidth: 30,
         
-        strokeColorNormal: '#ff0000',
-        strokeColorOver: '#fff600',
-        strokeColorActive: '#18ff00'
-    },
-    
-    constructor: function(config) {
+        pathColorNormal: '#ff0000',
+        pathColorOver: '#fff600',
+        pathColorActive: '#fff600'//'#18ff00'
     },
     
     createPath: function(data) {
         return new paper.Path(Ext.apply(data, {
-            strokeColor: this.getStrokeColorNormal(),
-            strokeWidth: this.getStrokeWidth(),
+            strokeColor: this.getPathColorNormal(),
+            strokeWidth: this.getPathWidth(),
             data: {
                 type: 'line'
             }
@@ -35,7 +32,7 @@ Ext.define('CB.paper.Path', {
             path = new paper.Path({
                 segments: segments,
                 strokeColor: new paper.Color(0,0,0,0),
-                strokeWidth: 30,
+                strokeWidth: this.getPathGhostWidth(),
                 data: {
                     type: 'ghost'
                 }
@@ -49,7 +46,53 @@ Ext.define('CB.paper.Path', {
             
         }, this);
         
+        ghost.attach({
+            mouseenter: Ext.bind(this.ghostPathMouseEnter, this, [ghost], true),
+            mouseleave: Ext.bind(this.ghostPathMouseLeave, this, [ghost], true),
+            click: Ext.bind(this.ghostPathClick, this, [ghost], true)
+        });
+        
         return ghost;
+    },
+    
+    ghostPathClick: function(e, ghost){
+        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+            return;
+        }
+        
+        var view = this.getView(),
+            route = ghost.parent.data.route;
+    
+        view.fireEvent('routeclick', view, route);
+    },
+    
+    ghostPathMouseEnter: function(e, ghost){
+        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+            return;
+        }
+        
+        var view = this.getView(),
+            route = ghost.parent.data.route,
+            color = this.getPathColorOver();
+
+        this.colorRouteLayer(route, color);
+
+        view.fireEvent('routemouseenter', view, route);
+    },
+    
+    ghostPathMouseLeave: function(e, ghost){
+        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+            return;
+        }
+        
+        var view = this.getView(),
+            route = ghost.parent.data.route,
+            selected = this.getSelectedRoute(),
+            color = route === selected ? this.getPathColorActive() : this.getPathColorNormal();
+
+        this.colorRouteLayer(route, color);
+
+        view.fireEvent('routemouseleave', view, route);
     }
 
 });

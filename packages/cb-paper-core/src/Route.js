@@ -8,7 +8,16 @@ Ext.define('CB.paper.Route', {
     },
     
     constructor: function() {
-        this.getViewModel().bind('{routes.selection}', this.setRoute, this);
+        var view = this.getView(),
+            vm = view.getViewModel();
+        
+        // provide functions for the view
+        view.removeRoute = Ext.bind(this.removeRoute, this);
+        view.routeMouseEnter = Ext.bind(this.routeMouseEnter, this);
+        view.routeMouseLeave = Ext.bind(this.routeMouseLeave, this);
+        
+        // bind to route selection change
+        vm.bind('{routes.selection}', this.setRoute, this);
     },
     
     applyRoute: function(route) {
@@ -23,9 +32,9 @@ Ext.define('CB.paper.Route', {
         
         // unhighlight old
         if (oldRoute) {
-            layer = this.getLayers().get(oldRoute.get('id'));
+            layer = this.getRouteLayer(oldRoute);
             if (layer) {
-                this.colorLayer(layer, this.getStrokeColorNormal());
+                this.colorLayer(layer, this.getPathColorNormal());
             }
         }
         
@@ -34,10 +43,12 @@ Ext.define('CB.paper.Route', {
             return null;
         }
         
-        // highlight new
-        layer = this.getLayers().get(route.get('id'));
+        // activate and highlight new
+        layer = this.getRouteLayer(route);
         if (layer) {
-            this.colorLayer(layer, this.getStrokeColorActive());
+            layer.activate();
+            this.setActiveLayer(layer);
+            this.colorLayer(layer, this.getPathColorActive());
         }
         
         // confirm change
@@ -46,106 +57,25 @@ Ext.define('CB.paper.Route', {
     
     getSelectedRoute: function() {
         return this.getViewModel().get('routes.selection');
-    }
+    },
     
-    /*
-
-    applyRoute: function(route) {
-        if (typeof route === 'number') {
-            route = this.getLocation().routes().getById(route);
-        }
-        
-        if (route instanceof CB.model.Route) {
-
-            // already set
-            if (!this.getRoute() || this.getRoute() !== route) {
-
-                // clear history
-                //this.clearHistory();
-
-                // deselect selected item
-                if (this.selectedItem) {
-                    this.selectedItem.selected = false;
-                }
-
-                // unhighlight previous layer
-                if (this.activeLayer && this.getRoute().get('id') !== route.get('id')) {
-                    this.colorLayer(this.activeLayer, this.strokeColorNormal);
-                    this.showIcons(this.activeLayer, false);
-                    this.activeLayer = null;
-                }
-
-                // highlight current layer
-                var layer = this.layers.get(route.get('id'));
-                if (layer) {
-                    layer.activate();
-                    this.activeLayer = layer;
-                    this.colorLayer(this.activeLayer, this.strokeColorActive);
-                }
-
-                // redraw
-                paper.view.draw();
-
-                // confirm apply
-                return route;
-            }
-
-        } else {
-
-            // unhighlight previous layer
-            if (this.activeLayer) {
-                this.colorLayer(this.activeLayer, this.strokeColorNormal);
-                this.activeLayer = null;
-
-                // redraw
-                paper.view.draw();
-            }
-            
-            // confirm clear
-            return null;
+    removeRoute: function(route) {
+        var layer = this.getRouteLayer(route);
+        if (layer) {
+            layer.remove();
         }
     },
     
-    updateRoute: function(newRoute, oldRoute) {
-        console.log('TODO: fix routeselectionchange event', this);
-        //this.fireEvent('routeselectionchange', this, newRoute, oldRoute);
-    },
-
-    removeRoutes: function(routes) {
-        for (var i = 0, len = routes.length; i < len; i++) {
-            var route = routes[i];
-            var layer = this.layers.get(route.get('id'));
-            if (layer) {
-                // remove record
-                var index = this.getFile().layers().findBy(function(rec, id) {
-                    if (rec.get('routeId') === route.get('id')) {
-                        return true;
-                    }
-                }, this);
-                if (index > -1) this.getFile().layers().removeAt(index);
-
-                // remove layer
-                layer.remove();
-            }
-        }
-        paper.view.draw();
-    },
-
     routeMouseEnter: function(route) {
-        var layer = this.layers.get(route.get('id'));
-        if (layer && layer !== this.activeLayer && route !== this.getRoute()) {
-            this.colorLayer(layer, this.strokeColorOver);
-            paper.view.draw();
-        }
+        var color = this.getPathColorOver();
+        this.colorRouteLayer(route, color);
     },
-
+    
     routeMouseLeave: function(route) {
-        var layer = this.layers.get(route.get('id'));
-        if (layer && layer !== this.activeLayer && route !== this.getRoute()) {
-            this.colorLayer(layer, this.strokeColorNormal);
-            paper.view.draw();
-        }
+        var selected = this.getSelectedRoute(),
+            color = route === selected ? this.getPathColorActive() : this.getPathColorNormal();
+    
+        this.colorRouteLayer(route, color);
     }
-    */
-
+    
 });

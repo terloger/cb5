@@ -20,14 +20,6 @@ Ext.define('CB.paper.Image', {
         // remove paper layer references
         this.getLayers().removeAll();
         
-        // remove existing project
-        if (paper.project) {
-            paper.project.remove();
-        }
-        
-        // setup new project
-        paper.setup(this.getCanvas().dom);
-        
         // fit canvas to parent container
         this.resizePaper(view.getWidth(), view.getHeight());
         
@@ -40,6 +32,8 @@ Ext.define('CB.paper.Image', {
     
     loadImage: function(image) {
         var view = this.getView(),
+            vm = view.getViewModel(),
+            file = vm.get('file'),
             box = view.getBox(),
             pad = this.getImagePadding(),
             wr = (box.width - (pad * 2)) / image.width,
@@ -72,17 +66,35 @@ Ext.define('CB.paper.Image', {
         this.applyTransform();
         
         // show layers
-        this.getFile().layers().each(function(layer, index){
+        file.layers().each(function(layer){
             this.importLayer(layer);
         }, this);
     },
     
-    getImageScaledWidth: function() {
-        return this.getImageWidth() * this.getScale();
+    getImageScaledWidth: function(scale) {
+        return this.getImageWidth() * (scale || this.getScale());
     },
     
-    getImageScaledHeight: function() {
-        return this.getImageHeight() * this.getScale();
+    getImageScaledHeight: function(scale) {
+        return this.getImageHeight() * (scale || this.getScale());
+    },
+    
+    withinImage: function(x, y) {
+        var box = this.getImage().getBox();
+        
+        if (x) {
+            if (x < box.left && x > box.right) {
+                return false;
+            }
+        }
+        
+        if (y) {
+            if (y < box.top && y > box.bottom) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
 });

@@ -10,68 +10,86 @@ Ext.define('CB.paper.Layer', {
         normalizedHeight: 800
     },
     
+    /**
+     * Core
+     */
+    
     constructor: function() {
         this.setLayers(Ext.create('Ext.util.MixedCollection'));
     },
     
-    createLayer: function(routeId) {
+    getRouteLayer: function(route) {
+        var routeId = route instanceof CB.model.Route ? route.get('id') : route;
+        return this.getLayers().get(routeId);
+    },
+    
+    getRecordLayer: function(record) {
+        var recordId = record instanceof CB.model.Layer ? record.get('id') : record;
+        return this.getLayers().findBy(function(layer){
+            return layer.data.record && layer.data.record.get('id') === recordId;
+        }, this);
+    },
+    
+    /**
+     * Craete/clear
+     */
+    
+    createLayer: function(record, route) {
         // create paper layer
         var layer = new paper.Layer({
             data: {
-                routeId: routeId
+                record: record,
+                route: route
             }
         });
         
-        // add layer to collection
-        this.getLayers().add(routeId, layer);
-        
-        // this is active layer
-        /*
-        if (this.getRoute() && this.getRoute().get('id') === layer.routeId) {
-            this.setActiveLayer(layer);
+        // set paper layer reference on layer record
+        if (record) {
+            record.setPaperLayer(layer);
         }
-        */
+        
+        // add layer to collections
+        this.getLayers().add(route.get('id'), layer);
         
         return layer;
     },
     
+    /**
+     * Commit
+     */
+    
     commitLayer: function(layer) {
         var view = this.getView(),
-            parentView = view.up('cb-location'),
             vm = view.getViewModel(),
-            session = parentView.getSession(),
-            route = vm.get('routes.selection'),
+            session = view.getSession(),
             file = vm.get('file'),
-            layerRec = file.layers().getAt(file.layers().find('routeId', route.get('id'))),
+            route = vm.get('routes.selection'),
+            record = layer.data.record,
             layerData = this.exportLayer(layer);
-        
-        if (!layerRec) {
+    
+        if (!record) {
             
             // create layer record
-            layerRec = session.createRecord('Layer', {
+            record = session.createRecord('Layer', {
                 data: Ext.encode(layerData)
             });
-            layerRec.setFile(file);
-            layerRec.setRoute(route);
+            record.setRoute(route);
+            
+            // set record reference on paper layer
+            layer.data.record = record;
+            
+            // set paper layer reference on layer record
+            record.setPaperLayer(layer);
+            
+            // associate layer record to file
+            file.layers().add(record);
             
         } else {
             
             // update layer record
-            layerRec.set('data', Ext.encode(layerData));
+            record.set('data', Ext.encode(layerData));
             
         }
-        
-        /*
-        console.log('session', session);
-        console.log('route', route);
-        console.log('file', file);
-        console.log('layer', layer);
-        console.log('layerRec', layerRec);
-        console.log('layerData', layerData);
-        */
-        
-        // associate layer record to file
-        file.layers().insert(0, layerRec);
     },
     
     commitLayers: function() {
@@ -79,6 +97,10 @@ Ext.define('CB.paper.Layer', {
             this.commitLayer(layer);
         }, this);
     },
+    
+    /**
+     * Color
+     */
     
     colorLayer: function(layer, color) {
         if (layer) {
@@ -96,83 +118,24 @@ Ext.define('CB.paper.Layer', {
             paper.view.draw();
         }
     },
-
-    clearLayer: function(layer) {
-
-        // no layer passed, find active layer
-        if (!layer) {
-            if (!this.getActiveLayer() || !this.getRoute() || !this.getFile()) return false;
-            layer = this.getLayers().get(this.getRoute().get('id'));
-            if (layer !== this.getActiveLayer()) return false;
-        }
-        
-        // no layer found
-        if (!layer) return;
-
-        // fetch layer record
-        var rec = this.getFile().layers().getById(this.getActiveLayer().layerId);
-        
-        // get layer project reference
-        var project = layer.project;
-        
-        var undo = Ext.bind(function() {
-            // re-add layer to project
-            layer._project = project;
-            layer._index = project.layers.push(layer) - 1;
-
-            // re-add layer to collection
-            this.getLayers().add(layer);
-            
-            // if record exists, re-add it to file layers
-            if (rec) {
-                this.getFile().layers().add(rec);
-            }
-
-            // set active layer
-            this.setActiveLayer(layer);
-
-            // redraw view
-            paper.view.draw();
-            
-            // commit
-            this.fireEvent('change', this);
-        }, this);
-        
-        var redo = Ext.bind(function() {
-            // remove paper layer
-            layer.remove();
-
-            // remove layer from collection
-            this.getLayers().remove(layer);
-
-            // if record exists, remove it from file layers
-            if (rec) {
-                this.getFile().layers().remove(rec);
-            }
-
-            // unset active layer
-            this.setActiveLayer(null);
-
-            // redraw view
-            paper.view.draw();
-            
-            // commit
-            this.fireEvent('change', this);
-        }, this);
-
-        this.addHistory(undo, redo);
-        
-        redo();
+    
+    colorRouteLayer: function(route, color) {
+        this.colorLayer(this.getRouteLayer(route), color);
     },
     
+    colorRecordLayer: function(record, color) {
+        this.colorLayer(this.getRecordLayer(record), color);
+    },
+
     /**
      * Transform
      */
     
     scaleLayers: function(scale, cx, cy) {
-        var matrix = new paper.Matrix();
+        var matrix = new paper.Matrix(),
+            center = cx && cy ? new paper.Point(cx, cy) : null;
             
-        matrix.scale(scale, new paper.Point(cx, cy));
+        matrix.scale(scale, center);
         
         Ext.each(paper.project.layers, function(layer){
             layer.transform(matrix);
@@ -207,15 +170,13 @@ Ext.define('CB.paper.Layer', {
         paper.view.draw();
     },
 
-    
-    
     /**
      * Import/export
      */
     
-    importLayer: function(layerRec) {
-        var data = Ext.decode(layerRec.get('data')),
-            layer = this.createLayer(layerRec),
+    importLayer: function(record) {
+        var data = Ext.decode(record.get('data')),
+            layer = this.createLayer(record, record.getRoute()),
             matrix = this.getImportMatrix(),
             path,
             ghost;
