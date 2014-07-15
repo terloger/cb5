@@ -207,8 +207,10 @@ Ext.define('CB.paper.Layer', {
                 layer.addChild(path);
             }, this);
             
-            ghost = this.createGhostPath(data.paths);
-            layer.addChild(ghost);
+            if (Ext.os.deviceType === 'Desktop') {
+                ghost = this.createGhostPath(data.paths);
+                layer.addChild(ghost);
+            }
         }
 
         // de-normalize layer

@@ -15,13 +15,19 @@ Ext.define('CB.paper.Path', {
     },
     
     createPath: function(data) {
-        return new paper.Path(Ext.apply({
+        var path = new paper.Path(Ext.apply(data, {
             strokeColor: this.getPathColorNormal(),
             strokeWidth: this.getPathWidth(),
             data: {
                 type: 'line'
             }
-        },data));
+        }));
+        
+        path.attach({
+            click: Ext.bind(this.pathClick, this, [path], true)
+        });
+        
+        return path;
     },
     
     createGhostPath: function(paths) {
@@ -49,19 +55,19 @@ Ext.define('CB.paper.Path', {
         ghost.attach({
             mouseenter: Ext.bind(this.ghostPathMouseEnter, this, [ghost], true),
             mouseleave: Ext.bind(this.ghostPathMouseLeave, this, [ghost], true),
-            click: Ext.bind(this.ghostPathClick, this, [ghost], true)
+            click: Ext.bind(this.pathClick, this, [ghost], true)
         });
         
         return ghost;
     },
     
-    ghostPathClick: function(e, ghost){
-        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+    pathClick: function(e, path){
+        if (!path || !path.parent || !path.parent.data || !path.parent.data.route) {
             return;
         }
         
         var view = this.getView(),
-            route = ghost.parent.data.route;
+            route = path.parent.data.route;
     
         view.fireEvent('routeclick', view, route);
     },
