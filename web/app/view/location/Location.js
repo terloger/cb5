@@ -249,7 +249,7 @@ Ext.define('CB.view.location.Location', {
                     xtype: 'button',
                     ui: 'blank',
                     tooltip: 'Remove selected routes',
-                    glyph: 'xe617@climbuddy',
+                    glyph: 'xe619@climbuddy',
                     handler: 'removeRoute',
                     bind: {
                         hidden: '{!user}'
