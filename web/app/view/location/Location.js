@@ -305,6 +305,7 @@ Ext.define('CB.view.location.Location', {
     
     items: [{
         xtype: 'cb-paper',
+        cls: 'loading',
         listeners: {
             routeclick: 'routeClick',
             routemouseenter: 'paperRouteMouseEnter',
