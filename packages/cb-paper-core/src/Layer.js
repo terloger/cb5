@@ -179,6 +179,16 @@ Ext.define('CB.paper.Layer', {
         this.transformLayers(matrix);
     },
     
+    scaleAndTranslateLayers: function(scale, cx, cy, dx, dy) {
+        var matrix = new paper.Matrix(),
+            center = new paper.Point(cx, cy);
+    
+        matrix.scale(scale, center);
+        matrix.translate(dx, dy);
+        
+        this.transformLayers(matrix);
+    },
+    
     transformLayers: function(matrix) {
         Ext.each(paper.project.layers, function(layer){
             layer.transform(matrix);

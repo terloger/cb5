@@ -153,7 +153,7 @@ Ext.define('CB.paper.Touch', {
                 var box = this.getCanvas().getBox();
                 var cx = endCenterX - box.x;
                 var cy = endCenterY - box.y;
-                this.transformLayers(ratio, cx, cy, tx, ty);
+                this.scaleAndTranslateLayers(ratio, cx, cy, tx, ty);
                 
                 // apply transform
                 this.applyTransform();
@@ -167,8 +167,6 @@ Ext.define('CB.paper.Touch', {
                 // reset start center
                 this.startCenterX = endCenterX;
                 this.startCenterY = endCenterY;
-                
-                
                 
                 break;
         }
