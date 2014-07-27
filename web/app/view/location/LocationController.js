@@ -51,6 +51,10 @@ Ext.define('CB.view.location.LocationController', {
                 
                 me.fileDataChanged();
                 
+                if (!miniMap) {
+                    return;
+                }
+                
                 if (miniMap.getCollapsed()) {
                     miniMap.on({
                         expand: showMiniMap,
@@ -211,6 +215,8 @@ Ext.define('CB.view.location.LocationController', {
         });
     },
     
+    
+    
     /**
      * Paper
      */
@@ -221,6 +227,181 @@ Ext.define('CB.view.location.LocationController', {
     
     paperChanged: function(paper, item) {
         this.getViewModel().set('dirty', true);
+    },
+    
+    paperRouteSelectionChange: function(paper, route, oldRoute, e) {
+        var view = this.getView(),
+            vm = view.getViewModel();
+    
+        vm.set('selectedroute', route);
+    
+        if (Ext.os.deviceType === 'Desktop') {
+            
+            var routes = view.down('#routes'),
+                sm = routes.getSelectionModel();
+        
+            if (route) {
+                sm.select(route, false, true);
+            } else {
+                sm.deselectAll();
+            }
+            
+        } else {
+            
+            var tip = view.down('#routeTip');
+            
+            if (route instanceof CB.model.Route) {
+                
+                // show tip
+                tip.setTitle(route.get('name'));
+                if (Ext.supports.Touch) {
+                    var touch = e.event && e.event.touches && e.event.touches.length ? e.event.touches[0] : null;
+                    if (touch) {
+                        tip.showAt(touch.pageX - paper.getX(), touch.pageY - paper.getY());
+                    }
+                } else {
+                    tip.showAt(e.event.layerX + 20, e.event.layerY + 20);
+                }
+
+                // reposition tip
+                var tbox = tip.getEl().getBox();
+                var bbox = Ext.getBody().getBox();
+                if (tbox.right > bbox.width) {
+                    tip.setX(tip.getX() - tip.getWidth() - 40);
+                }
+                if (tbox.bottom > bbox.height) {
+                    tip.setY(tip.getY() - tip.getHeight() - 40);
+                }
+                
+            } else {
+                
+                // hide tip
+                tip.hide();
+                
+            }
+        }
+    },
+    
+    paperRouteMouseEnter: function(paper, route) {
+        var view = this.getView();
+        
+        if (Ext.os.deviceType === 'Desktop') {
+            var routes = view.down('#routes');
+            var node = routes.getView().getNode(route);
+            if (node) {
+                Ext.fly(node).addCls('x-grid-item-over');
+            }
+        } else {
+            // do nothing
+        }
+    },
+    
+    paperRouteMouseLeave: function(paper, route) {
+        var view = this.getView();
+        
+        if (Ext.os.deviceType === 'Desktop') {
+            var routes = view.down('#routes');
+            var node = routes.getView().getNode(route);
+            if (node) {
+                Ext.fly(node).removeCls('x-grid-item-over');
+            }
+        } else {
+            // do nothing
+        }
+    },
+    
+    closeRouteTip: function() {
+        var view = this.getView(),
+            paper = view.down('cb-paper'),
+            vm = paper.getViewModel();
+    
+        vm.set('route', null);
+    },
+    
+    /**
+     * Route
+     */
+    
+    addRoute: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            routes = view.down('#routes'),
+            route = session.createRecord('Route', {});
+    
+        console.log('addRoute', route);
+    
+        routes.getStore().add(route);
+        
+        routes.getPlugin('cellediting').startEdit(route, 0);
+    },
+    
+    removeRoute: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            paper = view.down('cb-paper'),
+            file = vm.get('file'),
+            route = vm.get('routes.selection'),
+            layer = file.getRouteLayer(route);
+    
+        if (!route) {
+            return;
+        }
+        
+        // remove paper route
+        paper.removeRoute(route);
+
+        // drop route record
+        route.drop();
+
+        if (layer) {
+            layer.drop();
+        }
+
+        // mark view as dirty
+        vm.set('dirty', true);
+    },
+    
+    routeDataChanged: function() {
+        this.getViewModel().set('dirty', true);
+    },
+    
+    routeSelectionChange: function(grid, selection) {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            routes = view.down('#routes'),
+            paper = view.down('cb-paper'),
+            papervm = paper.getViewModel(),
+            selection = routes.getSelectionModel().getSelection(),
+            route = selection.length ? selection[0] : null;
+        
+        vm.set('selectedroute', route);
+        papervm.set('route', route);
+    },
+    
+    routeMouseEnter: function(grid, route, item, index, e) {
+        var view = this.getView(),
+            paper = view.down('cb-paper');
+    
+        paper.routeMouseEnter(route);
+    },
+    
+    routeMouseLeave: function(grid, route, item, index, e) {
+        var view = this.getView(),
+            paper = view.down('cb-paper');
+    
+        paper.routeMouseLeave(route);
+    },
+    
+    /**
+     * Zoom
+     */
+    
+    zoomIn: function() {
+        this.getView().down('cb-paper').zoomIn();
+    },
+    
+    zoomOut: function() {
+        this.getView().down('cb-paper').zoomOut();
     },
     
     /**
@@ -288,106 +469,6 @@ Ext.define('CB.view.location.LocationController', {
             center = miniMap.map.getCenter();
             google.maps.event.trigger(miniMap.map, 'resize');
             miniMap.map.setCenter(center, 15);
-        }
-    },
-    
-    /**
-     * Zoom
-     */
-    
-    zoomIn: function() {
-        this.getView().down('cb-paper').zoomIn();
-    },
-    
-    zoomOut: function() {
-        this.getView().down('cb-paper').zoomOut();
-    },
-    
-    /**
-     * Route
-     */
-    
-    addRoute: function() {
-        var view = this.getView(),
-            session = view.getSession(),
-            routes = view.down('#routes'),
-            route = session.createRecord('Route', {});
-    
-        console.log('addRoute', route);
-    
-        routes.getStore().add(route);
-        
-        routes.getPlugin('cellediting').startEdit(route, 0);
-    },
-    
-    removeRoute: function() {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            paper = view.down('cb-paper'),
-            file = vm.get('file'),
-            route = vm.get('routes.selection'),
-            layer = file.getRouteLayer(route);
-    
-        if (!route) {
-            return;
-        }
-        
-        // remove paper route
-        paper.removeRoute(route);
-
-        // drop route record
-        route.drop();
-
-        if (layer) {
-            layer.drop();
-        }
-
-        // mark view as dirty
-        vm.set('dirty', true);
-    },
-    
-    routeClick: function(paper, route) {
-        var view = this.getView(),
-            routes = view.down('#routes');
-    
-        routes.getSelectionModel().select(route);
-    },
-    
-    routeDataChanged: function() {
-        this.getViewModel().set('dirty', true);
-    },
-    
-    routeMouseEnter: function(grid, route, item, index, e) {
-        var view = this.getView(),
-            paper = view.down('cb-paper');
-    
-        paper.routeMouseEnter(route);
-    },
-    
-    routeMouseLeave: function(grid, route, item, index, e) {
-        var view = this.getView(),
-            paper = view.down('cb-paper');
-    
-        paper.routeMouseLeave(route);
-    },
-    
-    paperRouteMouseEnter: function(paper, route) {
-        var view = this.getView(),
-            routes = view.down('#routes'),
-            node = routes.getView().getNode(route);
-    
-        if (node) {
-            Ext.fly(node).addCls('x-grid-item-over');
-        }
-    },
-    
-    paperRouteMouseLeave: function(paper, route) {
-        var view = this.getView(),
-            routes = view.down('#routes'),
-            node = routes.getView().getNode(route);
-    
-        if (node) {
-            Ext.fly(node).removeCls('x-grid-item-over');
         }
     },
     

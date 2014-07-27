@@ -182,19 +182,18 @@ Ext.define('CB.view.main.MainController', {
     
     collapseClick: function() {
         var header = this.getView().getHeader(),
-            btn = this.collapseButton,
-            el = header.getEl();
+            btn = this.collapseButton;
     
         if (header.isCollapsed) {
             header.isCollapsed = false;
-            header.setWidth(198);
+            header.setWidth(178);
             header.removeCls(header.collapsedCls);
             btn.setGlyph(btn.collapseGlyph);
             btn.setText(btn.collapseText);
         } else {
             header.isCollapsed = true;
             header.originalWidth = header.getWidth();
-            header.setWidth(68);
+            header.setWidth(52);
             header.addCls(header.collapsedCls);
             btn.setGlyph(btn.expandGlyph);
             btn.setText(btn.expandText);

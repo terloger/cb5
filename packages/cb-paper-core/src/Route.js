@@ -17,7 +17,7 @@ Ext.define('CB.paper.Route', {
         view.routeMouseLeave = Ext.bind(this.routeMouseLeave, this);
         
         // bind to route selection change
-        vm.bind('{routes.selection}', this.setRoute, this);
+        vm.bind('{route}', this.setRoute, this);
     },
     
     applyRoute: function(route) {
@@ -56,7 +56,7 @@ Ext.define('CB.paper.Route', {
     },
     
     getSelectedRoute: function() {
-        return this.getViewModel().get('routes.selection');
+        return this.getViewModel().get('route');
     },
     
     removeRoute: function(route) {
@@ -65,7 +65,9 @@ Ext.define('CB.paper.Route', {
     },
     
     routeMouseEnter: function(route) {
-        var color = this.getPathColorOver();
+        var selected = this.getSelectedRoute(),
+            color = route === selected ? this.getPathColorActive() : this.getPathColorOver();
+    
         this.colorRouteLayer(route, color);
     },
     

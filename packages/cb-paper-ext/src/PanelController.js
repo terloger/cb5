@@ -31,11 +31,14 @@ Ext.define('CB.paper.PanelController', {
         // init paper
         this.mixins.paper.constructor.call(this);
         
-        // init touch/mouse
+        // init mouse support
+        if (Ext.os.deviceType === 'Desktop') {
+            this.mixins.mouse.constructor.call(this);
+        }
+        
+        // init touch support
         if (Ext.supports.Touch) {
             this.mixins.touch.constructor.call(this);
-        } else {
-            this.mixins.mouse.constructor.call(this);
         }
         
         // init core mixins

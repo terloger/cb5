@@ -14,7 +14,7 @@ Ext.define('CB.view.user.Login', {
     
     tbar: {
         ui: 'header',
-        height: 72,
+        height: 46,
         items: [{
             xtype: 'tbtext',
             text: 'Sign In',

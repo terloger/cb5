@@ -21,7 +21,7 @@ Ext.define('CB.view.location.List', {
     
     tbar: {
         ui: 'header',
-        height: 72,
+        height: 46,
         items: [{
             xtype: 'tbtext',
             text: 'Locations',

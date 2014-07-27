@@ -4,6 +4,11 @@
 Ext.define('CB.paper.Panel', {
     extend: 'Ext.container.Container',
     
+    requires: [
+        'CB.paper.PanelController',
+        'CB.paper.PanelModel'
+    ],
+    
     xtype : 'cb-paper',
     
     controller: 'cb-paper',

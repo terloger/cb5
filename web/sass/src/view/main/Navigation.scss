@@ -6,15 +6,15 @@
     $ui-header-color: $cb-dark-background,
     $ui-header-glyph-color: $cb-dark-background,
     $ui-header-glyph-opacity: 1,
-    $ui-header-font-size: 22px,
-    $ui-header-line-height: 52px,
+    $ui-header-font-size: 20px,
+    $ui-header-line-height: 44px,
     $ui-header-font-weight: 600,
-    $ui-header-icon-height: 32px,
-    $ui-header-icon-width: 32px,
+    $ui-header-icon-height: 28px,
+    $ui-header-icon-width: 36px,
     $ui-header-icon-spacing: 12px,
     $ui-header-background-color: $cb-yellow-color,
     $ui-header-padding: 0,
-    $ui-header-text-margin: 10px 24px 10px 16px,
+    $ui-header-text-margin: 2px 19px 0px 7px,
     $ui-header-noborder-adjust: false
 );
 
@@ -36,7 +36,7 @@
     $ui-tab-glyph-opacity: 1,
     $ui-tab-border-radius: 0,
     $ui-tab-border-width: 0,
-    $ui-tab-padding: 10px 24px,
+    $ui-tab-padding: 8px 14px 6px 16px,
     $ui-tab-margin: 0,
     $ui-tab-font-size: 14px,
     $ui-tab-font-size-over: 14px,
@@ -96,13 +96,17 @@
         }
     }
     
+    &.x-top {
+        border-bottom: 1px solid #222;
+    }
+    
     .x-tool-img {
         background-color: transparent !important;
-        left: 34px;
+        top: 7px;
+        left: 12px;
         width: 32px;
         height: 32px;
         position: relative;
-        top: 20px;
     }
     
     .x-tool-gear {
@@ -146,8 +150,8 @@
     }
 
     .x-menu-item-icon {
-        width: 40px;
-        height: 40px;
+        width: 28px;
+        height: 28px;
         margin: 5px;
         top: 6px;
         left: 10px;
@@ -156,7 +160,7 @@
     }
 
     .x-menu-item-text {
-        margin-left: 65px;
+        margin-left: 55px;
         margin-right: 15px;
     }
 
@@ -176,8 +180,8 @@
     border: none;
     z-index: 999999;
     position: absolute;
-    bottom: 18px;
-    left: 18px;
+    bottom: 8px;
+    left: 8px;
     
     opacity: 0.3;
     

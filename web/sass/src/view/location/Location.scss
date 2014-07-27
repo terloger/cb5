@@ -13,9 +13,13 @@
         -o-transform-origin: 0 0;
         transform-origin: 0 0;
         
+        /*
         -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 1);
         -moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 1);
         box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 1);
+        */
+        
+        
     }
     
 }
@@ -35,9 +39,13 @@
 
 .cb-location-sidebar {
     
+    border-left: 1px solid #ddd !important;
+    
+    /*
     -webkit-box-shadow: -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
     -moz-box-shadow:    -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
     box-shadow:         -1px 0px 5px 0px rgba(50, 50, 50, 0.75);
+    */
     
     .x-panel-header {
         background-color: rgba(245, 245, 235, 1);

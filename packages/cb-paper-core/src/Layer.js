@@ -94,7 +94,7 @@ Ext.define('CB.paper.Layer', {
             vm = view.getViewModel(),
             session = view.getSession(),
             file = vm.get('file'),
-            route = vm.get('routes.selection'),
+            route = vm.get('route'),
             record = layer.data.record,
             layerData = this.exportLayer(layer);
     

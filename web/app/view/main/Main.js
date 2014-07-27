@@ -27,7 +27,7 @@ Ext.define('CB.view.main.Main', {
         cls: 'cb-navigation',
         collapsedCls: 'collapsed',
         glyph: 'xe600@climbuddy',
-        width: 198,
+        width: 178,
         layout: {
             align: 'stretchmax'
         },
@@ -41,8 +41,8 @@ Ext.define('CB.view.main.Main', {
         },
         tools: [{
             type: 'gear',
-            width: 96,
-            height: 72,
+            width: 52,
+            height: 46,
             margin: '0 0 0 0',
             handler: 'showNavigationMenu',
             plugins: 'responsive',
@@ -63,19 +63,19 @@ Ext.define('CB.view.main.Main', {
         items: [{
             text: 'Home',
             glyph: 'xe602@climbuddy',
-            height: 50
+            height: 46
         },{
             text: 'Map',
             glyph: 'xe603@climbuddy',
-            height: 50
+            height: 46
         },{
             text: 'Locations',
             glyph: 'xe605@climbuddy',
-            height: 50
+            height: 46
         },{
             text: 'Sign In',
             glyph: 'xe60f@climbuddy',
-            height: 50
+            height: 46
         }],
         listeners: {
             click: 'navigationMenuClick'
@@ -109,17 +109,16 @@ Ext.define('CB.view.main.Main', {
     defaults: {
         tabConfig: {
             plugins: 'responsive',
+            iconAlign: 'left',
+            textAlign: 'left',
             responsiveConfig: {
                 wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left',
                     flex: 0,
-                    height: 58
+                    height: 52
                 },
                 tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    flex: 1
+                    flex: 0,
+                    height: 'auto'
                 },
                 'width < 566 && tall': {
                     visible: false
@@ -138,7 +137,7 @@ Ext.define('CB.view.main.Main', {
         },
         tbar: {
             ui: 'header',
-            height: 72,
+            height: 46,
             items: [{
                 xtype: 'tbtext',
                 text: 'Loading application ...',
@@ -152,20 +151,18 @@ Ext.define('CB.view.main.Main', {
         route: 'home',
         tabConfig: {
             plugins: 'responsive',
+            iconAlign: 'left',
+            textAlign: 'left',
             responsiveConfig: {
                 wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left',
                     flex: 0,
-                    height: 58,
+                    height: 52,
                     style: {
                         'box-shadow': 'inset 0px 5px 4px -2px rgba(0, 0, 0, 0.35)'
                     }
                 },
                 tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    flex: 1,
+                    flex: 0,
                     style: {
                         'box-shadow': 'none'
                     }
@@ -228,7 +225,7 @@ Ext.define('CB.view.main.Main', {
                 }
                 Ext.apply(this.header, {
                     isCollapsed: true,
-                    width: 68,
+                    width: 52,
                     cls: cls
                 });
             }

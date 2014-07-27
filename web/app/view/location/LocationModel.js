@@ -8,7 +8,7 @@ Ext.define('CB.view.location.LocationModel', {
     
     formulas: {
         draw: function(get) {
-            return get('user') && get('location') && get('routes.selection');
+            return get('user') && get('location') && get('selectedroute') && Ext.os.deviceType === 'Desktop';
         }
     }
     

@@ -16,7 +16,7 @@ Ext.define('CB.view.home.Home', {
     
     tbar: {
         ui: 'header',
-        height: 72,
+        height: 46,
         items: [{
             xtype: 'tbtext',
             text: 'Wellcome to CLIMBuddy beta',

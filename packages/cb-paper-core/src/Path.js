@@ -10,7 +10,7 @@ Ext.define('CB.paper.Path', {
         pathGhostWidth: 30,
         
         pathColorNormal: '#ff0000',
-        pathColorOver: '#fff600',
+        pathColorOver: '#18ff00',
         pathColorActive: '#fff600'//'#18ff00'
     },
     
@@ -53,8 +53,8 @@ Ext.define('CB.paper.Path', {
         }, this);
         
         ghost.attach({
-            mouseenter: Ext.bind(this.ghostPathMouseEnter, this, [ghost], true),
-            mouseleave: Ext.bind(this.ghostPathMouseLeave, this, [ghost], true),
+            mouseenter: Ext.bind(this.pathMouseEnter, this, [ghost], true),
+            mouseleave: Ext.bind(this.pathMouseLeave, this, [ghost], true),
             click: Ext.bind(this.pathClick, this, [ghost], true)
         });
         
@@ -67,32 +67,41 @@ Ext.define('CB.paper.Path', {
         }
         
         var view = this.getView(),
-            route = path.parent.data.route;
+            vm = view.getViewModel(),
+            oldRoute = this.getSelectedRoute(),
+            newRoute = path.parent.data.route;
     
-        view.fireEvent('routeclick', view, route);
+        if (newRoute === oldRoute) {
+            newRoute = null; // deselect
+        }
+    
+        vm.set('route', newRoute);
+    
+        view.fireEvent('routeselectionchange', view, newRoute, oldRoute, e);
     },
     
-    ghostPathMouseEnter: function(e, ghost){
-        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+    pathMouseEnter: function(e, path){
+        if (!path || !path.parent || !path.parent.data || !path.parent.data.route) {
             return;
         }
         
         var view = this.getView(),
-            route = ghost.parent.data.route,
-            color = this.getPathColorOver();
+            route = path.parent.data.route,
+            selected = this.getSelectedRoute(),
+            color = route === selected ? this.getPathColorActive() : this.getPathColorOver();
 
         this.colorRouteLayer(route, color);
 
         view.fireEvent('routemouseenter', view, route);
     },
     
-    ghostPathMouseLeave: function(e, ghost){
-        if (!ghost || !ghost.parent || !ghost.parent.data || !ghost.parent.data.route) {
+    pathMouseLeave: function(e, path){
+        if (!path || !path.parent || !path.parent.data || !path.parent.data.route) {
             return;
         }
         
         var view = this.getView(),
-            route = ghost.parent.data.route,
+            route = path.parent.data.route,
             selected = this.getSelectedRoute(),
             color = route === selected ? this.getPathColorActive() : this.getPathColorNormal();
 
