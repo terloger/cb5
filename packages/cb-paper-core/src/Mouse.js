@@ -59,6 +59,10 @@ Ext.define('CB.paper.Mouse', {
     },
     
     paperMouseWheel: function(e, el) {
+        if (!this.withinImage(e.getX(), e.getY())) {
+            return;
+        }
+        
         // calculate new scale and ratio
         var scale = this.getScale(),
             newScale = e.getWheelDelta() > 0 ? scale * 1.1 : scale / 1.1,
@@ -109,27 +113,32 @@ Ext.define('CB.paper.Mouse', {
     },
     
     paperMouseDown: function(e, t) {
+        if (!this.withinImage(e.getX(), e.getY())) {
+            return;
+        }
+        
         this.paperMouseMoveXY = e.getXY();
     },
     
     paperMouseMove: function(e, t) {
-        if (this.paperMouseMoveXY) {
-            
-            var dx = e.getX() - this.paperMouseMoveXY[0];
-            var dy = e.getY() - this.paperMouseMoveXY[1];
-            
-            this.translateLayers(dx, dy);
-            
-            var translateX = this.getTranslateX() + dx;
-            var translateY = this.getTranslateY() + dy;
-            
-            this.setTranslateX(translateX);
-            this.setTranslateY(translateY);
-            
-            this.applyTransform();
-            
-            this.paperMouseMoveXY = e.getXY();
+        if (!this.paperMouseMoveXY) {
+            return;
         }
+            
+        var dx = e.getX() - this.paperMouseMoveXY[0];
+        var dy = e.getY() - this.paperMouseMoveXY[1];
+
+        this.translateLayers(dx, dy);
+
+        var translateX = this.getTranslateX() + dx;
+        var translateY = this.getTranslateY() + dy;
+
+        this.setTranslateX(translateX);
+        this.setTranslateY(translateY);
+
+        this.applyTransform();
+
+        this.paperMouseMoveXY = e.getXY();
     },
     
     paperMouseUp: function(e, t) {

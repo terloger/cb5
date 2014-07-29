@@ -15,7 +15,7 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     /**
-     * Core
+     * Location
      */
     
     init: function() {
@@ -23,6 +23,46 @@ Ext.define('CB.view.location.LocationController', {
         
         vm.bind('{location}', this.showLocation, this);
     },
+    
+    save: function() {
+        console.log('save');
+        this.operations = [
+            'saveLocation',
+            'saveTypes'
+        ];
+        
+        this.saveLocation();
+    },
+    
+    saveComplete: function() {
+        console.log('saveComplete');
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        vm.set('dirty', false);
+        
+        view.unmask();
+        
+        this.fireEvent('locationupdated', location);
+    },
+    
+    operationComplete: function(operation) {
+        console.log('operationComplete', operation);
+        var index = this.operations.indexOf(operation);
+        
+        if (index > -1) {
+            this.operations.splice(index, 1);
+        }
+        
+        if (this.operations.length === 0) {
+            this.saveComplete();
+        }
+    },
+    
+    /**
+     * Location
+     */
     
     showLocation: function(location) {
         if (!location) {
@@ -34,10 +74,11 @@ Ext.define('CB.view.location.LocationController', {
         
         var me = this,
             view = me.getView(),
-            miniMap = view.down('#miniMap'),
+            main = view.up('cb-main'),
+            miniMap = view.down('cb-location-minimap'),
             paper = view.down('cb-paper'),
             vm = view.getViewModel(),
-            session = view.getSession(),
+            session = main.getSession(),
             rendered = view.rendered,
             visible = view.isVisible(),
             file = location.files().getAt(0),
@@ -48,6 +89,8 @@ Ext.define('CB.view.location.LocationController', {
             showLocation = function() {
                 vm.set('location', location);
                 vm.set('file', file);
+                
+                location.routes().sort('pos', 'ASC');
                 
                 me.fileDataChanged();
                 
@@ -89,40 +132,11 @@ Ext.define('CB.view.location.LocationController', {
                 marker.setMap(miniMap.map);
             };
         
-        // destroy session
-        if (session) {
-            session.destroy();
-        }
-        
-        // create new session
-        session = Ext.create('Ext.data.Session');
+        // set session
         view.setSession(session);
         paper.setSession(session);
         
-        // add location
-        session.adopt(location);
-        
-        // adopt location routes
-        location.routes().each(function(route){
-            session.adopt(route);
-        });
-        
-        // adopt location files
-        location.files().each(function(file){
-            session.adopt(file);
-            
-            // adopt file layers
-            file.layers().each(function(layer){
-                session.adopt(layer);
-            });
-        });
-        
-        // adopt location types
-        location.types().each(function(type){
-            session.adopt(type);
-        });
-        
-        // show location
+        // show location when view is ready
         if (!rendered) {
             view.on({
                 afterrender: showLocation
@@ -159,17 +173,17 @@ Ext.define('CB.view.location.LocationController', {
     saveLocation: function() {
         var me = this,
             view = me.getView(),
-            vm = view.getViewModel(),
             session = view.getSession(),
             batch = session.getSaveBatch();
     
-        console.log(session.getChanges());
+        console.log('changes', session.getChanges());
         
         if (!batch) {
+            this.saveLocationComplete();
             return;
         }
         
-        view.mask('Saving ...');
+        view.mask('Saving Location ...');
         
         batch.on({
             complete: this.saveLocationComplete,
@@ -184,14 +198,13 @@ Ext.define('CB.view.location.LocationController', {
         console.log('saveLocationComplete');
         var me = this,
             view = me.getView(),
-            vm = view.getViewModel(),
             paper = view.down('cb-paper');
     
-        vm.set('dirty', false);
+        paper.remapLayers();
         
-        view.unmask();
+        this.operationComplete('saveLocation');
         
-        paper.remapLayers();        
+        this.saveTypes();
     },
     
     saveLocationException: function(batch, operation) {
@@ -213,9 +226,82 @@ Ext.define('CB.view.location.LocationController', {
             icon: Ext.MessageBox.ERROR,
             buttons: Ext.MessageBox.OK
         });
+        
+        this.operationComplete('saveLocation');
+        this.operationComplete('saveTypes');
     },
     
+    /**
+     * Type
+     */
     
+    toggleTypePicker: function(e) {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            user = vm.get('user'),
+            parent = view.down('#types'),
+            picker = view.down('cb-location-typepicker');
+    
+        if (!user) {
+            return;
+        }
+        
+        if (picker.isVisible()) {
+            console.log('hide Picker');
+            picker.hide();
+        } else {
+            console.log('show picker');
+            picker.parent = parent;
+            picker.showAt(10, 8);
+        }
+    },
+    
+    typeChange: function() {
+        this.getViewModel().set('dirty', true);
+    },
+    
+    saveTypes: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            changes = session.getChanges();
+        
+        if (changes && changes.LocationType && changes.LocationType.locations) {
+            this.getView().mask('Saving Location Types ...');
+            
+            CB.api.Location.setTypes(changes.LocationType.locations, function(result) {
+                if (result && result.success) {
+                    this.saveTypesComplete(result);
+                } else {
+                    this.saveTypesException(result);
+                }
+            }, this);
+        } else {
+            this.saveTypesComplete();
+        }
+    },
+    
+    saveTypesComplete: function(result) {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        location.commit();
+        location.types().commitChanges();
+        
+        this.operationComplete('saveTypes');
+    },
+    
+    saveTypesException: function(result) {
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: result && result.message ? result.message : 'Unable to save Location Types!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+        
+        this.operationComplete('saveTypes');
+    },
     
     /**
      * Paper
@@ -237,7 +323,7 @@ Ext.define('CB.view.location.LocationController', {
     
         if (Ext.os.deviceType === 'Desktop') {
             
-            var routes = view.down('#routes'),
+            var routes = view.down('cb-location-routes'),
                 sm = routes.getSelectionModel();
         
             if (route) {
@@ -286,7 +372,7 @@ Ext.define('CB.view.location.LocationController', {
         var view = this.getView();
         
         if (Ext.os.deviceType === 'Desktop') {
-            var routes = view.down('#routes');
+            var routes = view.down('cb-location-routes');
             var node = routes.getView().getNode(route);
             if (node) {
                 Ext.fly(node).addCls('x-grid-item-over');
@@ -300,7 +386,7 @@ Ext.define('CB.view.location.LocationController', {
         var view = this.getView();
         
         if (Ext.os.deviceType === 'Desktop') {
-            var routes = view.down('#routes');
+            var routes = view.down('cb-location-routes');
             var node = routes.getView().getNode(route);
             if (node) {
                 Ext.fly(node).removeCls('x-grid-item-over');
@@ -325,8 +411,10 @@ Ext.define('CB.view.location.LocationController', {
     addRoute: function() {
         var view = this.getView(),
             session = view.getSession(),
-            routes = view.down('#routes'),
-            route = session.createRecord('Route', {});
+            routes = view.down('cb-location-routes'),
+            route = session.createRecord('Route', {
+                pos: routes.getStore().getCount()
+            });
     
         console.log('addRoute', route);
     
@@ -341,7 +429,7 @@ Ext.define('CB.view.location.LocationController', {
             paper = view.down('cb-paper'),
             file = vm.get('file'),
             route = vm.get('routes.selection'),
-            layer = file.getRouteLayer(route);
+            layer;
     
         if (!route) {
             return;
@@ -350,15 +438,61 @@ Ext.define('CB.view.location.LocationController', {
         // remove paper route
         paper.removeRoute(route);
 
-        // drop route record
+        // drop route
         route.drop();
 
+        // drop layer
+        layer = file.getRouteLayer(route)
         if (layer) {
             layer.drop();
         }
 
         // mark view as dirty
         vm.set('dirty', true);
+    },
+    
+    reorderRoutes: function(routes) {
+        Ext.each(routes, function(route, index){
+            route.set('pos', index);
+        }, this);
+    },
+    
+    routeDrop: function(node, data, overModel, dropPosition, dropHandlers) {
+        if (!data.records.length) {
+            return false;
+        }
+        
+        var view = this.getView(),
+            routes = view.down('cb-location-routes'),
+            store = routes.getStore(),
+            dragRoute = data.records[0],
+            dragIndex = store.indexOf(dragRoute),
+            dropRoute = overModel,
+            dropIndex = store.indexOf(dropRoute),
+            range = store.getRange();
+    
+        if (dragIndex > dropIndex && dropPosition === 'after') {
+            dropIndex++;
+        }
+        
+        if (dropIndex > dragIndex && dropPosition === 'before') {
+            dropIndex--;
+        }
+    
+        range.splice(dragIndex, 1);
+        range.splice(dropIndex, 0, dragRoute);
+        
+        this.reorderRoutes(range);
+        
+        this.routeDataChanged();
+        
+        store.sort('pos', 'ASC');
+    },
+    
+    routeEdit: function(editor, context) {
+        if (context.value !== context.originalValue) {
+            this.routeDataChanged();
+        }
     },
     
     routeDataChanged: function() {
@@ -368,7 +502,7 @@ Ext.define('CB.view.location.LocationController', {
     routeSelectionChange: function(grid, selection) {
         var view = this.getView(),
             vm = view.getViewModel(),
-            routes = view.down('#routes'),
+            routes = view.down('cb-location-routes'),
             paper = view.down('cb-paper'),
             papervm = paper.getViewModel(),
             selection = routes.getSelectionModel().getSelection(),
@@ -410,7 +544,7 @@ Ext.define('CB.view.location.LocationController', {
     
     createMiniMap: function() {
         var me = this,
-            miniMap = me.getView().down('#miniMap');
+            miniMap = me.getView().down('cb-location-minimap');
     
         console.log('createMiniMap');
         
@@ -452,7 +586,7 @@ Ext.define('CB.view.location.LocationController', {
     destroyMiniMap: function() {
         console.log('destroyMiniMap');
         var me = this,
-            miniMap = me.getView().down('#miniMap');
+            miniMap = me.getView().down('cb-location-minimap');
         
         if (miniMap.mapBody) {
             miniMap.mapBody.destroy();
@@ -462,7 +596,7 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     resizeMiniMap: function(w, h) {
-        var miniMap = this.getView().down('#miniMap'),
+        var miniMap = this.getView().down('cb-location-minimap'),
             center;
         
         if (miniMap.map) {

@@ -126,9 +126,13 @@ Ext.define('CB.view.location.AddController', {
             type.drop();
         });
         
+        console.log(view.getSession().matrices);
+        
         if (records.length) {
             location.types().add(records);
         }
+        
+        console.log(view.getSession().getChanges());
     },
     
     saveTypes: function() {

@@ -4,7 +4,8 @@
 Ext.define('CB.paper.Route', {
     
     config: {
-        route: null
+        route: null,
+        allowDeselect: false
     },
     
     constructor: function() {

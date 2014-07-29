@@ -1193,6 +1193,7 @@ Ext.Boot.loadSync([
 
 Ext.Loader.addClassPathMappings({
   "CB": "../../app",
+  "CB.overrides": "../../overrides",
   "CB.paper": "../../../packages/cb-paper-core/src",
   "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
   "CB.paper.PanelController": "../../../packages/cb-paper-ext/src/PanelController.js",
@@ -1299,6 +1300,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
+  "CB.overrides.data.matrix.Slice": [],
   "CB.paper.File": [],
   "CB.paper.Image": [],
   "CB.paper.Layer": [],
@@ -1332,11 +1334,16 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.location.Add": [],
   "CB.view.location.AddController": [],
   "CB.view.location.AddModel": [],
+  "CB.view.location.Header": [],
   "CB.view.location.List": [],
   "CB.view.location.ListController": [],
   "CB.view.location.Location": [],
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
+  "CB.view.location.MiniMap": [],
+  "CB.view.location.Routes": [],
+  "CB.view.location.Sidebar": [],
+  "CB.view.location.TypePicker": [],
   "CB.view.main.Main": [],
   "CB.view.main.MainController": [],
   "CB.view.main.MainModel": [],
@@ -1851,6 +1858,7 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "Ext.grid.RowEditor": [],
   "Ext.grid.RowEditorButtons": [],
+  "Ext.grid.Scroller": [],
   "Ext.grid.View": [],
   "Ext.grid.ViewDropZone": [],
   "Ext.grid.column.Action": [
@@ -2409,6 +2417,7 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.model.Route": [],
   "CB.model.Sector": [],
   "CB.model.User": [],
+  "CB.overrides.data.matrix.Slice": [],
   "CB.paper.File": [],
   "CB.paper.Image": [],
   "CB.paper.Layer": [],
@@ -2456,6 +2465,9 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.location.AddModel": [
     "viewmodel.cb-location-add"
   ],
+  "CB.view.location.Header": [
+    "widget.cb-location-header"
+  ],
   "CB.view.location.List": [
     "widget.cb-location-list"
   ],
@@ -2470,6 +2482,18 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.location.LocationModel": [
     "viewmodel.cb-location"
+  ],
+  "CB.view.location.MiniMap": [
+    "widget.cb-location-minimap"
+  ],
+  "CB.view.location.Routes": [
+    "widget.cb-location-routes"
+  ],
+  "CB.view.location.Sidebar": [
+    "widget.cb-location-sidebar"
+  ],
+  "CB.view.location.TypePicker": [
+    "widget.cb-location-typepicker"
   ],
   "CB.view.main.Main": [
     "widget.cb-main"
@@ -3136,6 +3160,7 @@ Ext.ClassManager.addNameAliasMappings({
   "Ext.grid.RowEditorButtons": [
     "widget.roweditorbuttons"
   ],
+  "Ext.grid.Scroller": [],
   "Ext.grid.View": [
     "widget.gridview"
   ],

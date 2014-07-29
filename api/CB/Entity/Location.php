@@ -231,10 +231,10 @@ class Location extends AbstractEntity
     {
         if (is_array($location))
         {
-            $this->name         = isset($location['name'])        ? $location['name'] : null;
-            $this->description  = isset($location['description']) ? $location['description'] : null;
-            $this->lat          = isset($location['lat'])         ? $location['lat'] : null;
-            $this->lng          = isset($location['lng'])         ? $location['lng'] : null;
+            if(isset($location['name']))        $this->name        = $location['name'];
+            if(isset($location['description'])) $this->description = $location['description'];
+            if(isset($location['lat']))         $this->lat         = $location['lat'];
+            if(isset($location['lng']))         $this->lng         = $location['lng'];
         }
     }
 

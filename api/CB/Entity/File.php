@@ -188,11 +188,11 @@ class File extends AbstractEntity
     {
         if (is_array($file))
         {
-            $this->name      = isset($file['name'])      ? $file['name'] : null;
-            $this->fileName  = isset($file['fileName'])  ? $file['fileName'] : null;
-            $this->extension = isset($file['extension']) ? $file['extension'] : null;
-            $this->mimeType  = isset($file['mimeType'])  ? $file['mimeType'] : null;
-            $this->created   = isset($file['created'])   ? $file['created'] : null;
+            if (isset($file['name']))      $this->name      = $file['name'];
+            if (isset($file['fileName']))  $this->fileName  = $file['fileName'];
+            if (isset($file['extension'])) $this->extension = $file['extension'];
+            if (isset($file['mimeType']))  $this->mimeType  = $file['mimeType'];
+            if (isset($file['created']))   $this->created   = $file['created'];
         }
     }
 

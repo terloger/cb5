@@ -83,13 +83,13 @@ Ext.define('CB.paper.Image', {
         var box = this.getImage().getBox();
         
         if (x) {
-            if (x < box.left && x > box.right) {
+            if (x < box.left || x > box.right) {
                 return false;
             }
         }
         
         if (y) {
-            if (y < box.top && y > box.bottom) {
+            if (y < box.top || y > box.bottom) {
                 return false;
             }
         }

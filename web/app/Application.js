@@ -14,6 +14,7 @@ Ext.define('CB.Application', {
         'Ext.state.CookieProvider',
         'Ext.direct.RemotingProvider',
         'Ext.MessageBox',
+        'CB.overrides.data.matrix.Slice',
         'CB.service.File',
         'CB.Config'
     ],

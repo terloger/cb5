@@ -4,6 +4,18 @@ Ext.define('CB.model.LocationType', {
     fields: [
         {name: 'name', type: 'string'},
         {name: 'type', type: 'string'}
-    ]
+    ],
+    
+    manyToMany: {
+        Locations: {
+            type: 'Location',
+            role: 'locations',
+            field: 'locationId',
+            left: {
+                field: 'typeId',
+                role: 'types'
+            }
+        }
+    }
     
 });

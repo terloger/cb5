@@ -1,3 +1,11 @@
+@include extjs-toolbar-ui(
+    $ui: 'blank',
+    $background-color: transparent,
+    $border-width: 0px,
+    $vertical-spacing: 0px,
+    $horizontal-spacing: 4px
+);
+
 .cb-paper {
     
     .cb-canvas {
@@ -69,6 +77,40 @@
     
     .x-tool-expand-right {
         background-position: 0 -384px;
+    }
+    
+}
+
+.cb-location-typepicker {
+    
+    .type {
+        float: left;
+        padding: 4px 6px;
+        margin: 2px;
+        cursor: pointer;
+        
+        @include border-radius(2px);
+        
+        &.type-over {
+            background: #f4f4f4;
+        }
+        
+        &.type-selected {
+            background: #E2EFF8;
+        }
+        
+        img {
+            float: left;
+            margin-right: 6px;
+            display: block;
+        }
+        
+        span {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 36px;
+        }
+        
     }
     
 }

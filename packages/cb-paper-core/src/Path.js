@@ -71,7 +71,7 @@ Ext.define('CB.paper.Path', {
             oldRoute = this.getSelectedRoute(),
             newRoute = path.parent.data.route;
     
-        if (newRoute === oldRoute) {
+        if (newRoute === oldRoute && this.getAllowDeselect()) {
             newRoute = null; // deselect
         }
     

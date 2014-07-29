@@ -153,7 +153,7 @@ class Layer extends AbstractEntity
     {
         if (is_array($layer))
         {
-            $this->data = isset($layer['data']) ? $layer['data'] : '';
+            if (isset($layer['data'])) $this->data = $layer['data'];
         }
     }
 

@@ -153,11 +153,11 @@ class User extends AbstractEntity
     {
         if (is_array($user))
         {
-            $this->username   = isset($user['username'])   ? $user['username'] : null;
-            $this->firstName  = isset($user['firstName'])  ? $user['firstName'] : null;
-            $this->lastName   = isset($user['lastName'])   ? $user['lastName'] : null;
-            $this->email      = isset($user['email'])      ? $user['email'] : null;
-            $this->permission = isset($user['permission']) ? $user['permission'] : null;
+            if (isset($user['username']))   $this->username   = $user['username'];
+            if (isset($user['firstName']))  $this->firstName  = $user['firstName'];
+            if (isset($user['lastName']))   $this->lastName   = $user['lastName'];
+            if (isset($user['email']))      $this->email      = $user['email'];
+            if (isset($user['permission'])) $this->permission = $user['permission'];
         }
     }
 

@@ -12,6 +12,8 @@ Ext.define('CB.view.main.Main', {
         type: 'cb-main'
     },
     
+    session: true,
+    
     ui: 'navigation',
     
     stateful: true,

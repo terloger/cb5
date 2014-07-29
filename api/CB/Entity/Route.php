@@ -186,9 +186,9 @@ class Route extends AbstractEntity
     {
         if (is_array($route))
         {
-            $this->pos    = isset($route['pos']) ? $route['pos'] : null;
-            $this->name   = isset($route['name']) ? $route['name'] : null;
-            $this->fileId = isset($route['fileId']) ? $route['fileId'] : null;
+            if (isset($route['pos']))    $this->pos    =  $route['pos'];
+            if (isset($route['name']))   $this->name   =  $route['name'];
+            if (isset($route['fileId'])) $this->fileId =  $route['fileId'];
         }
     }
 

@@ -91,12 +91,9 @@ class Location extends AbstractController
             $location = $Location->getValues();
             
             // apply location country
-            /*
             $location['country'] = array_merge($Location->getCountry()->getValues(), [
                 'locationId' => $Location->getId()
             ]);
-             * 
-             */
             
             // apply location types
             foreach ($Location->getTypes() as $LocationType)
@@ -537,7 +534,7 @@ class Location extends AbstractController
                                 }
                             }
 
-                            $sql = 'INSERT INTO location_types (location_id, type_id) VALUES ' . implode(',', $values);
+                            $sql = 'INSERT IGNORE INTO location_types (location_id, type_id) VALUES ' . implode(',', $values);
 
                             $stmt = $em->getConnection()->prepare($sql);
                             $stmt->execute();
