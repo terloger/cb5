@@ -42,30 +42,26 @@ Ext.define('CB.view.location.TypePicker', {
             scope: this
         });
         
-        this.on({
-            show: this.resumeListeners,
-            hide: this.suspendListeners,
-            scope: this
-        });
+        if (this.floating) {
+            this.on({
+                show: this.monDoc,
+                hide: this.munDoc,
+                scope: this
+            });
+        }
     },
     
     applyLocation: function(location) {
         var dataview = this.down('dataview'),
-            store = dataview.getStore(),
             sm = dataview.getSelectionModel(),
             types = [];
     
         if (location) {
-            location.types().each(function(type){
-                var record = store.getById(type.get('id'));
-                if (record) {
-                    types.push(record);
-                }
-            }, this);
+            types = location.types().getRange();
         }
         
         if (types.length) {
-            sm.select(location.types().getRange(), false, true);
+            sm.select(types, false, true);
         } else {
             sm.deselectAll(true);
         }
@@ -74,9 +70,7 @@ Ext.define('CB.view.location.TypePicker', {
     },
     
     onItemClick: function(view, type, item, index, e) {
-        var view = this.up('cb-location'),
-            vm = view.getViewModel(),
-            location = vm.get('location'),
+        var location = this.getLocation(),
             types = location.types(),
             hasType = types.getById(type.get('id'));
     
@@ -87,24 +81,21 @@ Ext.define('CB.view.location.TypePicker', {
             // add type
             types.add(type);
         }
-        
-        view.down('#types').setTypes(types);
     },
     
-    resumeListeners: function() {
+    monDoc: function() {
         this.mon(Ext.getDoc(), 'mousedown', this.mimicBlur, this, {
             delay: 10
         });
     },
     
-    suspendListeners: function() {
+    munDoc: function() {
         this.mun(Ext.getDoc(), 'mousedown', this.mimicBlur, this);
     },
     
     mimicBlur: function(e) {
-        if (!this.isDestroyed && !(this.el.contains(e.target) || this.parent.el.contains(e.target))) {
+        if (!this.isDestroyed && !(this.el.contains(e.target) || this.triggerCt.el.contains(e.target))) {
             this.hide();
-            console.log('hide mimicblur');
         }
     }
     

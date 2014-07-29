@@ -65,7 +65,7 @@ Ext.define('CB.view.location.AddController', {
     
     saveLocation: function() {
         var view = this.getView(),
-            session = view.getSession(),
+            session = view.getSession().getParent(),
             batch = session.getSaveBatch();
             
         console.log('saveLocation', session.getChanges());
@@ -126,18 +126,14 @@ Ext.define('CB.view.location.AddController', {
             type.drop();
         });
         
-        console.log(view.getSession().matrices);
-        
         if (records.length) {
             location.types().add(records);
         }
-        
-        console.log(view.getSession().getChanges());
     },
     
     saveTypes: function() {
         var view = this.getView(),
-            session = view.getSession(),
+            session = view.getSession().getParent(),
             changes = session.getChanges();
         
         console.log('saveTypes', changes);

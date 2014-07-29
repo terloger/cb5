@@ -9,7 +9,8 @@ Ext.define('CB.view.location.Add', {
         'Ext.layout.container.Column',
         'Ext.form.field.ComboBox',
         'Ext.form.field.File',
-        'CB.form.field.MultiFileButton'
+        'CB.form.field.MultiFileButton',
+        'CB.view.location.TypePicker'
     ],
     
     xtype: 'cb-location-add',
@@ -32,7 +33,7 @@ Ext.define('CB.view.location.Add', {
     
     tbar: {
         ui: 'header',
-        height: 72,
+        height: 46,
         items: [{
             xtype: 'tbtext',
             text: 'Add location',
@@ -107,6 +108,13 @@ Ext.define('CB.view.location.Add', {
             fieldLabel: 'Longitude',
             bind: '{location.lng}'
         }]
+    },{
+        xtype: 'cb-location-typepicker',
+        title: 'Choose types',
+        frame: true,
+        bind: {
+            location: '{location}'
+        }
     },{
         xtype: 'panel',
         title: 'Photos',

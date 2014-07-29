@@ -35,13 +35,13 @@ Ext.define('CB.view.location.Header', {
         listeners: {
             click: {
                 element: 'el',
-                fn: 'toggleTypePicker'
+                fn: 'typePicker'
             }
         },
         setTypes: function(types) {
             var html = [];
             types.each(function(type){
-                html.push('<img src="resources/types/' + type.get('type') + '.png" />');
+                html.push('<img src="resources/types/' + type.get('type') + '.png" data-qtip="' + type.get('name') + '" />');
             });
             this.update(html.join(' '));
         }

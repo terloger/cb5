@@ -4,6 +4,10 @@
 Ext.define('CB.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
+    requires: [
+        'CB.Config'
+    ],
+    
     alias: 'controller.cb-main',
     
     routes: {
@@ -37,6 +41,8 @@ Ext.define('CB.view.main.MainController', {
     
     init: function() {
         // initialize config
+        console.log('CB', CB);
+        console.log('CB.Config', CB.Config);
         CB.Config.init(CB.init.Config);
 
         // initialize user
@@ -228,14 +234,14 @@ Ext.define('CB.view.main.MainController', {
         }
         
         addLocationView = Ext.create('CB.view.location.Add', {
-            session: session,
+            session: session.spawn(),
             tabConfig: {
                 hidden: true
             }
         });
         
         view.add(addLocationView);
-
+        
         location = session.createRecord('Location', {
             lat: lat,
             lng: lng,

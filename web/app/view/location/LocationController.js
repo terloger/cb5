@@ -15,7 +15,7 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     /**
-     * Location
+     * Core
      */
     
     init: function() {
@@ -78,7 +78,7 @@ Ext.define('CB.view.location.LocationController', {
             miniMap = view.down('cb-location-minimap'),
             paper = view.down('cb-paper'),
             vm = view.getViewModel(),
-            session = main.getSession(),
+            session = view.getSession(),
             rendered = view.rendered,
             visible = view.isVisible(),
             file = location.files().getAt(0),
@@ -132,7 +132,13 @@ Ext.define('CB.view.location.LocationController', {
                 marker.setMap(miniMap.map);
             };
         
-        // set session
+        // destroy old session
+        if (session) {
+            session.destroy();
+        }
+        
+        // create new session
+        session = main.getSession().spawn();
         view.setSession(session);
         paper.setSession(session);
         
@@ -156,8 +162,7 @@ Ext.define('CB.view.location.LocationController', {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            session = view.getSession(),
-            location = vm.get('location');
+            session = view.getSession();
     
         vm.set('location', null);
         vm.set('file', null);
@@ -173,7 +178,7 @@ Ext.define('CB.view.location.LocationController', {
     saveLocation: function() {
         var me = this,
             view = me.getView(),
-            session = view.getSession(),
+            session = view.getSession().getParent(),
             batch = session.getSaveBatch();
     
         console.log('changes', session.getChanges());
@@ -235,11 +240,10 @@ Ext.define('CB.view.location.LocationController', {
      * Type
      */
     
-    toggleTypePicker: function(e) {
+    typePicker: function(e) {
         var view = this.getView(),
             vm = view.getViewModel(),
             user = vm.get('user'),
-            parent = view.down('#types'),
             picker = view.down('cb-location-typepicker');
     
         if (!user) {
@@ -247,22 +251,31 @@ Ext.define('CB.view.location.LocationController', {
         }
         
         if (picker.isVisible()) {
-            console.log('hide Picker');
+            // hide picker
+            console.log('hide picker');
             picker.hide();
+            return;
         } else {
+            // show picker
             console.log('show picker');
-            picker.parent = parent;
+            picker.triggerCt = view.down('#types');
             picker.showAt(10, 8);
         }
     },
     
     typeChange: function() {
-        this.getViewModel().set('dirty', true);
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        view.down('#types').setTypes(location.types());
+        
+        vm.set('dirty', true);
     },
     
     saveTypes: function() {
         var view = this.getView(),
-            session = view.getSession(),
+            session = view.getSession().getParent(),
             changes = session.getChanges();
         
         if (changes && changes.LocationType && changes.LocationType.locations) {
@@ -410,7 +423,7 @@ Ext.define('CB.view.location.LocationController', {
     
     addRoute: function() {
         var view = this.getView(),
-            session = view.getSession(),
+            session = view.getSession().getParent(),
             routes = view.down('cb-location-routes'),
             route = session.createRecord('Route', {
                 pos: routes.getStore().getCount()
