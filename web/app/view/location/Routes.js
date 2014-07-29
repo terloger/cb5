@@ -20,19 +20,21 @@ Ext.define('CB.view.location.Routes', {
     
     viewConfig: {
         listeners: {
+            beforedrag: 'checkUser',
             drop: 'routeDrop'
         },
         plugins: {
             ptype: 'gridviewdragdrop',
+            pluginId: 'locationRouteDragDrop',
             dragText: 'Drag and drop to reorder',
-            containerScroll: true,
-            ddGroup: 'locationRouteDD'
+            ddGroup: 'locationRouteDD',
+            containerScroll: true
         }
     },
     
     plugins: {
         ptype: 'cellediting',
-        pluginId: 'cellediting',
+        pluginId: 'locationRouteCellEditing',
         clicksToEdit: 2
     },
     
@@ -53,6 +55,7 @@ Ext.define('CB.view.location.Routes', {
     }*/],
     
     listeners: {
+        beforeedit: 'checkUser',
         edit: 'routeEdit',
         itemclick: 'routeSelectionChange',
         itemmouseenter: 'routeMouseEnter',

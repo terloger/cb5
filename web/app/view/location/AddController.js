@@ -11,7 +11,6 @@ Ext.define('CB.view.location.AddController', {
      */
     
     save: function() {
-        console.log('save');
         this.operations = [
             'saveLocation',
             'saveTypes',
@@ -22,7 +21,6 @@ Ext.define('CB.view.location.AddController', {
     },
     
     saveComplete: function() {
-        console.log('saveComplete');
         var view = this.getView(),
             vm = view.getViewModel(),
             location = vm.get('location');
@@ -35,7 +33,6 @@ Ext.define('CB.view.location.AddController', {
     },
     
     operationComplete: function(operation) {
-        console.log('operationComplete', operation);
         var index = this.operations.indexOf(operation);
         
         if (index > -1) {
@@ -68,8 +65,6 @@ Ext.define('CB.view.location.AddController', {
             session = view.getSession().getParent(),
             batch = session.getSaveBatch();
             
-        console.log('saveLocation', session.getChanges());
-        
         view.mask('Saving Location ...');
         
         if (!batch) {
@@ -87,13 +82,11 @@ Ext.define('CB.view.location.AddController', {
     },
     
     saveLocationComplete: function(batch, operation) {
-        console.log('saveLocationComplete');
         this.operationComplete('saveLocation');
         this.saveTypes();
     },
     
     saveLocationException: function(batch, operation) {
-        console.log('saveLocationException', arguments);
         var exceptions = batch.getExceptions(),
             msg = [];
     
@@ -118,7 +111,6 @@ Ext.define('CB.view.location.AddController', {
      */
     
     setTypes: function(combo, records) {
-        console.log('setTypes', records);
         var view = this.getView(),
             location = view.getViewModel().get('location');
     
@@ -136,8 +128,6 @@ Ext.define('CB.view.location.AddController', {
             session = view.getSession().getParent(),
             changes = session.getChanges();
         
-        console.log('saveTypes', changes);
-        
         if (changes && changes.LocationType && changes.LocationType.locations) {
             this.getView().mask('Saving Location Types ...');
             
@@ -154,15 +144,12 @@ Ext.define('CB.view.location.AddController', {
     },
     
     saveTypesComplete: function(result) {
-        console.log('saveTypesSuccess', result);
-        
         this.operationComplete('saveTypes');
         
         this.saveFiles();
     },
     
     saveTypesException: function(result) {
-        console.log('saveTypesException', result);
         Ext.MessageBox.show({
             title: 'Server Exception',
             msg: result && result.message ? result.message : 'Unable to save Location Types!',
@@ -185,7 +172,6 @@ Ext.define('CB.view.location.AddController', {
             data = [],
             file;
 
-        console.log('setFiles', files);
         for (var i = 0, len = files.length; i < len; i++) {
             file = files[i];
             data.push({
@@ -202,7 +188,6 @@ Ext.define('CB.view.location.AddController', {
     },
     
     clearFiles: function() {
-        console.log('clearFiles');
         var view = this.getView(),
             grid = view.down('grid'),
             fileField = view.down('filebutton');
@@ -224,8 +209,6 @@ Ext.define('CB.view.location.AddController', {
         this.fileCount = len;
         this.fileErrors = [];
     
-        console.log('saveFiles', files);
-        
         if (!len) {
             this.saveFilesComplete();
             return;
@@ -261,14 +244,10 @@ Ext.define('CB.view.location.AddController', {
     },
     
     saveFilesComplete: function() {
-        console.log('saveFilesComplete');
-        
         this.operationComplete('saveFiles');
     },
     
     saveFilesException: function() {
-        console.log('saveFilesExceptions');
-        
         Ext.MessageBox.show({
             title: 'Server Exception',
             msg: this.fileErrors.join('<br />'),

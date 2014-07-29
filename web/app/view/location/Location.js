@@ -42,6 +42,7 @@ Ext.define('CB.view.location.Location', {
     },
     
     initComponent: function() {
+        var vm = this.getViewModel();
         
         // header
         this.tbar = {
@@ -53,6 +54,7 @@ Ext.define('CB.view.location.Location', {
         if (Ext.os.deviceType === 'Desktop') {
             this.dockedItems = [{
                 xtype: 'cb-location-sidebar',
+                viewModel: vm,
                 width: 300,
                 minWidth: 240,
                 maxWidth: 600,
@@ -114,7 +116,9 @@ Ext.define('CB.view.location.Location', {
     },
 
     showLocation: function(location) {
-        this.getViewModel().set('location', location);
+        if (location) {
+            this.getViewModel().set('location', location);
+        }
     }
     
 });

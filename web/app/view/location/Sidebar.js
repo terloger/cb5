@@ -49,6 +49,7 @@ Ext.define('CB.view.location.Sidebar', {
                 tooltip: 'Add route',
                 glyph: 'xe618@climbuddy',
                 handler: 'addRoute',
+                hidden: true,
                 bind: {
                     hidden: '{!user}'
                 }
@@ -58,6 +59,7 @@ Ext.define('CB.view.location.Sidebar', {
                 tooltip: 'Remove selected routes',
                 glyph: 'xe619@climbuddy',
                 handler: 'removeRoute',
+                hidden: true,
                 bind: {
                     hidden: '{!user}'
                 }

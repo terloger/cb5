@@ -41,8 +41,6 @@ Ext.define('CB.view.main.MainController', {
     
     init: function() {
         // initialize config
-        console.log('CB', CB);
-        console.log('CB.Config', CB.Config);
         CB.Config.init(CB.init.Config);
 
         // initialize user
@@ -61,7 +59,6 @@ Ext.define('CB.view.main.MainController', {
      */
     
     homeRoute: function() {
-        console.log('homeRoute');
         var view = this.getView(),
             tab = view.setActiveTab(view.down('cb-home'));
         
@@ -71,7 +68,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     mapRoute: function() {
-        console.log('mapRoute');
         var view = this.getView(),
             tab = view.setActiveTab(view.down('cb-map'))
     
@@ -81,7 +77,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     userRoute: function() {
-        console.log('userRoute');
         var view = this.getView(),
             tab = view.setActiveTab(view.down('cb-user'))
 
@@ -91,7 +86,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     locationsRoute: function() {
-        console.log('locationsRoute');
         var view = this.getView(),
             tab = view.setActiveTab(view.down('cb-location-list'))
     
@@ -101,7 +95,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     beforeLocationRoute: function(id, action) {
-        console.log('beforeLocationRoute');
         var view = this.getView(),
             locationView = view.down('cb-location'),
             vm = locationView.getViewModel(),
@@ -129,7 +122,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     locationRoute: function(id) {
-        console.log('locationRoute');
         var view = this.getView(),
             locationView = view.down('cb-location'),
             vm = locationView.getViewModel(),
@@ -142,7 +134,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     unmatchedRoute: function(hash) {
-        console.log('unmatchedRoute', hash);
         this.showError('Unable to find route ' + hash);
     },
     
@@ -151,7 +142,6 @@ Ext.define('CB.view.main.MainController', {
      */
     
     tabChange: function (view, tab) {
-        console.log('onTabChange');
         if (tab.route) {
             this.redirectTo(tab.route);
         }
@@ -209,7 +199,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     showError: function(msg) {
-        console.log('showError', msg);
         var view = this.getView(),
             tab, header, title;
         
@@ -221,7 +210,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     showLocationAdd: function(country, lat, lng) {
-        console.log('showLocationAdd');
         var view = this.getView(),
             session = view.getSession(),
             user = view.getViewModel().get('user'),

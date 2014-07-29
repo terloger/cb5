@@ -11,6 +11,4 @@ Ext.define('CB.Config', {
         return this.config[key];
     }
 
-}, function() {
-    console.log('CB.Config created');
 });

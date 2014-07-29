@@ -25,7 +25,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     save: function() {
-        console.log('save');
         this.operations = [
             'saveLocation',
             'saveTypes'
@@ -35,7 +34,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveComplete: function() {
-        console.log('saveComplete');
         var view = this.getView(),
             vm = view.getViewModel(),
             location = vm.get('location');
@@ -48,7 +46,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     operationComplete: function(operation) {
-        console.log('operationComplete', operation);
         var index = this.operations.indexOf(operation);
         
         if (index > -1) {
@@ -60,17 +57,21 @@ Ext.define('CB.view.location.LocationController', {
         }
     },
     
+    checkUser: function() {
+        var vm = this.getViewModel(),
+            user = vm.get('user');
+    
+        return user instanceof CB.model.User;
+    },
+    
     /**
      * Location
      */
     
     showLocation: function(location) {
         if (!location) {
-            console.log('no location');
             return;
         }
-        
-        console.log('showLocation', location);
         
         var me = this,
             view = me.getView(),
@@ -158,7 +159,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     hideLocation: function() {
-        console.log('hideLocation');
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -181,8 +181,6 @@ Ext.define('CB.view.location.LocationController', {
             session = view.getSession().getParent(),
             batch = session.getSaveBatch();
     
-        console.log('changes', session.getChanges());
-        
         if (!batch) {
             this.saveLocationComplete();
             return;
@@ -200,7 +198,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocationComplete: function(batch, operation) {
-        console.log('saveLocationComplete');
         var me = this,
             view = me.getView(),
             paper = view.down('cb-paper');
@@ -213,7 +210,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocationException: function(batch, operation) {
-        console.log('saveLocationException');
         var me = this,
             view = me.getView(),
             exceptions = batch.getExceptions(),
@@ -252,12 +248,10 @@ Ext.define('CB.view.location.LocationController', {
         
         if (picker.isVisible()) {
             // hide picker
-            console.log('hide picker');
             picker.hide();
             return;
         } else {
             // show picker
-            console.log('show picker');
             picker.triggerCt = view.down('#types');
             picker.showAt(10, 8);
         }
@@ -429,8 +423,6 @@ Ext.define('CB.view.location.LocationController', {
                 pos: routes.getStore().getCount()
             });
     
-        console.log('addRoute', route);
-    
         routes.getStore().add(route);
         
         routes.getPlugin('cellediting').startEdit(route, 0);
@@ -559,8 +551,6 @@ Ext.define('CB.view.location.LocationController', {
         var me = this,
             miniMap = me.getView().down('cb-location-minimap');
     
-        console.log('createMiniMap');
-        
         // no google available
         if (typeof google === 'undefined') {
             miniMap.mapBody = miniMap.body.createChild({
@@ -597,7 +587,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     destroyMiniMap: function() {
-        console.log('destroyMiniMap');
         var me = this,
             miniMap = me.getView().down('cb-location-minimap');
         
@@ -715,8 +704,6 @@ Ext.define('CB.view.location.LocationController', {
         this.fileCount = len;
         this.fileErrors = [];
     
-        console.log('saveFiles', files);
-        
         if (!len) {
             this.saveFilesComplete();
             return;
@@ -756,8 +743,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveFilesComplete: function() {
-        console.log('saveFilesComplete');
-        
         this.getView().unmask();
         
         Ext.MessageBox.show({
@@ -769,8 +754,6 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveFilesException: function() {
-        console.log('saveFilesExceptions');
-        
         this.getView().unmask();
         
         Ext.MessageBox.show({

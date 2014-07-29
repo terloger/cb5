@@ -130,7 +130,6 @@ Ext.define('CB.view.map.MapController', {
      */
     
     createLocation: function(location) {
-        console.log('createLocation', location);
         var view = this.getView(),
             vm = view.getViewModel(),
             locations = vm.get('locations'),
@@ -148,7 +147,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     addLocation: function() {
-        console.log('addLocation', this.mapMenu.getEvent().latLng);
         var countries = this.getView().getViewModel().get('countries'),
             latLng = this.mapMenu.getEvent().latLng,
             lat = latLng.lat(),
@@ -163,9 +161,6 @@ Ext.define('CB.view.map.MapController', {
             var iso = null,
                 name = null;
                 
-            console.log('status', status);
-            console.log('results', results);
-            
             if (status === google.maps.GeocoderStatus.OK) {
                 for (var i = 0, len = results.length; i < len; i++) {
                     var r = results[i];
@@ -197,7 +192,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     openLocation: function() {
-        console.log('openLocation', this.markerMenu.getLocation());
         var location = this.markerMenu.getLocation();
         
         if (!location) {
@@ -208,7 +202,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     moveLocation: function() {
-        console.log('moveLocation', this.markerMenu.getLocation());
         var marker = this.markerMenu.getMarker();
         
         if (marker) {
@@ -217,7 +210,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     deleteLocation: function() {
-        console.log('deleteLocation', this.markerMenu.getLocation());
         var location = this.markerMenu.getLocation(),
             marker = this.markerMenu.getMarker();
     
@@ -242,7 +234,6 @@ Ext.define('CB.view.map.MapController', {
      */
     
     refreshMap: function() {
-        console.log('refresh map');
     },
     
     mapClick: function(e) {
@@ -281,7 +272,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     getMapTypeId: function(type) {
-        console.log('getMapTypeId');
         switch (type) {
             default:
             case 'roadmap':
@@ -440,11 +430,9 @@ Ext.define('CB.view.map.MapController', {
      */
     
     search: function(btn, e) {
-        console.log('search');
     },
     
     showFilterMenu: function(btn, e) {
-        console.log('showFilterMenu');
         var view = this.getView(),
             viewModel = view.getViewModel(),
             menu = this.filterMenu;
@@ -475,7 +463,6 @@ Ext.define('CB.view.map.MapController', {
     },
     
     filterMenuItemClick: function(menu, item, e) {
-        console.log('filterMenuItemClick');
     }
     
 });

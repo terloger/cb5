@@ -32,12 +32,6 @@ Ext.define('CB.model.Layer', {
             type: 'json',
             allowSingle: false
         }
-    },
-    
-    listeners: {
-        idchanged: function() {
-            console.log('idchanged');
-        }
     }
     
 });
