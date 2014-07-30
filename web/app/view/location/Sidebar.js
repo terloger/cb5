@@ -73,11 +73,13 @@ Ext.define('CB.view.location.Sidebar', {
     },{
         xtype: 'cb-location-minimap',
         region: 'south',
-        height: 200,
+        height: 240,
         minHeight: 160,
         maxHeight: 360,
-        split: true,
-        collapsible: true
+        collapsible: true,
+        split: {
+            size: 5
+        }
     }]
 
 });

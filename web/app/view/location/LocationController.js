@@ -425,7 +425,7 @@ Ext.define('CB.view.location.LocationController', {
     
         routes.getStore().add(route);
         
-        routes.getPlugin('cellediting').startEdit(route, 0);
+        routes.getPlugin('locationRouteCellEditing').startEdit(route, 0);
     },
     
     removeRoute: function() {

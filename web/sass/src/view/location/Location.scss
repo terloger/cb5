@@ -79,6 +79,21 @@
         background-position: 0 -384px;
     }
     
+    .x-resizable-handle-west {
+        cursor: col-resize;
+    }
+    
+    .x-splitter-horizontal {
+        
+        background: #fff;
+        border-bottom: 1px solid #ddd;
+        
+        .x-collapse-el {
+            display: none;
+        }
+        
+    }
+    
 }
 
 .cb-location-typepicker {

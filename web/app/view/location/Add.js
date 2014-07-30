@@ -112,6 +112,8 @@ Ext.define('CB.view.location.Add', {
         xtype: 'cb-location-typepicker',
         title: 'Choose types',
         frame: true,
+        disabled: true,
+        hidden: true,
         bind: {
             location: '{location}'
         }

@@ -55,7 +55,7 @@ Ext.define('CB.view.location.Location', {
             this.dockedItems = [{
                 xtype: 'cb-location-sidebar',
                 viewModel: vm,
-                width: 300,
+                width: 400,
                 minWidth: 240,
                 maxWidth: 600,
                 animCollapse: false,
