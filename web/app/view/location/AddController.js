@@ -198,7 +198,8 @@ Ext.define('CB.view.location.AddController', {
     },
     
     saveFiles: function() {
-        var view = this.getView(),
+        var me = this,
+            view = me.getView(),
             vm = view.getViewModel(),
             location = vm.get('location'),
             button = view.down('multifilebutton'),
