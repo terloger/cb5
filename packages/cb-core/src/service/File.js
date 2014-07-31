@@ -23,7 +23,7 @@ Ext.define('CB.service.File', {
                 'X-File-Name': config.file.name
             },
             progress: function(e) {
-                console.log('progress', 'position', e.position, 'total', e.total);
+                console.log('progress', Math.round((e.position / e.total) * 100), e);
             },
             success: function(response, operation) {
                 try {
