@@ -13,6 +13,7 @@ Ext.define('CB.service.File', {
         connection.request({
             url: '/api/upload-file/',
             xmlData: config.file,
+            timeout : 60000, // set timeout to 60 seconds
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -24,22 +25,27 @@ Ext.define('CB.service.File', {
                     var result = Ext.decode(response.responseText, true);
                     if (result.success) {
                         if (config.success) {
-                            config.success.apply(config.scope, [result]);
+                            config.success.call(config.scope, result);
                         }
                     } else {
                         if (config.failure) {
-                            config.failure.apply(config.scope, [result.message ? result.message : 'Unable to upload File!']);
+                            config.failure.call(config.scope, result.message ? result.message : 'Unable to upload File!');
                         }
                     }
                 } catch (e) {
                     if (config.failure) {
-                        config.failure.apply(config.scope, 'Error processing response from the server!');
+                        config.failure.call(config.scope, 'Error processing response from the server!');
                     }
                 }
             },
             failure: function(response, operation) {
+                console.log('failure');
+                console.log('response', response);
+                console.log('operation', operation);
+                console.log('config', config);
+
                 if (config.failure) {
-                    config.failure.apply(config.scope, 'Error ' + response.status + ': ' + response.statusText);
+                    config.failure.call(config.scope, 'Error ' + response.status + ': ' + response.statusText);
                 }
             }
         });
