@@ -15,7 +15,7 @@ Ext.define('CB.service.File', {
         connection.request({
             url: '/api/upload-file/',
             xmlData: config.file,
-            timeout : 60000, // set timeout to 60 seconds
+            timeout : 120000, // set timeout to 120 seconds
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest',
