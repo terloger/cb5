@@ -33,13 +33,13 @@ Ext.define('CB.service.File', {
                     }
                 } catch (e) {
                     if (config.failure) {
-                        config.failure.apply('Error processing response from the server!');
+                        config.failure.apply(config.scope, 'Error processing response from the server!');
                     }
                 }
             },
             failure: function(response, operation) {
                 if (config.failure) {
-                    config.failure.apply('Error ' + response.status + ': ' + response.statusText);
+                    config.failure.apply(config.scope, 'Error ' + response.status + ': ' + response.statusText);
                 }
             }
         });
