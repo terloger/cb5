@@ -1,13 +1,15 @@
 Ext.define('CB.service.File', {
     
     requires: [
-        'Ext.data.Connection'
+        'CB.data.Connection'
     ],
     
     singleton: true,
     
     upload: function(config) {
-        var connection = Ext.create('Ext.data.Connection');
+        var connection = Ext.create('CB.data.Connection');
+
+        console.log('connection', connection);
         
         // execute request
         connection.request({
@@ -19,6 +21,9 @@ Ext.define('CB.service.File', {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-Location-Id': config.location.get('id'),
                 'X-File-Name': config.file.name
+            },
+            progress: function(e) {
+                console.log('progress', 'position', e.position, 'total', e.total);
             },
             success: function(response, operation) {
                 try {

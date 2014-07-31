@@ -420,8 +420,6 @@ class Location extends AbstractController
         $locationId = (int)$_SERVER['HTTP_X_LOCATION_ID'];
         $name = $_SERVER['HTTP_X_FILE_NAME'];
 
-        return $this->error('Test error');
-
         try
         {
             // must be logged in

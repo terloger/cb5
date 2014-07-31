@@ -1193,6 +1193,7 @@ Ext.Boot.loadSync([
 
 Ext.Loader.addClassPathMappings({
   "CB": "../../app",
+  "CB.data": "../../../packages/cb-core/src/data",
   "CB.overrides": "../../overrides",
   "CB.paper": "../../../packages/cb-paper-core/src",
   "CB.paper.Panel": "../../../packages/cb-paper-ext/src/Panel.js",
@@ -1288,6 +1289,7 @@ Ext.Loader.addClassPathMappings({
 Ext.ClassManager.addNameAlternateMappings({
   "CB.Application": [],
   "CB.Config": [],
+  "CB.data.Connection": [],
   "CB.form.field.MultiFileButton": [],
   "CB.model.Base": [],
   "CB.model.Country": [],
@@ -2402,6 +2404,7 @@ Ext.ClassManager.addNameAlternateMappings({
 Ext.ClassManager.addNameAliasMappings({
   "CB.Application": [],
   "CB.Config": [],
+  "CB.data.Connection": [],
   "CB.form.field.MultiFileButton": [
     "widget.multifilebutton",
     "widget.widget.multifilebutton"
