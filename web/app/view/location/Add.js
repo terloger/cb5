@@ -20,6 +20,14 @@ Ext.define('CB.view.location.Add', {
     viewModel: {
         type: 'cb-location-add'
     },
+
+    session: true,
+
+    config: {
+        country: null,
+        lat: null,
+        lng: null
+    },
     
     title: 'Add location',
     cls: 'cb-location-add',
@@ -71,6 +79,8 @@ Ext.define('CB.view.location.Add', {
             allowBlank: false
         },{
             xtype: 'combobox',
+            hidden: true,
+            disabled: true,
             name: 'types',
             fieldLabel: 'Type',
             displayField: 'name',
@@ -112,8 +122,6 @@ Ext.define('CB.view.location.Add', {
         xtype: 'cb-location-typepicker',
         title: 'Choose types',
         frame: true,
-        disabled: true,
-        hidden: true,
         bind: {
             location: '{location}'
         }

@@ -80,20 +80,29 @@ Ext.define('CB.paper.Image', {
     },
     
     withinImage: function(x, y) {
-        var box = this.getImage().getBox();
-        
+        var left = this.getTranslateX(),
+            right = left + this.getImageScaledWidth(),
+            top = this.getTranslateY(),
+            bottom = top + this.getImageScaledHeight();
+
         if (x) {
-            if (x < box.left || x > box.right) {
+            if (x < left) {
+                return false;
+            }
+            if (x > right) {
                 return false;
             }
         }
         
         if (y) {
-            if (y < box.top || y > box.bottom) {
+            if (y < top) {
+                return false;
+            }
+            if (y > bottom) {
                 return false;
             }
         }
-        
+
         return true;
     }
 

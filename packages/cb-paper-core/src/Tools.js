@@ -41,12 +41,20 @@ Ext.define('CB.paper.Tools', {
     
     applyActiveTool: function(name) {
         var tool = this.getTools().getByKey(name);
-        
+
         if (!tool || tool === this.getActiveTool()) {
             return;
         }
         
         tool.activate();
+
+        this.getPaper().removeCls([
+            'tool-move',
+            'tool-pen',
+            'tool-select'
+        ]);
+
+        this.getPaper().addCls('tool-' + name);
         
         this.fireEvent('toolchange', name, tool);
         

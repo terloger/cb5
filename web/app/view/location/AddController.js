@@ -5,11 +5,31 @@ Ext.define('CB.view.location.AddController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.cb-location-add',
-    
+
     /**
      * Core
      */
-    
+
+    init: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            session = view.getSession(),
+            country = view.getCountry(),
+            lat = view.getLat(),
+            lng = view.getLng(),
+            location;
+
+        location = session.createRecord('Location', {
+            lat: lat,
+            lng: lng,
+            created: new Date()
+        });
+
+        location.setCountry(country);
+
+        vm.set('location', location);
+    },
+
     save: function() {
         this.operations = [
             'saveLocation',
@@ -62,11 +82,11 @@ Ext.define('CB.view.location.AddController', {
     
     saveLocation: function() {
         var view = this.getView(),
-            session = view.getSession().getParent(),
+            session = view.getSession(),
             batch = session.getSaveBatch();
             
         view.mask('Saving Location ...');
-        
+
         if (!batch) {
             this.saveLocationComplete();
             return;
@@ -109,8 +129,9 @@ Ext.define('CB.view.location.AddController', {
     /**
      * Types
      */
-    
+
     setTypes: function(combo, records) {
+        return;
         var view = this.getView(),
             location = view.getViewModel().get('location');
     
@@ -125,7 +146,7 @@ Ext.define('CB.view.location.AddController', {
     
     saveTypes: function() {
         var view = this.getView(),
-            session = view.getSession().getParent(),
+            session = view.getSession(),
             changes = session.getChanges();
         
         if (changes && changes.LocationType && changes.LocationType.locations) {

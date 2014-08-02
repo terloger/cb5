@@ -64,6 +64,8 @@ Ext.define('CB.paper.Layer', {
         if (layer) {
             this.getLayers().remove(layer);
             layer.remove();
+
+            paper.view.draw();
         }
     },
     

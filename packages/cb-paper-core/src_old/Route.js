@@ -12,7 +12,7 @@ Ext.define('CB.paper.Route', {
 
     applyRoute: function(route) {
         if (typeof route === 'number') {
-            route = this.getLocation().routes().getById(route);
+            route = this.getLocation().routez¸().getById(route);
         }
         
         if (route instanceof CB.model.Route) {

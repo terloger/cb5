@@ -4,8 +4,8 @@ Ext.define('CB.model.Layer', {
     clientIdProperty: 'clientId',
 
     fields: [
-        {name: 'routeId', reference: 'Route'},
         {name: 'fileId', reference: 'File'},
+        {name: 'routeId', reference: 'Route'},
         {name: 'data', type: 'string'},
         {name: 'created', type: 'date'}
     ],

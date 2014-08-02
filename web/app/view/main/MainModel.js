@@ -15,26 +15,43 @@ Ext.define('CB.view.main.MainModel', {
         countries: {
             model: 'Country',
             storeId: 'countries',
-            session: true,
             autoLoad: true
         },
         gradeTypes: {
             model: 'GradeType',
             storeId: 'gradeTypes',
-            session: true,
             autoLoad: true
         },
         locationTypes: {
             model: 'LocationType',
             storeId: 'locationTypes',
-            session: true,
             autoLoad: true
         },
         locations: {
             model: 'Location',
             storeId: 'locations',
-            session: true,
-            autoLoad: true
+            autoLoad: {
+                recordCreator: function(data, Model) {
+                    var schema = Ext.data.schema.Schema.get('default'),
+                        record;
+
+                    switch (schema.getEntityName(Model)) {
+                        case 'LocationType':
+                            record = Ext.data.StoreManager.lookup('locationTypes').getById(data.id);
+                            break;
+                        case 'Country':
+                            record = Ext.data.StoreManager.lookup('countries').getById(data.id);
+                            break;
+                        default:
+                            // create new model instance
+                            record = new Model(data);
+                            record.phantom = false;
+                            break;
+                    }
+
+                    return record;
+                }
+            }
         }
     }
     

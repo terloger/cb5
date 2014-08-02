@@ -19,8 +19,8 @@ Ext.define('CB.service.File', {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-Requested-With': 'XMLHttpRequest',
-                'X-Location-Id': config.location.get('id'),
-                'X-File-Name': config.file.name
+                'X-LOCATION-ID': config.location.get('id'),
+                'X-FILE-NAME': config.file.name
             },
             progress: function(e) {
                 console.log('progress', Math.round((e.position / e.total) * 100), e);

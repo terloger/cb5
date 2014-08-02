@@ -458,9 +458,7 @@ class Location extends AbstractController
 
     /**
      * Remove file
-     *
-     * @access public
-     * @param  array $files
+     * @param $file
      * @return array
      */
     public function removeFile($file)

@@ -7,6 +7,16 @@
 );
 
 .cb-paper {
+
+    &.tool-move {
+      cursor: move;
+    }
+    &.tool-select {
+      cursor: default;
+    }
+    &.tool-pen {
+      cursor: crosshair;
+    }
     
     .cb-canvas {
         position: absolute;
@@ -20,14 +30,14 @@
         -ms-transform-origin: 0 0;
         -o-transform-origin: 0 0;
         transform-origin: 0 0;
+
+
         
         /*
         -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 1);
         -moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 1);
         box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 1);
         */
-        
-        
     }
     
 }

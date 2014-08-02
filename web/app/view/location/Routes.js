@@ -57,7 +57,7 @@ Ext.define('CB.view.location.Routes', {
     listeners: {
         beforeedit: 'checkUser',
         edit: 'routeEdit',
-        itemclick: 'routeSelectionChange',
+        selectionchange: 'routeSelectionChange',
         itemmouseenter: 'routeMouseEnter',
         itemmouseleave: 'routeMouseLeave'
     }

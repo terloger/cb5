@@ -36,139 +36,191 @@ Ext.define('CB.view.location.LocationController', {
     saveComplete: function() {
         var view = this.getView(),
             vm = view.getViewModel(),
-            location = vm.get('location');
+            location = vm.get('location'),
+            routes = view.down('cb-location-routes');
     
         vm.set('dirty', false);
-        
+
         view.unmask();
-        
+
+        this.initSession(location);
+
         this.fireEvent('locationupdated', location);
     },
-    
+
     operationComplete: function(operation) {
         var index = this.operations.indexOf(operation);
-        
+
         if (index > -1) {
             this.operations.splice(index, 1);
         }
-        
+
         if (this.operations.length === 0) {
             this.saveComplete();
         }
     },
-    
+
     checkUser: function() {
         var vm = this.getViewModel(),
             user = vm.get('user');
-    
+
         return user instanceof CB.model.User;
     },
-    
+
     /**
      * Location
      */
-    
+
     showLocation: function(location) {
         if (!location) {
             return;
         }
+
+        this.initSession(location);
         
-        var me = this,
-            view = me.getView(),
-            main = view.up('cb-main'),
-            miniMap = view.down('cb-location-minimap'),
+        this.initLocation(location);
+    },
+
+    initSession: function(location) {
+        var view = this.getView(),
             paper = view.down('cb-paper'),
-            vm = view.getViewModel(),
             session = view.getSession(),
-            rendered = view.rendered,
-            visible = view.isVisible(),
-            file = location.files().getAt(0),
-            lat = location.get('lat'),
-            lng = location.get('lng'),
-            marker, center, type, icon,
-            
-            showLocation = function() {
-                vm.set('location', location);
-                vm.set('file', file);
-                
-                location.routes().sort('pos', 'ASC');
-                
-                me.fileDataChanged();
-                
-                if (!miniMap) {
-                    return;
-                }
-                
-                if (miniMap.getCollapsed()) {
-                    miniMap.on({
-                        expand: showMiniMap,
-                        single: true
-                    });
-                } else {
-                    showMiniMap();
-                }
-            },
-            
-            showMiniMap = function() {
-                if (!miniMap.map) {
-                    me.createMiniMap();
-                }
-                
-                if (!miniMap.map) {
-                    return;
-                }
-                
-                center = new google.maps.LatLng(lat, lng);
-                type = location.types().getAt(0);
-                icon = type ? type.get('type') : 'default';
-                marker = new google.maps.Marker({
-                    position: center,
-                    lat: lat,
-                    lng: lng,
-                    title: location.get('name'),
-                    icon: 'resources/types/' + icon + '.png',
-                    shadow: 'resources/types/shadow.png'
-                });
-                miniMap.map.setCenter(center, 15);
-                marker.setMap(miniMap.map);
-            };
-        
-        // destroy old session
+            types = location.types();
+
+        // destroy session
         if (session) {
             session.destroy();
         }
-        
+
         // create new session
-        session = main.getSession().spawn();
+        session = Ext.create('Ext.data.Session');
         view.setSession(session);
         paper.setSession(session);
-        
-        // show location when view is ready
+
+        // no location
+        if (!location) {
+            return;
+        }
+
+        // add location
+        session.adopt(location);
+
+        // adopt location routes
+        location.routes().each(function(route){
+            session.adopt(route);
+        });
+
+        // adopt location files
+        location.files().each(function(file){
+            session.adopt(file);
+
+            // adopt location file layers
+            file.layers().each(function(layer){
+                session.adopt(layer);
+            });
+        });
+
+        // manage location types
+        this.initLocationTypes(location);
+    },
+
+    initLocation: function(location) {
+        var view = this.getView(),
+            rendered = view.rendered,
+            visible = view.isVisible();
+
         if (!rendered) {
             view.on({
-                afterrender: showLocation
+                afterrender: Ext.bind(this.doShowLocation, this, [location])
             });
         } else if (!visible) {
             view.on({
-                show: showLocation,
+                show: Ext.bind(this.doShowLocation, this, [location]),
                 single: true
             });
         } else {
-            showLocation();
+            this.doShowLocation(location);
         }
     },
-    
-    hideLocation: function() {
-        var me = this,
-            view = me.getView(),
+
+    initLocationTypes: function(location) {
+        var types = location.types(),
+            view = this.getView(),
+            session = view.getSession(),
+            role = session.getMatrix('LocationTypes').right.role,
+            matrix = session.getMatrixSlice(role, location.get('id'));
+
+        // adopt location types
+        Ext.data.StoreManager.lookup('locationTypes').each(function(type){
+            session.adopt(type);
+        });
+
+        // set session for location types
+        types.setSession(session);
+
+        // attach matrix to the store
+        matrix.attach(types);
+        matrix.notify = role.onMatrixUpdate;
+        matrix.scope = role;
+
+        // bind store to many-to-many events
+        types.on({
+            add: role.onAddToMany,
+            remove: role.onRemoveFromMany,
+            clear: role.onRemoveFromMany,
+            scope: role
+        });
+
+        // load initial matrix
+        if (types.getCount()) {
+            role.onAddToMany(types, types.getData().items, true);
+        }
+    },
+
+    unloadLocationTypes: function(location) {
+        var types = location.types(),
+            view = this.getView(),
+            session = view.getSession(),
+            role = session.getMatrix('LocationTypes').right.role;
+
+        types.matrix.destroy();
+
+        types.un({
+            add: role.onAddToMany,
+            remove: role.onRemoveFromMany,
+            clear: role.onRemoveFromMany,
+            scope: role
+        });
+    },
+
+    doShowLocation: function(location) {
+        var view = this.getView(),
             vm = view.getViewModel(),
-            session = view.getSession();
-    
+            file = location.files().getAt(0);
+
+        vm.set('location', location);
+        vm.set('file', file);
+
+        location.routes().sort('pos', 'ASC');
+
+        this.fileDataChanged();
+
+        this.initMiniMap(location);
+    },
+
+    hideLocation: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            session = view.getSession(),
+            location = vm.get('location');
+
         vm.set('location', null);
         vm.set('file', null);
         vm.set('dirty', false);
-        
-        me.destroyMiniMap();
+
+        this.destroyMiniMap();
+
+        this.unloadLocationTypes(location);
         
         if (session) {
             session.destroy();
@@ -176,11 +228,10 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocation: function() {
-        var me = this,
-            view = me.getView(),
-            session = view.getSession().getParent(),
+        var view = this.getView(),
+            session = view.getSession(),
             batch = session.getSaveBatch();
-    
+
         if (!batch) {
             this.saveLocationComplete();
             return;
@@ -198,11 +249,12 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocationComplete: function(batch, operation) {
-        var me = this,
-            view = me.getView(),
+        var view = this.getView(),
             paper = view.down('cb-paper');
     
-        paper.remapLayers();
+        if (batch) {
+            paper.remapLayers();
+        }
         
         this.operationComplete('saveLocation');
         
@@ -210,11 +262,12 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveLocationException: function(batch, operation) {
-        var me = this,
-            view = me.getView(),
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location'),
             exceptions = batch.getExceptions(),
             msg = [];
-    
+
         view.unmask();
     
         Ext.each(exceptions, function(exception){
@@ -230,6 +283,117 @@ Ext.define('CB.view.location.LocationController', {
         
         this.operationComplete('saveLocation');
         this.operationComplete('saveTypes');
+    },
+
+    /**
+     * MiniMap
+     */
+
+    initMiniMap: function(location) {
+        var view = this.getView(),
+            miniMap = view.down('cb-location-minimap');
+
+        if (!miniMap) {
+            return;
+        }
+
+        if (miniMap.getCollapsed()) {
+            miniMap.on({
+                expand: Ext.bind(this.showMiniMap, this, [location]),
+                single: true
+            });
+        } else {
+            this.showMiniMap(location);
+        }
+    },
+
+    showMiniMap: function(location) {
+        var view = this.getView(),
+            miniMap = view.down('cb-location-minimap'),
+            lat = location.get('lat'),
+            lng = location.get('lng'),
+            center, type, icon, marker;
+
+        if (!miniMap.map) {
+            this.createMiniMap();
+        }
+
+        if (!miniMap.map) {
+            return;
+        }
+
+        center = new google.maps.LatLng(lat, lng);
+        type = location.types().getAt(0);
+        icon = type ? type.get('type') : 'default';
+        marker = new google.maps.Marker({
+            position: center,
+            lat: lat,
+            lng: lng,
+            title: location.get('name'),
+            icon: 'resources/types/' + icon + '.png',
+            shadow: 'resources/types/shadow.png'
+        });
+        miniMap.map.setCenter(center, 15);
+        marker.setMap(miniMap.map);
+    },
+
+    createMiniMap: function() {
+        var miniMap = this.getView().down('cb-location-minimap');
+
+        // no google available
+        if (typeof google === 'undefined') {
+            miniMap.mapBody = miniMap.body.createChild({
+                tag: 'div',
+                cls: 'cb-map-body',
+                style: 'width:100%;height:100%;padding: 0 1em;',
+                html: '<p>Looks like Google Maps services are not available at the moment.</p>'
+            });
+            return;
+        }
+
+        if (!miniMap.mapBody) {
+            miniMap.mapBody = miniMap.body.createChild({
+                tag: 'div',
+                cls: 'cb-map-body',
+                style: 'width:100%;height:100%;'
+            });
+        }
+
+        if (!miniMap.map) {
+            miniMap.map = new google.maps.Map(miniMap.mapBody.dom, {
+                zoom: 15,
+                minZoom: 12,
+                mapTypeId: 'satellite',
+                mapTypeControl: false,
+                overviewMapControl: false,
+                panControl: false,
+                rotateControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                zoomControl: true
+            });
+        }
+    },
+
+    destroyMiniMap: function() {
+        var miniMap = this.getView().down('cb-location-minimap');
+
+        if (miniMap.mapBody) {
+            miniMap.mapBody.destroy();
+            delete miniMap.mapBody;
+            delete miniMap.map;
+        }
+    },
+
+    resizeMiniMap: function(w, h) {
+        var miniMap = this.getView().down('cb-location-minimap'),
+            center;
+
+        if (miniMap.map) {
+            center = miniMap.map.getCenter();
+            google.maps.event.trigger(miniMap.map, 'resize');
+            miniMap.map.setCenter(center, 15);
+        }
     },
     
     /**
@@ -269,9 +433,9 @@ Ext.define('CB.view.location.LocationController', {
     
     saveTypes: function() {
         var view = this.getView(),
-            session = view.getSession().getParent(),
+            session = view.getSession(),
             changes = session.getChanges();
-        
+
         if (changes && changes.LocationType && changes.LocationType.locations) {
             this.getView().mask('Saving Location Types ...');
             
@@ -288,8 +452,7 @@ Ext.define('CB.view.location.LocationController', {
     },
     
     saveTypesComplete: function(result) {
-        var me = this,
-            view = me.getView(),
+        var view = this.getView(),
             vm = view.getViewModel(),
             location = vm.get('location');
     
@@ -315,7 +478,10 @@ Ext.define('CB.view.location.LocationController', {
      */
     
     setPaperTool: function(btn) {
-        this.getView().down('cb-paper').setActiveTool(btn.paperTool);
+        var view = this.getView(),
+            paper = view.down('cb-paper');
+
+        paper.setActiveTool(btn.paperTool);
     },
     
     paperChanged: function(paper, item) {
@@ -334,7 +500,7 @@ Ext.define('CB.view.location.LocationController', {
                 sm = routes.getSelectionModel();
         
             if (route) {
-                sm.select(route, false, true);
+                sm.select(route);
             } else {
                 sm.deselectAll();
             }
@@ -417,13 +583,15 @@ Ext.define('CB.view.location.LocationController', {
     
     addRoute: function() {
         var view = this.getView(),
-            session = view.getSession().getParent(),
+            session = view.getSession(),
             routes = view.down('cb-location-routes'),
             route = session.createRecord('Route', {
                 pos: routes.getStore().getCount()
             });
     
         routes.getStore().add(route);
+
+        routes.getSelectionModel().select(route);
         
         routes.getPlugin('locationRouteCellEditing').startEdit(route, 0);
     },
@@ -432,25 +600,39 @@ Ext.define('CB.view.location.LocationController', {
         var view = this.getView(),
             vm = view.getViewModel(),
             paper = view.down('cb-paper'),
+            location = vm.get('location'),
             file = vm.get('file'),
             route = vm.get('routes.selection'),
             layer;
-    
+
         if (!route) {
             return;
         }
-        
+
         // remove paper route
         paper.removeRoute(route);
+
+        // get route layer
+        layer = file.getRouteLayer(route)
+        if (layer) {
+            // fix ext bug
+            var fileLayers = file.layers;
+
+            // drop layer
+            layer.drop();
+
+            // fix ext bug
+            file.layers = fileLayers;
+        }
+
+        // fix ext bug
+        var locationRoutes = location.routes;
 
         // drop route
         route.drop();
 
-        // drop layer
-        layer = file.getRouteLayer(route)
-        if (layer) {
-            layer.drop();
-        }
+        // fix ext bug
+        location.routes = locationRoutes;
 
         // mark view as dirty
         vm.set('dirty', true);
@@ -511,8 +693,8 @@ Ext.define('CB.view.location.LocationController', {
             paper = view.down('cb-paper'),
             papervm = paper.getViewModel(),
             selection = routes.getSelectionModel().getSelection(),
-            route = selection.length ? selection[0] : null;
-        
+            route = selection.length ? selection[selection.length - 1] : null;
+
         vm.set('selectedroute', route);
         papervm.set('route', route);
     },
@@ -543,70 +725,7 @@ Ext.define('CB.view.location.LocationController', {
         this.getView().down('cb-paper').zoomOut();
     },
     
-    /**
-     * MiniMap
-     */
-    
-    createMiniMap: function() {
-        var me = this,
-            miniMap = me.getView().down('cb-location-minimap');
-    
-        // no google available
-        if (typeof google === 'undefined') {
-            miniMap.mapBody = miniMap.body.createChild({
-                tag: 'div',
-                cls: 'cb-map-body',
-                style: 'width:100%;height:100%;padding: 0 1em;',
-                html: '<p>Looks like Google Maps services are not available at the moment.</p>'
-            });
-            return;
-        }
-        
-        if (!miniMap.mapBody) {
-            miniMap.mapBody = miniMap.body.createChild({
-                tag: 'div',
-                cls: 'cb-map-body',
-                style: 'width:100%;height:100%;'
-            });
-        }
-        
-        if (!miniMap.map) {
-            miniMap.map = new google.maps.Map(miniMap.mapBody.dom, {
-                zoom: 15,
-                minZoom: 12,
-                mapTypeId: 'satellite',
-                mapTypeControl: false,
-                overviewMapControl: false,
-                panControl: false,
-                rotateControl: false,
-                scaleControl: false,
-                streetViewControl: false,
-                zoomControl: true
-            });
-        }
-    },
-    
-    destroyMiniMap: function() {
-        var me = this,
-            miniMap = me.getView().down('cb-location-minimap');
-        
-        if (miniMap.mapBody) {
-            miniMap.mapBody.destroy();
-            delete miniMap.mapBody;
-            delete miniMap.map;
-        }
-    },
-    
-    resizeMiniMap: function(w, h) {
-        var miniMap = this.getView().down('cb-location-minimap'),
-            center;
-        
-        if (miniMap.map) {
-            center = miniMap.map.getCenter();
-            google.maps.event.trigger(miniMap.map, 'resize');
-            miniMap.map.setCenter(center, 15);
-        }
-    },
+
     
     /**
      * File

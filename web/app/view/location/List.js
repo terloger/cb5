@@ -52,7 +52,7 @@ Ext.define('CB.view.location.List', {
         },{
             text: 'Files',
             renderer: function(value, meta, location) {
-                return location.files().getCount();
+                return location.getFiles().getCount();
             }
         },{
             text: 'Country',

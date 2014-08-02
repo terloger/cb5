@@ -157,6 +157,11 @@ class Route extends AbstractEntity
         ];
     }
 
+    public function removeGrade($grade)
+    {
+        $this->grades->removeElement($grade);
+    }
+
     /**
      * Setters
      */

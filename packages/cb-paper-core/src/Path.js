@@ -15,13 +15,13 @@ Ext.define('CB.paper.Path', {
     },
     
     createPath: function(data) {
-        var path = new paper.Path(Ext.apply(data, {
+        var path = new paper.Path(Ext.apply({
             strokeColor: this.getPathColorNormal(),
             strokeWidth: this.getPathWidth(),
             data: {
                 type: 'line'
             }
-        }));
+        }, data));
         
         path.attach({
             click: Ext.bind(this.pathClick, this, [path], true)

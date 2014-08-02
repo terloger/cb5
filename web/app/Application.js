@@ -15,6 +15,7 @@ Ext.define('CB.Application', {
         'Ext.direct.RemotingProvider',
         'Ext.MessageBox',
         'CB.overrides.data.matrix.Slice',
+        //'CB.overrides.data.Store',
         'CB.overrides.grid.plugin.DragDrop',
         'CB.service.File',
         'CB.Config'

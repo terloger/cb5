@@ -72,7 +72,8 @@ Ext.define('CB.paper.tool.Pen', {
     
     penToolMouseUp: function(e) {
         var view = this.getView(),
-            path = this.getSelectedItem();
+            path = this.getSelectedItem(),
+            ghost;
         
         // no path
         if (!path) {
@@ -84,6 +85,10 @@ Ext.define('CB.paper.tool.Pen', {
         
         // fully select path
         path.fullySelected = false;
+
+        // create ghost path
+        console.log(path);
+        this.createGhostPath([path.segments]);
         
         // commit active layer
         this.commitLayer(this.getActiveLayer());

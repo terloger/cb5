@@ -6,7 +6,9 @@ Ext.define('CB.paper.Mouse', {
     config: {
         scale: 1,
         translateX: 0,
-        translateY: 0
+        translateY: 0,
+        minScale: 0.1,
+        maxScale: 6
     },
     
     constructor: function() {
@@ -69,7 +71,7 @@ Ext.define('CB.paper.Mouse', {
             ratio = newScale / scale;
     
         // constrain scale
-        if (newScale < 0.1 || newScale > 6) {
+        if (newScale < this.getMinScale() || newScale > this.getMaxScale()) {
             return;
         }
         

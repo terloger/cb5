@@ -1,4 +1,4 @@
-Ext.define('CB.model.LocationType', {
+    Ext.define('CB.model.LocationType', {
     extend: 'CB.model.Base',
 
     fields: [

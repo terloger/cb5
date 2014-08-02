@@ -30,7 +30,7 @@ Ext.define('CB.paper.Route', {
         // get old route
         var oldRoute = this.getRoute(),
             layer;
-        
+
         // unhighlight old
         if (oldRoute) {
             layer = this.getRouteLayer(oldRoute);
@@ -43,7 +43,7 @@ Ext.define('CB.paper.Route', {
         if (!route || !(route instanceof CB.model.Route)) {
             return null;
         }
-        
+
         // activate and highlight new
         layer = this.getRouteLayer(route);
         if (layer) {

@@ -59,7 +59,7 @@ Ext.define('CB.view.location.TypePicker', {
         if (location) {
             types = location.types().getRange();
         }
-        
+
         if (types.length) {
             sm.select(types, false, true);
         } else {

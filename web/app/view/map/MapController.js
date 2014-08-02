@@ -89,7 +89,7 @@ Ext.define('CB.view.map.MapController', {
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
                         drop = false;
-                        
+
                     if (location.files().getCount() > 0) {
                         this.addMarker(latLng, location, icon, drop);
                     }

@@ -211,35 +211,25 @@ Ext.define('CB.view.main.MainController', {
     
     showLocationAdd: function(country, lat, lng) {
         var view = this.getView(),
-            session = view.getSession(),
-            user = view.getViewModel().get('user'),
-            addLocationView,
-            location;
-    
+            vm = view.getViewModel(),
+            user = vm.get('user'),
+            addLocationView;
+
         if (!user) {
             this.redirectTo('home');
             return;
         }
-        
+
         addLocationView = Ext.create('CB.view.location.Add', {
-            session: session.spawn(),
+            country: country,
+            lat: lat,
+            lng: lng,
             tabConfig: {
                 hidden: true
             }
         });
         
         view.add(addLocationView);
-        
-        location = session.createRecord('Location', {
-            lat: lat,
-            lng: lng,
-            created: new Date()
-        });
-        
-        location.setCountry(country);
-        
-        addLocationView.getViewModel().set('location', location);
-        
         view.setActiveTab(addLocationView);
     },
     

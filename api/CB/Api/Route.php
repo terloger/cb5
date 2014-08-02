@@ -203,7 +203,7 @@ class Route extends AbstractController
                 // remove grades
                 foreach ($Route->getGrades() as $Grade)
                 {
-                    $em->remove($Grade);
+                    $Route->removeGrade($Grade);
                 }
                 
                 // remove layers
