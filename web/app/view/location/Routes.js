@@ -20,7 +20,7 @@ Ext.define('CB.view.location.Routes', {
     
     viewConfig: {
         listeners: {
-            beforedrag: 'checkUser',
+            beforedrag: 'beforeRouteDrag',
             drop: 'routeDrop'
         },
         plugins: {

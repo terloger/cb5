@@ -68,7 +68,7 @@ Ext.define('CB.view.location.LocationController', {
     },
 
     /**
-     * Location
+     * Show/hide location
      */
 
     showLocation: function(location) {
@@ -77,15 +77,59 @@ Ext.define('CB.view.location.LocationController', {
         }
 
         this.initSession(location);
-        
-        this.initLocation(location);
+
+        var view = this.getView();
+
+        if (!view.rendered) {
+            view.on({
+                afterrender: Ext.bind(this.doShowLocation, this, [location])
+            });
+        } else if (!view.isVisible()) {
+            view.on({
+                show: Ext.bind(this.doShowLocation, this, [location]),
+                single: true
+            });
+        } else {
+            this.doShowLocation(location);
+        }
     },
+
+    doShowLocation: function(location) {
+        var vm = this.getViewModel();
+
+        vm.set('location', location);
+
+        vm.set('file', location.files().getAt(0));
+
+        location.routes().sort('pos', 'ASC');
+
+        this.fileDataChanged();
+
+        this.initMiniMap(location);
+    },
+
+    hideLocation: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+
+        vm.set('location', null);
+        vm.set('file', null);
+        vm.set('dirty', false);
+
+        this.destroyMiniMap();
+
+        this.destroySession(location);
+    },
+
+    /**
+     * Session handling
+     */
 
     initSession: function(location) {
         var view = this.getView(),
             paper = view.down('cb-paper'),
-            session = view.getSession(),
-            types = location.types();
+            session = view.getSession();
 
         // destroy session
         if (session) {
@@ -94,10 +138,12 @@ Ext.define('CB.view.location.LocationController', {
 
         // create new session
         session = Ext.create('Ext.data.Session');
+
+        // apply session to view and paper
         view.setSession(session);
         paper.setSession(session);
 
-        // no location
+        // no location?
         if (!location) {
             return;
         }
@@ -114,118 +160,93 @@ Ext.define('CB.view.location.LocationController', {
         location.files().each(function(file){
             session.adopt(file);
 
-            // adopt location file layers
+            // adopt file layers
             file.layers().each(function(layer){
                 session.adopt(layer);
             });
         });
-
-        // manage location types
-        this.initLocationTypes(location);
-    },
-
-    initLocation: function(location) {
-        var view = this.getView(),
-            rendered = view.rendered,
-            visible = view.isVisible();
-
-        if (!rendered) {
-            view.on({
-                afterrender: Ext.bind(this.doShowLocation, this, [location])
-            });
-        } else if (!visible) {
-            view.on({
-                show: Ext.bind(this.doShowLocation, this, [location]),
-                single: true
-            });
-        } else {
-            this.doShowLocation(location);
-        }
-    },
-
-    initLocationTypes: function(location) {
-        var types = location.types(),
-            view = this.getView(),
-            session = view.getSession(),
-            role = session.getMatrix('LocationTypes').right.role,
-            matrix = session.getMatrixSlice(role, location.get('id'));
 
         // adopt location types
         Ext.data.StoreManager.lookup('locationTypes').each(function(type){
             session.adopt(type);
         });
 
-        // set session for location types
-        types.setSession(session);
-
-        // attach matrix to the store
-        matrix.attach(types);
-        matrix.notify = role.onMatrixUpdate;
-        matrix.scope = role;
-
-        // bind store to many-to-many events
-        types.on({
-            add: role.onAddToMany,
-            remove: role.onRemoveFromMany,
-            clear: role.onRemoveFromMany,
-            scope: role
-        });
-
-        // load initial matrix
-        if (types.getCount()) {
-            role.onAddToMany(types, types.getData().items, true);
-        }
+        // init session associations
+        this.initSessionAssociations(location, 'LocationTypes');
+        //this.initSessionAssociations(location, 'LocationRoutes');
     },
 
-    unloadLocationTypes: function(location) {
-        var types = location.types(),
-            view = this.getView(),
-            session = view.getSession(),
-            role = session.getMatrix('LocationTypes').right.role;
-
-        types.matrix.destroy();
-
-        types.un({
-            add: role.onAddToMany,
-            remove: role.onRemoveFromMany,
-            clear: role.onRemoveFromMany,
-            scope: role
-        });
-    },
-
-    doShowLocation: function(location) {
+    destroySession: function(location) {
         var view = this.getView(),
-            vm = view.getViewModel(),
-            file = location.files().getAt(0);
+            session = view.getSession();
 
-        vm.set('location', location);
-        vm.set('file', file);
+        this.removeSessionAssociations(location, 'LocationTypes');
+        //this.removeSessionAssociations(location, 'LocationRoutes');
 
-        location.routes().sort('pos', 'ASC');
-
-        this.fileDataChanged();
-
-        this.initMiniMap(location);
-    },
-
-    hideLocation: function() {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            session = view.getSession(),
-            location = vm.get('location');
-
-        vm.set('location', null);
-        vm.set('file', null);
-        vm.set('dirty', false);
-
-        this.destroyMiniMap();
-
-        this.unloadLocationTypes(location);
-        
         if (session) {
             session.destroy();
         }
     },
+
+    initSessionAssociations: function(location, associationName) {
+        var view = this.getView(),
+            session = view.getSession(),
+            association = location.schema.getAssociation(associationName),
+            manyToMany = association.isManyToMany,
+            left = association.left,
+            right = association.right,
+            store = location[left.getterName](),
+            role = manyToMany ? right : left,
+            matrix;
+
+        // set session for location types
+        store.setSession(session);
+
+        // attach matrix to the store
+        if (manyToMany) {
+            matrix = session.getMatrixSlice(role, location.get('id'));
+            matrix.attach(store);
+            matrix.notify = role.onMatrixUpdate;
+            matrix.scope = role;
+        }
+
+        // bind role event handlers to store
+        store.on({
+            add: role.onAddToMany,
+            remove: role.onRemoveFromMany,
+            clear: role.onRemoveFromMany,
+            scope: role
+        });
+
+        // load initial associations
+        if (store.getCount()) {
+            role.onAddToMany(store, store.getData().items, true);
+        }
+    },
+
+    removeSessionAssociations: function(location, associationName) {
+        var association = location.schema.getAssociation(associationName),
+            manyToMany = association.isManyToMany,
+            left = association.left,
+            right = association.right,
+            store = location[left.getterName](),
+            role = manyToMany ? right : left;
+
+        if (manyToMany) {
+            store.matrix.destroy();
+        }
+
+        store.un({
+            add: role.onAddToMany,
+            remove: role.onRemoveFromMany,
+            clear: role.onRemoveFromMany,
+            scope: role
+        });
+    },
+
+    /**
+     * Save location
+     */
     
     saveLocation: function() {
         var view = this.getView(),
@@ -630,50 +651,12 @@ Ext.define('CB.view.location.LocationController', {
 
         // drop route
         route.drop();
-
+        
         // fix ext bug
         location.routes = locationRoutes;
 
         // mark view as dirty
         vm.set('dirty', true);
-    },
-    
-    reorderRoutes: function(routes) {
-        Ext.each(routes, function(route, index){
-            route.set('pos', index);
-        }, this);
-    },
-    
-    routeDrop: function(node, data, overModel, dropPosition, dropHandlers) {
-        if (!data.records.length) {
-            return false;
-        }
-        
-        var view = this.getView(),
-            routes = view.down('cb-location-routes'),
-            store = routes.getStore(),
-            dragRoute = data.records[0],
-            dragIndex = store.indexOf(dragRoute),
-            dropRoute = overModel,
-            dropIndex = store.indexOf(dropRoute),
-            range = store.getRange();
-    
-        if (dragIndex > dropIndex && dropPosition === 'after') {
-            dropIndex++;
-        }
-        
-        if (dropIndex > dragIndex && dropPosition === 'before') {
-            dropIndex--;
-        }
-    
-        range.splice(dragIndex, 1);
-        range.splice(dropIndex, 0, dragRoute);
-        
-        this.reorderRoutes(range);
-        
-        this.routeDataChanged();
-        
-        store.sort('pos', 'ASC');
     },
     
     routeEdit: function(editor, context) {
@@ -712,21 +695,63 @@ Ext.define('CB.view.location.LocationController', {
     
         paper.routeMouseLeave(route);
     },
-    
-    /**
-     * Zoom
-     */
-    
-    zoomIn: function() {
-        this.getView().down('cb-paper').zoomIn();
-    },
-    
-    zoomOut: function() {
-        this.getView().down('cb-paper').zoomOut();
-    },
-    
 
-    
+    /**
+     * Route drag drop
+     */
+
+    beforeRouteDrag: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+
+        this.locationRoutesFix = location.routes;
+    },
+
+    routeDrop: function(node, data, overModel, dropPosition, dropHandlers) {
+        if (!data.records.length) {
+            return false;
+        }
+
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location'),
+            routes = view.down('cb-location-routes'),
+            store = routes.getStore(),
+            dragRoute = data.records[0],
+            dragIndex = store.indexOf(dragRoute),
+            dropRoute = overModel,
+            dropIndex = store.indexOf(dropRoute),
+            range = store.getRange();
+
+        if (dragIndex > dropIndex && dropPosition === 'after') {
+            dropIndex++;
+        }
+
+        if (dropIndex > dragIndex && dropPosition === 'before') {
+            dropIndex--;
+        }
+
+        range.splice(dragIndex, 1);
+        range.splice(dropIndex, 0, dragRoute);
+
+        this.reorderRoutes(range);
+
+        this.routeDataChanged();
+
+        store.sort('pos', 'ASC');
+
+        if (!location.routes) {
+            location.routes = this.locationRoutesFix;
+        }
+    },
+
+    reorderRoutes: function(routes) {
+        Ext.each(routes, function(route, index){
+            route.set('pos', index);
+        }, this);
+    },
+
     /**
      * File
      */
@@ -896,6 +921,18 @@ Ext.define('CB.view.location.LocationController', {
         vm.set('fileCount', files.getCount());
         vm.set('fileIndex', files.indexOf(file) + 1);
         vm.set('hasFiles', files.getCount() > 1);
+    },
+
+    /**
+     * Zoom
+     */
+
+    zoomIn: function() {
+        this.getView().down('cb-paper').zoomIn();
+    },
+
+    zoomOut: function() {
+        this.getView().down('cb-paper').zoomOut();
     }
     
 });
