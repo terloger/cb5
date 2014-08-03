@@ -54,7 +54,8 @@ Ext.define('CB.paper.tool.Pen', {
         this.setSelectedItem(path);
         
         // add point if event withing image box
-        if (this.withinImage(e.event.x, e.event.y)) {
+        console.log(e.event);
+        if (this.withinImage(e.event.offsetX, e.event.offsetY)) {
             path.add(e.point);
         }
     },
@@ -63,7 +64,7 @@ Ext.define('CB.paper.tool.Pen', {
         var path = this.getSelectedItem();
         
         // no path or not within image
-        if (!path || !this.withinImage(e.event.x, e.event.y)) {
+        if (!path || !this.withinImage(e.event.offsetX, e.event.offsetY)) {
             return;
         }
         
@@ -72,9 +73,8 @@ Ext.define('CB.paper.tool.Pen', {
     
     penToolMouseUp: function(e) {
         var view = this.getView(),
-            path = this.getSelectedItem(),
-            ghost;
-        
+            path = this.getSelectedItem();
+
         // no path
         if (!path) {
             return;
@@ -87,7 +87,6 @@ Ext.define('CB.paper.tool.Pen', {
         path.fullySelected = false;
 
         // create ghost path
-        console.log(path);
         this.createGhostPath([path.segments]);
         
         // commit active layer

@@ -616,6 +616,32 @@ Ext.define('CB.view.location.LocationController', {
         
         routes.getPlugin('locationRouteCellEditing').startEdit(route, 0);
     },
+
+    clearRoute: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            paper = view.down('cb-paper'),
+            route = paper.getSelectedRoute(),
+            file = vm.get('file'),
+            fileLayers = file.layers,
+            layer = file.getRouteLayer(route);
+
+        if (!layer) {
+            return;
+        }
+
+        // drop layer
+        layer.drop();
+
+        // ext bug fix
+        file.layers = fileLayers;
+
+        // remove route
+        paper.removeRoute(route);
+
+        // trigger data change
+        this.routeDataChanged();
+    },
     
     removeRoute: function() {
         var view = this.getView(),

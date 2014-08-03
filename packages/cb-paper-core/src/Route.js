@@ -13,6 +13,7 @@ Ext.define('CB.paper.Route', {
             vm = view.getViewModel();
         
         // provide functions for the view
+        view.getSelectedRoute = Ext.bind(this.getSelectedRoute, this);
         view.removeRoute = Ext.bind(this.removeRoute, this);
         view.routeMouseEnter = Ext.bind(this.routeMouseEnter, this);
         view.routeMouseLeave = Ext.bind(this.routeMouseLeave, this);
@@ -62,7 +63,9 @@ Ext.define('CB.paper.Route', {
     
     removeRoute: function(route) {
         var layer = this.getRouteLayer(route);
-        this.removeLayer(layer);
+        if (layer) {
+            this.removeLayer(layer);
+        }
     },
     
     routeMouseEnter: function(route) {

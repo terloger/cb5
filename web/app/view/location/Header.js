@@ -156,6 +156,16 @@ Ext.define('CB.view.location.Header', {
             hidden: '{!draw}'
         }
     },{
+        xtype: 'button',
+        ui: 'blank',
+        tooltip: 'Clear Route Lines',
+        overflowText: 'Clear Route Lines',
+        glyph: 'xe61e@climbuddy',
+        handler: 'clearRoute',
+        bind: {
+            hidden: '{!draw}'
+        }
+    },{
         xtype: 'tbseparator',
         bind: {
             hidden: '{!dirty}'

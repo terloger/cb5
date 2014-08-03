@@ -87,18 +87,22 @@ Ext.define('CB.paper.Image', {
 
         if (x) {
             if (x < left) {
+                //console.log('x < left', x, left);
                 return false;
             }
             if (x > right) {
+                //console.log('x > right', x, right);
                 return false;
             }
         }
         
         if (y) {
             if (y < top) {
+                //console.log('y < top', y, top);
                 return false;
             }
             if (y > bottom) {
+                //console.log('y > bottom', y, bottom);
                 return false;
             }
         }

@@ -17,9 +17,9 @@ Ext.define('CB.paper.Layer', {
     constructor: function() {
         // create layer collection
         this.setLayers(Ext.create('Ext.util.MixedCollection'));
-        
+
         var view = this.getView();
-        
+
         // provide functions for the view
         view.remapLayers = Ext.bind(this.remapLayers, this);
     },

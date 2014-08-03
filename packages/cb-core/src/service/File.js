@@ -9,8 +9,6 @@ Ext.define('CB.service.File', {
     upload: function(config) {
         var connection = Ext.create('CB.data.Connection');
 
-        console.log('connection', connection);
-        
         // execute request
         connection.request({
             url: '/api/upload-file/',
