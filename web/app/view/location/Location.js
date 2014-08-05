@@ -58,7 +58,7 @@ Ext.define('CB.view.location.Location', {
                 viewModel: vm,
                 width: 400,
                 minWidth: 240,
-                maxWidth: 600,
+                maxWidth: 800,
                 animCollapse: false,
                 collapsible: true,
                 collapseDirection: 'left',

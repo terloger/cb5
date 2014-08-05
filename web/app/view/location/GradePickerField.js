@@ -8,6 +8,9 @@ Ext.define('CB.view.location.GradePickerField', {
     xtype: 'cb-location-gradepickerfield',
     
     cls: 'cb-location-gradepickerfield',
+
+    editable: false,
+    selectOnFocus: true,
     
     config: {
         location: null,
@@ -44,7 +47,9 @@ Ext.define('CB.view.location.GradePickerField', {
     },
 
     setValue: function(grade) {
-        var inputEl = this.inputEl;
+        var inputEl = this.inputEl,
+            value,
+            rawValue;
 
         if (inputEl && this.emptyText && !Ext.isEmpty(grade)) {
             inputEl.removeCls(this.emptyUICls);
@@ -52,9 +57,30 @@ Ext.define('CB.view.location.GradePickerField', {
             this.valueContainsPlaceholder = false;
         }
 
-        this.setRawValue(grade ? grade.get('grade') : null);
+        if (grade instanceof CB.model.Grade) {
 
-        this.value = grade;
+            // grade instance
+            value = grade;
+            rawValue = grade.get('grade');
+
+        } else if (Ext.isArray(grade)) {
+
+            // grade object
+            grade = grade[0];
+            value = Ext.data.StoreManager.lookup('grades').getById(grade.id);
+            rawValue = grade.grade;
+
+        } else {
+
+            // no value
+            value = null;
+            rawValue = null;
+
+        }
+
+        this.setRawValue(rawValue);
+
+        this.value = value;
 
         this.checkChange();
 
@@ -71,6 +97,8 @@ Ext.define('CB.view.location.GradePickerField', {
         var grade = selection.length ? selection[0] : null;
 
         this.setValue(grade);
+
+        this.fireEvent('blur');
     },
 
     applyLocation: function(location) {

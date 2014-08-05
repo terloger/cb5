@@ -67,7 +67,7 @@ Ext.define('CB.paper.Route', {
     },
     
     updateRoute: function(newRoute, oldRoute) {
-        console.log('TODO: fix routeselectionchange event', this);
+        //console.log('TODO: fix routeselectionchange event', this);
         //this.fireEvent('routeselectionchange', this, newRoute, oldRoute);
     },
 

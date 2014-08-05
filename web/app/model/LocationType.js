@@ -7,7 +7,7 @@
     ],
     
     manyToMany: {
-        Locations: {
+        TypeLocations: {
             type: 'Location',
             role: 'locations',
             field: 'locationId',

@@ -27,8 +27,8 @@ Ext.define('CB.view.location.RoutesCellEditing', {
 
                 // update route grade
                 me.view.refresh();
-                console.log('set grade', value);
-                console.log('context', context);
+                //console.log('set grade', value);
+                //console.log('context', context);
 
             } else {
 

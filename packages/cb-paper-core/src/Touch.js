@@ -185,8 +185,8 @@ Ext.define('CB.paper.Touch', {
     onPaperSwipe: function(e, node, options) {
         // limit swipe distance and duration
         if (e.distance < this.getSwipeDistanceMin() || e.duration > this.getSwipeDurationMax()) {
-            if (e.distance < this.getSwipeDistanceMin()) console.log('too short distance');
-            if (e.duration > this.getSwipeDurationMax()) console.log('too long duration');
+            //if (e.distance < this.getSwipeDistanceMin()) console.log('too short distance');
+            //if (e.duration > this.getSwipeDurationMax()) console.log('too long duration');
             return;
         }
         

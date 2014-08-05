@@ -10,7 +10,19 @@ Ext.define('CB.model.Route', {
         {name: 'created', type: 'date'},
         {name: 'fileId', type: 'int'}
     ],
-    
+
+    manyToMany: {
+        RouteGrades: {
+            type: 'Grade',
+            role: 'grades',
+            field: 'gradeId',
+            right: {
+                field: 'routeId',
+                role: 'routes'
+            }
+        }
+    },
+
     proxy: {
         type: 'direct',
         api: {

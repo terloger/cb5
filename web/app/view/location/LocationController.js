@@ -24,52 +24,12 @@ Ext.define('CB.view.location.LocationController', {
         vm.bind('{location}', this.showLocation, this);
     },
     
-    save: function() {
-        this.operations = [
-            'saveLocation',
-            'saveTypes'
-        ];
-        
-        this.saveLocation();
-    },
-    
-    saveComplete: function() {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            location = vm.get('location'),
-            routes = view.down('cb-location-routes');
-    
-        vm.set('dirty', false);
-
-        view.unmask();
-
-        this.initSession(location);
-
-        this.fireEvent('locationupdated', location);
-    },
-
-    operationComplete: function(operation) {
-        var index = this.operations.indexOf(operation);
-
-        if (index > -1) {
-            this.operations.splice(index, 1);
-        }
-
-        if (this.operations.length === 0) {
-            this.saveComplete();
-        }
-    },
-
     checkUser: function() {
         var vm = this.getViewModel(),
             user = vm.get('user');
 
         return user instanceof CB.model.User;
     },
-
-    /**
-     * Show/hide location
-     */
 
     showLocation: function(location) {
         if (!location) {
@@ -171,31 +131,49 @@ Ext.define('CB.view.location.LocationController', {
             session.adopt(type);
         });
 
-        // init session associations
+        // adopt grade types and grades
+        Ext.data.StoreManager.lookup('gradeTypes').each(function(type){
+            session.adopt(type);
+
+            type.grades().each(function(grade){
+                session.adopt(grade);
+            });
+        });
+        
+        // init location type associations
         this.initSessionAssociations(location, 'LocationTypes');
-        //this.initSessionAssociations(location, 'LocationRoutes');
+
+        // init route grades associations for each route
+        location.routes().each(function(route){
+            this.initSessionAssociations(route, 'RouteGrades');
+        }, this);
     },
 
     destroySession: function(location) {
         var view = this.getView(),
             session = view.getSession();
 
+        // remove location types associations
         this.removeSessionAssociations(location, 'LocationTypes');
-        //this.removeSessionAssociations(location, 'LocationRoutes');
+
+        // remove route grades associations from each route
+        location.routes().each(function(route){
+            this.removeSessionAssociations(route, 'RouteGrades');
+        }, this);
 
         if (session) {
             session.destroy();
         }
     },
 
-    initSessionAssociations: function(location, associationName) {
+    initSessionAssociations: function(model, associationName) {
         var view = this.getView(),
             session = view.getSession(),
-            association = location.schema.getAssociation(associationName),
+            association = model.schema.getAssociation(associationName),
             manyToMany = association.isManyToMany,
             left = association.left,
             right = association.right,
-            store = location[left.getterName](),
+            store = model[left.getterName](),
             role = manyToMany ? right : left,
             matrix;
 
@@ -204,7 +182,7 @@ Ext.define('CB.view.location.LocationController', {
 
         // attach matrix to the store
         if (manyToMany) {
-            matrix = session.getMatrixSlice(role, location.get('id'));
+            matrix = session.getMatrixSlice(role, model.get('id'));
             matrix.attach(store);
             matrix.notify = role.onMatrixUpdate;
             matrix.scope = role;
@@ -224,12 +202,12 @@ Ext.define('CB.view.location.LocationController', {
         }
     },
 
-    removeSessionAssociations: function(location, associationName) {
-        var association = location.schema.getAssociation(associationName),
+    removeSessionAssociations: function(model, associationName) {
+        var association = model.schema.getAssociation(associationName),
             manyToMany = association.isManyToMany,
             left = association.left,
             right = association.right,
-            store = location[left.getterName](),
+            store = model[left.getterName](),
             role = manyToMany ? right : left;
 
         if (manyToMany) {
@@ -247,15 +225,49 @@ Ext.define('CB.view.location.LocationController', {
     /**
      * Save location
      */
+
+    save: function() {
+        this.operations = [
+            'saveLocation',
+            'saveTypes',
+            'saveRouteGrades'
+        ];
+
+        this.saveLocation();
+    },
+
+    saveComplete: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location'),
+            routes = view.down('cb-location-routes');
+
+        vm.set('dirty', false);
+
+        view.unmask();
+
+        this.initSession(location);
+
+        this.fireEvent('locationupdated', location);
+    },
+
+    operationComplete: function(operation) {
+        var index = this.operations.indexOf(operation);
+
+        if (index > -1) {
+            this.operations.splice(index, 1);
+        }
+
+        if (this.operations.length === 0) {
+            this.saveComplete();
+        }
+    },
     
     saveLocation: function() {
         var view = this.getView(),
             session = view.getSession(),
+            changes = session.getChanges(),
             batch = session.getSaveBatch();
-
-        console.log('changes', session.getChanges());
-        console.log('batch', batch);
-        return;
 
         if (!batch) {
             this.saveLocationComplete();
@@ -308,6 +320,125 @@ Ext.define('CB.view.location.LocationController', {
         
         this.operationComplete('saveLocation');
         this.operationComplete('saveTypes');
+        this.operationComplete('saveRouteGrades');
+    },
+
+    /**
+     * Type
+     */
+    
+    typePicker: function(e) {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            user = vm.get('user'),
+            picker = view.down('cb-location-typepicker');
+    
+        if (!user) {
+            return;
+        }
+        
+        if (picker.isVisible()) {
+            // hide picker
+            picker.hide();
+            return;
+        } else {
+            // show picker
+            picker.triggerCt = view.down('#types');
+            picker.showAt(10, 8);
+        }
+    },
+    
+    typeChange: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        view.down('#types').setTypes(location.types());
+        
+        vm.set('dirty', true);
+    },
+    
+    saveTypes: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            changes = session.getChanges();
+
+        if (changes && changes.LocationType && changes.LocationType.locations) {
+            this.getView().mask('Saving Location Types ...');
+            
+            CB.api.Location.setTypes(changes.LocationType.locations, function(result) {
+                if (result && result.success) {
+                    this.saveTypesComplete(result);
+                } else {
+                    this.saveTypesException(result);
+                }
+            }, this);
+        } else {
+            this.saveTypesComplete();
+        }
+    },
+    
+    saveTypesComplete: function() {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            location = vm.get('location');
+    
+        location.commit();
+        location.types().commitChanges();
+        
+        this.operationComplete('saveTypes');
+
+        this.saveRouteGrades();
+    },
+    
+    saveTypesException: function(result) {
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: result && result.message ? result.message : 'Unable to save Location Types!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+        
+        this.operationComplete('saveTypes');
+    },
+
+    /**
+     * Save route grades
+     */
+
+    saveRouteGrades: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            changes = session.getChanges();
+
+        if (changes && changes.Grade && changes.Grade.routes) {
+            this.getView().mask('Saving Route Types ...');
+
+            CB.api.Location.setRouteGrades(changes.Grade.routes, function(result) {
+                if (result && result.success) {
+                    this.saveRouteGradesComplete(result);
+                } else {
+                    this.saveRouteGradesException(result);
+                }
+            }, this);
+        } else {
+            this.saveRouteGradesComplete();
+        }
+    },
+
+    saveRouteGradesComplete: function() {
+        this.operationComplete('saveRouteGrades');
+    },
+
+    saveRouteGradesException: function(result) {
+        Ext.MessageBox.show({
+            title: 'Server Exception',
+            msg: result && result.message ? result.message : 'Unable to save Route Grades!',
+            icon: Ext.MessageBox.ERROR,
+            buttons: Ext.MessageBox.OK
+        });
+
+        this.operationComplete('saveRouteGrades');
     },
 
     /**
@@ -419,83 +550,6 @@ Ext.define('CB.view.location.LocationController', {
             google.maps.event.trigger(miniMap.map, 'resize');
             miniMap.map.setCenter(center, 15);
         }
-    },
-    
-    /**
-     * Type
-     */
-    
-    typePicker: function(e) {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            user = vm.get('user'),
-            picker = view.down('cb-location-typepicker');
-    
-        if (!user) {
-            return;
-        }
-        
-        if (picker.isVisible()) {
-            // hide picker
-            picker.hide();
-            return;
-        } else {
-            // show picker
-            picker.triggerCt = view.down('#types');
-            picker.showAt(10, 8);
-        }
-    },
-    
-    typeChange: function() {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            location = vm.get('location');
-    
-        view.down('#types').setTypes(location.types());
-        
-        vm.set('dirty', true);
-    },
-    
-    saveTypes: function() {
-        var view = this.getView(),
-            session = view.getSession(),
-            changes = session.getChanges();
-
-        if (changes && changes.LocationType && changes.LocationType.locations) {
-            this.getView().mask('Saving Location Types ...');
-            
-            CB.api.Location.setTypes(changes.LocationType.locations, function(result) {
-                if (result && result.success) {
-                    this.saveTypesComplete(result);
-                } else {
-                    this.saveTypesException(result);
-                }
-            }, this);
-        } else {
-            this.saveTypesComplete();
-        }
-    },
-    
-    saveTypesComplete: function(result) {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            location = vm.get('location');
-    
-        location.commit();
-        location.types().commitChanges();
-        
-        this.operationComplete('saveTypes');
-    },
-    
-    saveTypesException: function(result) {
-        Ext.MessageBox.show({
-            title: 'Server Exception',
-            msg: result && result.message ? result.message : 'Unable to save Location Types!',
-            icon: Ext.MessageBox.ERROR,
-            buttons: Ext.MessageBox.OK
-        });
-        
-        this.operationComplete('saveTypes');
     },
     
     /**

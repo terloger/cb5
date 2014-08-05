@@ -539,6 +539,7 @@ class Location extends AbstractController
 
                             $msg[] = $sql;
                             //$msg[] = 'Created: ' . count($values) . '.';
+
                             break;
 
                         // delete
@@ -564,6 +565,7 @@ class Location extends AbstractController
 
                             $msg[] = $sql;
                             //$msg[] = 'Deleted: ' . count($values) . '.';
+
                             break;
 
                         // invalid action
@@ -574,6 +576,89 @@ class Location extends AbstractController
                 }
             }
             
+            return $this->success(implode(' ', $msg));
+        }
+        catch (\Exception $e)
+        {
+            return $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * Set route grades
+     *
+     * @param array $data
+     * @return array
+     */
+    public function setRouteGrades($data)
+    {
+        try
+        {
+            // response message
+            $msg = [];
+
+            if (is_array($data))
+            {
+                // get entity manager
+                $em = $this->getEntityManager();
+
+                // loop through actions
+                foreach ($data as $action => $grades)
+                {
+                    switch ($action)
+                    {
+                        // create
+                        case 'C':
+                            $values = [];
+
+                            foreach ($grades as $gradeId => $routeIds)
+                            {
+                                foreach ($routeIds as $routeId)
+                                {
+                                    $values[] = '(' . (int)$routeId . ',' . (int)$gradeId . ')';
+                                }
+                            }
+
+                            $sql = 'INSERT IGNORE INTO route_grades (route_id, grade_id) VALUES ' . implode(',', $values);
+
+                            $stmt = $em->getConnection()->prepare($sql);
+                            $stmt->execute();
+
+                            $msg[] = $sql;
+                            //$msg[] = 'Created: ' . count($values) . '.';
+
+                            break;
+
+                        // delete
+                        case 'D':
+                            $values = [];
+
+                            foreach ($grades as $gradeId => $routeIds)
+                            {
+                                foreach ($routeIds as $routeId)
+                                {
+                                    $values[] = '(route_id = ' . (int)$routeId . ' AND grade_id = ' . (int)$gradeId . ')';
+                                }
+                            }
+
+                            $sql = 'DELETE FROM route_grades WHERE ' . implode(' OR ', $values);
+
+                            $stmt = $em->getConnection()->prepare($sql);
+                            $stmt->execute();
+
+                            $msg[] = $sql;
+                            //$msg[] = 'Deleted: ' . count($values) . '.';
+
+                            break;
+
+                        // invalid action
+                        default:
+                            $msg[] = 'Invalid action: ' . $action . '!';
+                            break;
+                    }
+                }
+            }
+
             return $this->success(implode(' ', $msg));
         }
         catch (\Exception $e)

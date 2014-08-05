@@ -22,7 +22,7 @@ Ext.define('CB.service.File', {
             },
             progress: function(e) {
                 var percent = Math.round((e.position / e.total) * 100);
-                console.log('progress', percent, e);
+                //console.log('progress', percent, e);
                 if (config.progress) {
                     config.progress.call(config.scope, e);
                 }
@@ -46,10 +46,12 @@ Ext.define('CB.service.File', {
                 }
             },
             failure: function(response, operation) {
+                /*
                 console.log('failure');
                 console.log('response', response);
                 console.log('operation', operation);
                 console.log('config', config);
+                */
 
                 if (config.failure) {
                     config.failure.call(config.scope, 'Error ' + response.status + ': ' + response.statusText);

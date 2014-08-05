@@ -1338,6 +1338,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.location.Add": [],
   "CB.view.location.AddController": [],
   "CB.view.location.AddModel": [],
+  "CB.view.location.GradePicker": [],
+  "CB.view.location.GradePickerField": [],
   "CB.view.location.Header": [],
   "CB.view.location.List": [],
   "CB.view.location.ListController": [],
@@ -1346,6 +1348,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.location.LocationModel": [],
   "CB.view.location.MiniMap": [],
   "CB.view.location.Routes": [],
+  "CB.view.location.RoutesCellEditing": [],
   "CB.view.location.Sidebar": [],
   "CB.view.location.TypePicker": [],
   "CB.view.main.Main": [],
@@ -2471,6 +2474,12 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.location.AddModel": [
     "viewmodel.cb-location-add"
   ],
+  "CB.view.location.GradePicker": [
+    "widget.cb-location-gradepicker"
+  ],
+  "CB.view.location.GradePickerField": [
+    "widget.cb-location-gradepickerfield"
+  ],
   "CB.view.location.Header": [
     "widget.cb-location-header"
   ],
@@ -2494,6 +2503,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.location.Routes": [
     "widget.cb-location-routes"
+  ],
+  "CB.view.location.RoutesCellEditing": [
+    "plugin.routescellediting"
   ],
   "CB.view.location.Sidebar": [
     "widget.cb-location-sidebar"
