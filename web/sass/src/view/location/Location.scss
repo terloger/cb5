@@ -139,3 +139,33 @@
     }
     
 }
+
+.cb-location-gradepicker {
+
+    .x-panel-header {
+        padding: 4px 8px;
+
+        .x-title-text {
+            text-align: center;
+        }
+    }
+
+    .grade {
+        cursor: pointer;
+        text-align: center;
+        margin: 2px 20px 0 20px;
+        padding: 2px 0px;
+
+        @include border-radius(2px);
+
+        &.grade-over {
+            background: #f4f4f4;
+        }
+
+        &.grade-selected {
+            background: #E2EFF8;
+        }
+
+    }
+
+}

@@ -12,6 +12,7 @@ Ext.define('CB.view.location.Location', {
         'CB.form.field.MultiFileButton',
         'CB.view.location.Header',
         'CB.view.location.Sidebar',
+        'CB.view.location.GradePickerField',
         'CB.view.location.TypePicker',
         'CB.paper.Panel'
     ],

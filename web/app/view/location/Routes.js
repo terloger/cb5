@@ -1,5 +1,9 @@
 Ext.define('CB.view.location.Routes', {
     extend: 'Ext.grid.Panel',
+
+    requires: [
+        'CB.view.location.RoutesCellEditing'
+    ],
     
     xtype: 'cb-location-routes',
     
@@ -33,7 +37,7 @@ Ext.define('CB.view.location.Routes', {
     },
     
     plugins: {
-        ptype: 'cellediting',
+        ptype: 'routescellediting',
         pluginId: 'locationRouteCellEditing',
         clicksToEdit: 2
     },
@@ -41,21 +45,28 @@ Ext.define('CB.view.location.Routes', {
     columns: [{
         text: 'Name',
         dataIndex: 'name',
-        flex: 1,
+        flex: 3,
         sortable: false,
         editor: {
             xtype: 'textfield',
             allowBlank: false
         }
-    }/*,{
-        text: 'Pos',
-        dataIndex: 'pos',
-        width: 100,
-        sortable: false
-    }*/],
+    },{
+        text: 'Grade',
+        dataIndex: 'grades',
+        flex: 1,
+        sortable: false,
+        editor: {
+            xtype: 'cb-location-gradepickerfield'
+        },
+        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+            var grade = record.grades().getAt(0);
+            return grade ? grade.get('grade') : '';
+        }
+    }],
     
     listeners: {
-        beforeedit: 'checkUser',
+        beforeedit: 'beforeRouteEdit',
         edit: 'routeEdit',
         selectionchange: 'routeSelectionChange',
         itemmouseenter: 'routeMouseEnter',

@@ -4,7 +4,6 @@ Ext.define('CB.model.Location', {
     clientIdProperty: 'clientId',
     
     requires: [
-        'Ext.data.proxy.Direct',
         'Ext.data.validator.Presence',
         'Ext.data.validator.Length',
         'CB.model.LocationType',

@@ -2,7 +2,7 @@ Ext.define('CB.service.Location', {
     
     singleton: true,
     
-    save: function() {
+    save: function(session) {
         console.log('service location save');
     }
     

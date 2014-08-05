@@ -253,6 +253,10 @@ Ext.define('CB.view.location.LocationController', {
             session = view.getSession(),
             batch = session.getSaveBatch();
 
+        console.log('changes', session.getChanges());
+        console.log('batch', batch);
+        return;
+
         if (!batch) {
             this.saveLocationComplete();
             return;
@@ -684,6 +688,30 @@ Ext.define('CB.view.location.LocationController', {
         // mark view as dirty
         vm.set('dirty', true);
     },
+
+    beforeRouteEdit: function(plugin, context) {
+        var isUser = this.checkUser(),
+            vm = this.getViewModel(),
+            editor,
+            location,
+            route;
+
+        if (!isUser) {
+            return false;
+        }
+
+        if (context.field === 'grades') {
+            editor = context.column.getEditor();
+            if (editor) {
+                location = vm.get('location');
+                route = vm.get('routes.selection'),
+                editor.setLocation(location);
+                editor.setRoute(route);
+            }
+        }
+
+        return true;
+    },
     
     routeEdit: function(editor, context) {
         if (context.value !== context.originalValue) {
@@ -732,6 +760,8 @@ Ext.define('CB.view.location.LocationController', {
             location = vm.get('location');
 
         this.locationRoutesFix = location.routes;
+
+        return this.checkUser();
     },
 
     routeDrop: function(node, data, overModel, dropPosition, dropHandlers) {
