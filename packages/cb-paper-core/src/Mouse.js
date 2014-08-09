@@ -16,6 +16,11 @@ Ext.define('CB.paper.Mouse', {
             toolchange: this.toolChange,
             scope: this
         });
+
+        this.getCanvas().on({
+            mousewheel: this.paperMouseWheel,
+            scope: this
+        });
     },
     
     toolChange: function(name, tool) {
@@ -32,7 +37,6 @@ Ext.define('CB.paper.Mouse', {
     
     suspendMouseEvents: function() {
         this.getCanvas().un({
-            mousewheel: this.paperMouseWheel,
             mousedown: this.paperMouseDown,
             mousemove: this.paperMouseMove,
             mouseup: this.paperMouseUp,
@@ -47,7 +51,6 @@ Ext.define('CB.paper.Mouse', {
     
     resumeMouseEvents: function() {
         this.getCanvas().on({
-            mousewheel: this.paperMouseWheel,
             mousedown: this.paperMouseDown,
             mousemove: this.paperMouseMove,
             mouseup: this.paperMouseUp,

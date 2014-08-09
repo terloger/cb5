@@ -951,49 +951,57 @@ Ext.define('CB.view.location.LocationController', {
             vm = view.getViewModel(),
             location = vm.get('location'),
             button = view.down('multifilebutton'),
-            files = button.fileInputEl.dom.files,
-            len = files.length,
-            i = 0;
-    
-        this.fileCount = len;
-        this.fileErrors = [];
-    
-        if (!len) {
+            files = button.fileInputEl.dom.files;
+
+        if (!files.length) {
             this.saveFilesComplete();
             return;
         }
-        
-        view.mask('Saving Location Files ...');
-        
-        for (; i < len; i++) {
-            CB.service.File.upload({
-                file: files[i],
-                location: location,
-                scope: this,
-                success: function(result) {
-                    location.files().add(Ext.create('CB.model.File', result.data));
-                    
-                    this.fileDataChanged();
 
-                    if (--this.fileCount === 0) {
-                        if (this.fileErrors.length) {
-                            this.saveFilesException();
-                        } else {
-                            this.saveFilesComplete();
-                        }
-                    }
-                },
-                failure: function(msg) {
-                    this.fileErrors.push(msg);
-                    
-                    this.fileDataChanged();
+        this.files = files;
+        this.fileCount = files.length;
+        this.fileErrors = [];
 
-                    if (--this.fileCount === 0) {
-                        this.saveFilesException();
-                    }
+        this.saveFile(location, files[0], 0);
+    },
+
+    saveFile: function(location, file, index) {
+        var view = this.getView(),
+            next = index + 1,
+            message = 'Uploading image {0} of {1}: {2}%';
+        
+        view.mask(Ext.String.format(message, index + 1, this.fileCount, 0));
+
+        CB.service.File.upload({
+            file: file,
+            location: location,
+            scope: this,
+            progress: function(percent, e) {
+                view.mask(Ext.String.format(message, index + 1, this.fileCount, percent));
+            },
+            success: function(result) {
+                location.files().add(Ext.create('CB.model.File', result.data));
+
+                this.fileDataChanged();
+
+                if (next < this.fileCount) {
+                    this.saveFile(location, this.files[next], next);
+                } else {
+                    this.saveFilesComplete();
                 }
-            });
-        }
+            },
+            failure: function(msg) {
+                this.fileErrors.push(msg);
+
+                this.fileDataChanged();
+
+                if (next < this.fileCount) {
+                    this.saveFile(location, this.files[next], next);
+                } else {
+                    this.saveFilesComplete();
+                }
+            }
+        });
     },
     
     saveFilesComplete: function() {

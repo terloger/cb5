@@ -1347,6 +1347,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.location.LocationController": [],
   "CB.view.location.LocationModel": [],
   "CB.view.location.MiniMap": [],
+  "CB.view.location.Route": [],
   "CB.view.location.Routes": [],
   "CB.view.location.RoutesCellEditing": [],
   "CB.view.location.Sidebar": [],
@@ -2500,6 +2501,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.location.MiniMap": [
     "widget.cb-location-minimap"
+  ],
+  "CB.view.location.Route": [
+    "widget.cb-location-route"
   ],
   "CB.view.location.Routes": [
     "widget.cb-location-routes"

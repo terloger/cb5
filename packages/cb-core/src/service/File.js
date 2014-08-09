@@ -21,10 +21,9 @@ Ext.define('CB.service.File', {
                 'X-FILE-NAME': config.file.name
             },
             progress: function(e) {
-                var percent = Math.round((e.position / e.total) * 100);
-                //console.log('progress', percent, e);
                 if (config.progress) {
-                    config.progress.call(config.scope, e);
+                    var percent = Math.round((e.position / e.total) * 100);
+                    config.progress.call(config.scope, percent, e);
                 }
             },
             success: function(response, operation) {

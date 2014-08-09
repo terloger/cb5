@@ -2,7 +2,9 @@ Ext.define('CB.view.location.Sidebar', {
     extend: 'Ext.panel.Panel',
     
     requires: [
+        'Ext.layout.container.Card',
         'CB.view.location.Routes',
+        'CB.view.location.Route',
         'CB.view.location.MiniMap'
     ],
     
@@ -68,8 +70,17 @@ Ext.define('CB.view.location.Sidebar', {
     },
     
     items: [{
-        xtype: 'cb-location-routes',
-        region: 'center'
+        xtype: 'panel',
+        region: 'center',
+        layout: {
+            type: 'card'
+        },
+        activeItem: 0,
+        items: [{
+            xtype: 'cb-location-routes'
+        },{
+            xtype: 'cb-location-route'
+        }]
     },{
         xtype: 'cb-location-minimap',
         region: 'south',

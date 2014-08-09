@@ -21,7 +21,14 @@ Ext.define('CB.view.main.MainController', {
             conditions: {
                 ':id': '([0-9]+)'
             }
-        }
+        }/*,
+        ':slug': {
+            action: 'slugRoute',
+            before: 'beforeSlugRoute',
+            conditions: {
+                ':id': '([0-9]+)'
+            }
+        }*/
     },
     
     listen: {
@@ -119,6 +126,19 @@ Ext.define('CB.view.main.MainController', {
                 scope: this
             });
         }
+    },
+
+    beforeSlugRoute: function(slug, action) {
+        console.log('slug', slug);
+        if (true) {
+            action.stop(true);
+        } else {
+            action.resume();
+        }
+    },
+
+    slugRoute: function(slug) {
+
     },
     
     locationRoute: function(id) {
