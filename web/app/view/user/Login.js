@@ -35,15 +35,13 @@ Ext.define('CB.view.user.Login', {
         allowBlank: false,
         fieldLabel: 'User ID',
         name: 'username',
-        emptyText: 'user id',
-        value: 'HriBB'
+        emptyText: 'user id'
     }, {
         allowBlank: false,
         fieldLabel: 'Password',
         name: 'password',
         emptyText: 'password',
-        inputType: 'password',
-        value: 'jebiga'
+        inputType: 'password'
     }, {
         xtype: 'checkbox',
         fieldLabel: 'Remember me',

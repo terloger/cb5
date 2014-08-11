@@ -84,7 +84,7 @@ class Location extends AbstractController
 
         // fetch all locations
         $locations = [];
-        $Locations = $em->createQuery('SELECT l, c, t FROM \CB\Entity\Location l LEFT JOIN l.country c LEFT JOIN l.types t')->getResult();
+        $Locations = $em->createQuery('SELECT l, c, t FROM \CB\Entity\Location l LEFT JOIN l.country c LEFT JOIN l.types t ORDER BY l.name')->getResult();
         foreach ($Locations as $Location)
         {
             // build location data

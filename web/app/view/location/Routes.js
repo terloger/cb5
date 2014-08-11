@@ -12,6 +12,8 @@ Ext.define('CB.view.location.Routes', {
     reference: 'routes',
     
     sortableColumns: false,
+
+    reserveScrollbar: true,
     
     bind: {
         store: '{location.routes}'
@@ -43,10 +45,25 @@ Ext.define('CB.view.location.Routes', {
     },
     
     columns: [{
+        text: '#',
+        dataIndex: 'pos',
+        width: 35,
+        sortable: false,
+        hideable: false,
+        draggable: false,
+        resizable: false,
+        menuDisabled: true,
+        renderer: function(value) {
+            return value + 1;
+        }
+    },{
         text: 'Name',
         dataIndex: 'name',
         flex: 3,
         sortable: false,
+        hideable: false,
+        draggable: false,
+        menuDisabled: true,
         editor: {
             xtype: 'textfield',
             allowBlank: false
@@ -56,6 +73,7 @@ Ext.define('CB.view.location.Routes', {
         dataIndex: 'grades',
         flex: 1,
         sortable: false,
+        draggable: false,
         editor: {
             xtype: 'cb-location-gradepickerfield'
         },

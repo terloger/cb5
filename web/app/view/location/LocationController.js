@@ -61,8 +61,6 @@ Ext.define('CB.view.location.LocationController', {
 
         vm.set('file', location.files().getAt(0));
 
-        location.routes().sort('pos', 'ASC');
-
         this.fileDataChanged();
 
         this.initMiniMap(location);
@@ -672,7 +670,7 @@ Ext.define('CB.view.location.LocationController', {
 
         routes.getSelectionModel().select(route);
         
-        routes.getPlugin('locationRouteCellEditing').startEdit(route, 0);
+        routes.getPlugin('locationRouteCellEditing').startEdit(route, 1);
     },
 
     clearRoute: function() {

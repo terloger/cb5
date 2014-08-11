@@ -103,7 +103,21 @@
         }
         
     }
-    
+
+    .cb-location-routes {
+        border-top: 1px solid #ddd !important;
+
+        .x-column-header-text {
+            background-image: none !important;
+        }
+    }
+
+    .cb-location-minimap {
+        .x-panel-header {
+            border-bottom: 1px solid #ddd !important;
+        }
+    }
+
 }
 
 .cb-location-typepicker {

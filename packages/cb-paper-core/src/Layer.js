@@ -35,6 +35,24 @@ Ext.define('CB.paper.Layer', {
             return layer.data.record && layer.data.record.get('id') === recordId;
         }, this);
     },
+
+    getLayerStartPoint: function(layer) {
+        var point;
+
+        Ext.each(layer.children, function(child){
+            switch (child.data.type) {
+                case 'line':
+                    Ext.each(child.segments, function(segment){
+                        if (!point || segment.point.y > point.y) {
+                            point = segment.point;
+                        }
+                    });
+                    break;
+            }
+        });
+
+        return point;
+    },
     
     /**
      * Crate/remove
@@ -116,11 +134,17 @@ Ext.define('CB.paper.Layer', {
             
             // associate layer record to file
             file.layers().add(record);
+
+            // create/update path number
+            this.createRouteNumber(layer, route);
             
         } else {
             
             // update layer record
             record.set('data', Ext.encode(layerData));
+
+            // create/update path number
+            this.updateRouteNumber(layer, route);
             
         }
     },
@@ -141,6 +165,7 @@ Ext.define('CB.paper.Layer', {
                 var child = layer.children[i];
                 switch (child.data.type) {
                     case 'line':
+                    case 'circle':
                         child.strokeColor = color;
                         break;
                     case 'icon':
@@ -167,9 +192,9 @@ Ext.define('CB.paper.Layer', {
     scaleLayers: function(scale, cx, cy) {
         var matrix = new paper.Matrix(),
             center = cx && cy ? new paper.Point(cx, cy) : null;
-            
+
         matrix.scale(scale, center);
-        
+
         this.transformLayers(matrix);
     },
     
@@ -190,22 +215,37 @@ Ext.define('CB.paper.Layer', {
         
         this.transformLayers(matrix);
     },
-    
+
     transformLayers: function(matrix) {
-        Ext.each(paper.project.layers, function(layer){
-            layer.transform(matrix);
+        var scaling = matrix.scaling;
+
+        Ext.each(paper.project.layers, function(layer) {
+            Ext.each(layer.children, function(child){
+                switch (child.data.type) {
+                    case 'line':
+                    case 'ghost':
+                        child.transform(matrix);
+                        break;
+                    case 'circle':
+                    case 'text':
+                        child.transform(matrix);
+                        child.scale(1 / scaling.x, 1 / scaling.y); // reset scale
+                        break;
+                }
+            });
         });
-        
+
         paper.view.draw();
     },
 
     /**
      * Import/export
      */
-    
+
     importLayer: function(record) {
         var data = Ext.decode(record.get('data')),
-            layer = this.createLayer(record, record.getRoute()),
+            route = record.getRoute(),
+            layer = this.createLayer(record, route),
             matrix = this.getImportMatrix(),
             path,
             ghost;
@@ -218,7 +258,7 @@ Ext.define('CB.paper.Layer', {
                 });
                 layer.addChild(path);
             }, this);
-            
+
             if (Ext.os.deviceType === 'Desktop') {
                 ghost = this.createGhostPath(data.paths);
                 layer.addChild(ghost);
@@ -227,7 +267,10 @@ Ext.define('CB.paper.Layer', {
 
         // de-normalize layer
         layer.transform(matrix);
-        
+
+        // create path number
+        this.createRouteNumber(layer, route);
+
         paper.view.draw();
     },
     

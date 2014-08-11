@@ -5,10 +5,8 @@ Ext.define('CB.paper.Path', {
 
     config: {
         pathSimplify: 10, // how much to "simplify" paths when user ends drawing a line
-
         pathWidth: 2,
-        pathGhostWidth: 30,
-        
+        pathGhostWidth: 24,
         pathColorNormal: '#ff0000',
         pathColorOver: '#18ff00',
         pathColorActive: '#fff600'//'#18ff00'
@@ -59,6 +57,76 @@ Ext.define('CB.paper.Path', {
         });
         
         return ghost;
+    },
+
+    createRouteNumber: function(layer, route) {
+        var point = this.getLayerStartPoint(layer),
+            circle = new paper.Path.Circle({
+                center: point,
+                radius: 9,
+                strokeWidth: 2,
+                strokeColor: this.getPathColorNormal(),
+                fillColor: '#fff',
+                data: {
+                    type: 'circle'
+                }
+            }),
+            text = new paper.PointText({
+                point: new paper.Point(point.x, point.y + 4),
+                justification: 'center',
+                fontSize: 13,
+                fillColor: 'black',
+                content: route.get('pos') + 1,
+                data: {
+                    type: 'text'
+                }
+            });
+
+        circle.attach({
+            mouseenter: Ext.bind(this.pathMouseEnter, this, [circle], true),
+            mouseleave: Ext.bind(this.pathMouseLeave, this, [circle], true),
+            click: Ext.bind(this.pathClick, this, [circle], true)
+        });
+
+        text.attach({
+            mouseenter: Ext.bind(this.pathMouseEnter, this, [text], true),
+            mouseleave: Ext.bind(this.pathMouseLeave, this, [text], true),
+            click: Ext.bind(this.pathClick, this, [text], true)
+        });
+
+        layer.addChild(circle);
+        layer.addChild(text);
+
+        layer.data.circle = circle;
+        layer.data.text = text;
+
+        circle.bringToFront();
+        text.bringToFront();
+    },
+
+    updateRouteNumber: function(layer, route) {
+        var point = this.getLayerStartPoint(layer),
+            circle = layer.data.circle,
+            text = layer.data.text;
+
+        if (circle) {
+            circle.position = point;
+            circle.bringToFront();
+        }
+
+        if (text) {
+            text.position = point;
+            text.content = route.get('pos') + 1;
+            text.bringToFront();
+        }
+    },
+
+    updateRouteNumberText: function(layer, route) {
+        var text = layer.data.text;
+
+        if (text) {
+            text.content = route.get('pos') + 1;
+        }
     },
     
     pathClick: function(e, path){

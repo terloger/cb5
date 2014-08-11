@@ -129,7 +129,7 @@ Ext.define('CB.view.main.MainController', {
     },
 
     beforeSlugRoute: function(slug, action) {
-        console.log('slug', slug);
+        //console.log('slug', slug);
         if (true) {
             action.stop(true);
         } else {

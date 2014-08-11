@@ -81,9 +81,9 @@ Ext.define('CB.paper.Image', {
     
     withinImage: function(x, y) {
         var left = this.getTranslateX(),
-            right = left + this.getImageScaledWidth(),
             top = this.getTranslateY(),
-            bottom = top + this.getImageScaledHeight();
+            right = left + this.getImageScaledWidth() + this.getView().getX(),
+            bottom = top + this.getImageScaledHeight() + this.getView().getY();
 
         if (x) {
             if (x < left) {

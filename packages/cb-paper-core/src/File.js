@@ -11,6 +11,7 @@ Ext.define('CB.paper.File', {
     applyFile: function(file) {
         // not changed
         if (file === this.getFile()) {
+            this.getView().removeCls('loading');
             return;
         }
         

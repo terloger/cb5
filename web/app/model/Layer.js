@@ -5,7 +5,7 @@ Ext.define('CB.model.Layer', {
 
     fields: [
         {name: 'fileId', reference: 'File'},
-        {name: 'routeId', reference: 'Route'},
+        {name: 'routeId', reference: 'Route', unique: true},
         {name: 'data', type: 'string'},
         {name: 'created', type: 'date'}
     ],
