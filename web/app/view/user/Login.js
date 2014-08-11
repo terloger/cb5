@@ -33,9 +33,9 @@ Ext.define('CB.view.user.Login', {
     
     items: [{
         allowBlank: false,
-        fieldLabel: 'User ID',
+        fieldLabel: 'Username',
         name: 'username',
-        emptyText: 'user id'
+        emptyText: 'username'
     }, {
         allowBlank: false,
         fieldLabel: 'Password',
