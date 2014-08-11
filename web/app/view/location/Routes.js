@@ -47,7 +47,7 @@ Ext.define('CB.view.location.Routes', {
     columns: [{
         text: '#',
         dataIndex: 'pos',
-        width: 35,
+        width: 36,
         sortable: false,
         hideable: false,
         draggable: false,

@@ -14,19 +14,9 @@ Ext.define('CB.view.location.Sidebar', {
     
     stateful: true,
     stateId: 'CB.view.location.Sidebar',
-    
-    plugins: 'responsive',
-    
-    responsiveConfig: {
-        'tall': {
-            dock: 'bottom',
-            height: 200
-        },
-        'wide': {
-            dock: 'right',
-            height: 'auto'
-        }
-    },
+
+    dock: 'right',
+    height: 'auto',
     
     layout: {
         type: 'border'

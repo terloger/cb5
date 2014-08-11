@@ -107,7 +107,9 @@ Ext.define('CB.view.map.MapController', {
         };
         
         // show markers immediately or on store load
-        if (store.isLoaded()) {
+        if (!store) {
+            Ext.defer(showMarkers, 500, this);
+        } else if (store.isLoaded()) {
             showMarkers.apply(this);
         } else {
             store.on({
