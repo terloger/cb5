@@ -48,7 +48,8 @@ Ext.define('CB.view.map.Map', {
         },{
             xtype: 'textfield',
             name: 'search',
-            margin: '0 -1 0 0'
+            margin: '0 -1 0 0',
+
         },{
             xtype: 'button',
             handler: 'search',
@@ -61,13 +62,7 @@ Ext.define('CB.view.map.Map', {
             xtype: 'button',
             text: 'Filter',
             glyph: 'xe646@climbuddy',
-            menu: [],
-            listeners: {
-                click: {
-                    fn: 'showFilterMenu',
-                    single: true
-                }
-            }
+            handler: 'typePicker'
         }]
     },
     

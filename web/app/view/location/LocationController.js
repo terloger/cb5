@@ -325,11 +325,12 @@ Ext.define('CB.view.location.LocationController', {
      * Type
      */
     
-    typePicker: function(e) {
+    typePicker: function(e, dom) {
         var view = this.getView(),
             vm = view.getViewModel(),
             user = vm.get('user'),
-            picker = view.down('cb-location-typepicker');
+            picker = view.down('cb-location-typepicker'),
+            btn = view.down('#types');
     
         if (!user) {
             return;
@@ -338,11 +339,10 @@ Ext.define('CB.view.location.LocationController', {
         if (picker.isVisible()) {
             // hide picker
             picker.hide();
-            return;
         } else {
             // show picker
-            picker.triggerCt = view.down('#types');
-            picker.showAt(10, 8);
+            picker.triggerCt = btn;
+            picker.showBy(btn, 'tl-bl', [0, 10]);
         }
     },
     
@@ -350,9 +350,9 @@ Ext.define('CB.view.location.LocationController', {
         var view = this.getView(),
             vm = view.getViewModel(),
             location = vm.get('location');
-    
+
         view.down('#types').setTypes(location.types());
-        
+
         vm.set('dirty', true);
     },
     

@@ -90,9 +90,12 @@ Ext.define('CB.view.map.MapController', {
                         icon = type ? type.get('type') : 'default',
                         drop = false;
 
-                    if (location.files().getCount() > 0) {
-                        this.addMarker(latLng, location, icon, drop);
+                    // dont show locations without files
+                    if (location.files().getCount() <= 0) {
+                        return;
                     }
+
+                    this.addMarker(latLng, location, icon, drop);
                 }, this);
             };
             
@@ -326,7 +329,7 @@ Ext.define('CB.view.map.MapController', {
     /**
      * Marker
      */
-    
+
     addMarker: function(latLng, location, icon, drop, delay) {
         // create new marker
         var marker = new google.maps.Marker({
@@ -334,8 +337,8 @@ Ext.define('CB.view.map.MapController', {
             lat: location.get('lat'),
             lng: location.get('lng'),
             title: location.get('name'),
-            icon: 'resources/types/' + icon + '.png',
-            shadow: 'resources/types/shadow.png'
+            icon: this.getMarkerIconUrl(icon),
+            shadow: this.getMarkerShadowUrl()
         });
         
         // create marker location getter
@@ -355,9 +358,13 @@ Ext.define('CB.view.map.MapController', {
         this.getMarkers().add(location.get('id'), marker);
 
         // show on map
-        Ext.defer(function(){
+        if (delay) {
+            Ext.defer(function(){
+                marker.setMap(this.getMap());
+            }, delay, this);
+        } else {
             marker.setMap(this.getMap());
-        }, delay || 0, this);
+        }
 
         // add event listeners
         google.maps.event.addListener(marker, 'click',      Ext.bind(this.markerClick, this, [marker], true));
@@ -426,6 +433,14 @@ Ext.define('CB.view.map.MapController', {
             location.save();
         }
     },
+
+    getMarkerIconUrl: function(icon) {
+        return 'resources/types/' + icon + '.png';
+    },
+
+    getMarkerShadowUrl: function() {
+        return 'resources/types/shadow.png';
+    },
     
     /**
      * Toolbar
@@ -433,6 +448,91 @@ Ext.define('CB.view.map.MapController', {
     
     search: function(btn, e) {
     },
+
+    typePicker: function(btn, e) {
+        var picker = this.filterMenu;
+
+        if (!picker) {
+            picker = this.filterMenu = Ext.create('CB.view.location.TypePicker', {
+                renderTo: Ext.getBody(),
+                floating: true,
+                hidden: true,
+                closable: true,
+                closeAction: 'hide',
+                width: 460,
+                height: 200,
+                bodyPadding: 5,
+                location: false,
+                listeners: {
+                    selectionchange: this.typeChange,
+                    scope: this
+                }
+            });
+        }
+        
+        if (picker.isVisible()) {
+            // hide picker
+            picker.hide();
+        } else {
+            // show picker
+            picker.triggerCt = btn;
+            picker.showBy(btn, 'tl-bl', [0, 10]);
+        }
+    },
+
+    typeChange: function(sm, selection) {
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            locations = vm.get('locations'),
+            filter = {
+                types: selection || []
+            },
+            marker,
+            types,
+            visible;
+
+        // loop through all locations
+        locations.each(function(location){
+
+            // dont touch locations without files
+            if (location.files().getCount() <= 0) {
+                return;
+            }
+
+            // prepare vars
+            marker = location.getMarker();
+            types = [];
+            visible = false;
+
+            // loop through location types
+            location.types().each(function(type){
+
+                // type filter
+                if (filter.types) {
+                    if (filter.types.length === 0 || Ext.Array.contains(filter.types, type)) {
+
+                        // add type so that we can switch marker icon if necessary
+                        types.push(type.get('type'));
+
+                        // show this marker
+                        visible = true;
+                    }
+                }
+
+            },this);
+
+            // switch icon
+            if (types.length) {
+                marker.setIcon(this.getMarkerIconUrl(types[0]));
+            }
+
+            // show/hide marker
+            marker.setVisible(visible);
+
+        },this);
+    }
+
+    /*,
     
     showFilterMenu: function(btn, e) {
         var view = this.getView(),
@@ -452,7 +552,7 @@ Ext.define('CB.view.map.MapController', {
                 menu.items.push({
                     xtype: 'menucheckitem',
                     text: type.get('name'),
-                    type: type.get('type'),
+                    type: type,
                     checked: true
                 });
             }, this);
@@ -465,6 +565,55 @@ Ext.define('CB.view.map.MapController', {
     },
     
     filterMenuItemClick: function(menu, item, e) {
-    }
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            store = vm.get('locations'),
+            filter = [],
+            marker,
+            types,
+            visible;
+
+        // build filter
+        menu.items.each(function(item){
+            if (item.checked) {
+                filter.push(item.type);
+            }
+        }, this);
+
+        // loop through all locations
+        store.each(function(location){
+
+            // dont touch locations without files
+            if (location.files().getCount() <= 0) {
+                return;
+            }
+
+            // prepare vars
+            marker = location.getMarker();
+            types = [];
+            visible = false;
+
+            // loop through location types
+            location.types().each(function(type){
+                if (Ext.Array.contains(filter, type)) {
+
+                    // add type so that we can switch marker icon if necessary
+                    types.push(type.get('type'));
+
+                    // show this marker
+                    visible = true;
+                }
+            },this);
+
+            // switch icon
+            if (types.length) {
+                marker.setIcon(this.getMarkerIconUrl(types[0]));
+            }
+
+            // show/hide marker
+            marker.setVisible(visible);
+
+        },this);
+    }*/
     
 });

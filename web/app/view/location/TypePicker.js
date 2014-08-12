@@ -8,7 +8,8 @@ Ext.define('CB.view.location.TypePicker', {
     title: 'Types',
     
     config: {
-        location: null
+        location: null,
+        types: null
     },
     
     items: [{
@@ -36,12 +37,14 @@ Ext.define('CB.view.location.TypePicker', {
         this.view = this.down('dataview');
         
         this.relayEvents(this.view, ['selectionchange']);
-        
-        this.view.on({
-            itemclick: this.onItemClick,
-            scope: this
-        });
-        
+
+        if (this.getLocation()) {
+            this.view.on({
+                itemclick: this.onItemClick,
+                scope: this
+            });
+        }
+
         if (this.floating) {
             this.on({
                 show: this.monDoc,
@@ -52,12 +55,22 @@ Ext.define('CB.view.location.TypePicker', {
     },
     
     applyLocation: function(location) {
-        var dataview = this.down('dataview'),
-            sm = dataview.getSelectionModel(),
+        if (location instanceof CB.model.Location) {
+            this.setTypes(location.types());
+        }
+
+        return location;
+    },
+
+    applyTypes: function(types) {
+        var sm = this.down('dataview').getSelectionModel();
+
+        if (!types) {
             types = [];
-    
-        if (location) {
-            types = location.types().getRange();
+        } else if (types instanceof Ext.data.Store) {
+            types = types.getRange();
+        } else if (types instanceof CB.model.LocationType) {
+            types = [types];
         }
 
         if (types.length) {
@@ -65,21 +78,24 @@ Ext.define('CB.view.location.TypePicker', {
         } else {
             sm.deselectAll(true);
         }
-        
-        return location;
+
+        return types;
     },
     
     onItemClick: function(view, type, item, index, e) {
-        var location = this.getLocation(),
-            types = location.types(),
-            hasType = types.getById(type.get('id'));
-    
-        if (hasType) {
-            // remove type
-            types.remove(hasType);
-        } else {
-            // add type
-            types.add(type);
+        var location = this.getLocation();
+        if (location instanceof CB.model.Location) {
+            // handle type if attached to location
+            var types = location.types(),
+                hasType = types.getById(type.get('id'));
+
+            if (hasType) {
+                // remove type
+                types.remove(hasType);
+            } else {
+                // add type
+                types.add(type);
+            }
         }
     },
     

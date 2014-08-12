@@ -105,6 +105,7 @@ Ext.define('CB.view.location.Location', {
             width: 460,
             height: 200,
             bodyPadding: 5,
+            location: true,
             bind: {
                 location: '{location}'
             },
