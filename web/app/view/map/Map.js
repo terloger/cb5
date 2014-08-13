@@ -6,7 +6,9 @@ Ext.define('CB.view.map.Map', {
     
     requires: [
         'Ext.util.MixedCollection',
-        'Ext.form.field.Text'
+        'Ext.form.field.Text',
+        'CB.view.location.TypePicker',
+        'CB.view.map.SearchMenu'
     ],
     
     xtype: 'cb-map',
@@ -49,10 +51,21 @@ Ext.define('CB.view.map.Map', {
             xtype: 'textfield',
             name: 'search',
             margin: '0 -1 0 0',
-
+            itemId: 'searchField',
+            selectOnFocus: true,
+            afterSubTpl: '<span class="clear icon-cross"></span>',
+            listeners: {
+                specialkey: 'searchSpecialKey',
+                focus: 'searchFocus',
+                change: {
+                    fn: 'search',
+                    buffer: 500
+                }
+            }
         },{
             xtype: 'button',
-            handler: 'search',
+            handler: 'searchButtonClick',
+            itemId: 'searchButton',
             glyph: 'xe63d@climbuddy',
             style: {
                 borderTopLeftRadius: 0,
@@ -61,8 +74,11 @@ Ext.define('CB.view.map.Map', {
         },{
             xtype: 'button',
             text: 'Filter',
+            cls: 'filter-button',
+            itemId: 'filterButton',
             glyph: 'xe646@climbuddy',
-            handler: 'typePicker'
+            handler: 'typePicker',
+            menu: []
         }]
     },
     

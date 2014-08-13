@@ -44,12 +44,19 @@ Ext.define('CB.view.map.MapController', {
                 mapTypeId: view.getMapTypeId()
             }),
             center = new google.maps.LatLng(view.getCenter().lat, view.getCenter().lng),
-            markers = Ext.create('Ext.util.MixedCollection');
+            markers = Ext.create('Ext.util.MixedCollection'),
+            mc = new MarkerClusterer(map, [], {
+                gridSize: 60,
+                maxZoom: 9
+            });
             
         // set map reference on controller and view
         me.setMap(map);
         view.setMap(map);
-        
+
+        // enable marker clusterer
+        me.setMarkerClusterer(mc);
+
         // set map center
         map.setCenter(center, view.getZoom());
         me.setLastCenter(center);
@@ -371,6 +378,9 @@ Ext.define('CB.view.map.MapController', {
         google.maps.event.addListener(marker, 'rightclick', Ext.bind(this.markerRightClick, this, [marker], true));
         google.maps.event.addListener(marker, 'dragend',    Ext.bind(this.markerDragEnd, this, [marker], true));
 
+        // add to marker clusterer
+        this.getMarkerClusterer().addMarker(marker);
+
         // return instance
         return marker;
     },
@@ -443,18 +453,165 @@ Ext.define('CB.view.map.MapController', {
     },
     
     /**
-     * Toolbar
+     * Search
      */
     
-    search: function(btn, e) {
+    search: function(field, value, oldValue) {
+        // no google or value not string
+        if (typeof google === 'undefined' || typeof value !== 'string') {
+            return false;
+        }
+
+        // user cleared search before buffer
+        if (this.searchCleared) {
+            this.searchCleared = false;
+            return;
+        }
+
+        // clear the search
+        if (value === '') {
+            this.clearSearch();
+            return;
+        }
+
+        var geocoder = new google.maps.Geocoder(),
+            menu = this.searchMenu;
+
+        // create menu
+        if (!menu) {
+            menu = this.searchMenu = Ext.create('CB.view.map.SearchMenu', {
+                floating: true,
+                hidden: true,
+                closable: true,
+                closeAction: 'hide',
+                width: 320,
+                bodyPadding: 5,
+                maxHeight: 300,
+                autoScroll: true,
+                listeners: {
+                    selectionchange: this.searchItemClick,
+                    scope: this
+                }
+            });
+        }
+
+        // mask menu if rendered
+        if (menu.rendered) {
+            //menu.getStore().removeAll();
+            //menu.setHeight(100);
+            menu.mask('Searching ...');
+        }
+
+        // if user clears the search during callback
+        this.searchCleared = false;
+
+        // ask google for some data
+        geocoder.geocode({ 'address': value }, Ext.bind(function(results, status) {
+
+            // geocoding successful and search not cleared
+            if (status === google.maps.GeocoderStatus.OK && !this.searchCleared) {
+
+                // unmask menu
+                if (menu.rendered) {
+                    //menu.setHeight(null);
+                    menu.unmask();
+                }
+
+                // load data into menu store
+                menu.getStore().loadData(results);
+
+                // show menu
+                menu.triggerCt = field;
+                menu.showBy(field, 'tl-bl');
+
+                // re-focus search field
+                field.focus();
+            }
+        }, this));
+
     },
+
+    clearSearch: function() {
+        var menu = this.searchMenu,
+            marker = this.searchMarker,
+            field = this.getView().down('#searchField');
+
+        field.suspendEvents();
+        field.reset();
+        field.resumeEvents();
+
+        if (menu) {
+            menu.getStore().removeAll();
+            menu.hide();
+        }
+
+        if (marker) {
+            marker.setMap(null);
+        }
+
+        this.searchCleared = true;
+    },
+
+    searchItemClick: function(sm, selection) {
+        if (!selection.length) {
+            return false;
+        }
+
+        var item = selection[0],
+            map = this.getMap(),
+            marker = this.searchMarker;
+
+        if (!marker) {
+            marker = this.searchMarker = new google.maps.Marker();
+        }
+
+        // show marker
+        marker.setPosition(item.get('geometry').location);
+        marker.setMap(map);
+
+        // animate map
+        map.setCenter(item.get('geometry').location);
+        map.fitBounds(item.get('geometry').bounds);
+    },
+
+    searchSpecialKey: function(field, e) {
+        if (e.getKey() === e.ENTER) {
+            this.search(field, field.getValue());
+        } else if (e.getKey() === e.ESC) {
+            this.search(field, '');
+        }
+    },
+
+    searchFocus: function(field) {
+        var menu = this.searchMenu;
+
+        // got menu and some search results
+        if (menu && menu.getStore().getCount()) {
+            // show menu
+            menu.triggerCt = field;
+            menu.showBy(field, 'tl-bl');
+
+            // re-focus search field
+            field.focus();
+        }
+    },
+
+    searchButtonClick: function(btn, e) {
+        var view = this.getView(),
+            field = view.down('#searchField');
+
+        this.search(field, field.getValue());
+    },
+
+    /**
+     * Type filter
+     */
 
     typePicker: function(btn, e) {
         var picker = this.filterMenu;
 
         if (!picker) {
             picker = this.filterMenu = Ext.create('CB.view.location.TypePicker', {
-                renderTo: Ext.getBody(),
                 floating: true,
                 hidden: true,
                 closable: true,
@@ -476,7 +633,7 @@ Ext.define('CB.view.map.MapController', {
         } else {
             // show picker
             picker.triggerCt = btn;
-            picker.showBy(btn, 'tl-bl', [0, 10]);
+            picker.showBy(btn, 'tl-bl');
         }
     },
 
@@ -484,12 +641,15 @@ Ext.define('CB.view.map.MapController', {
         var view = this.getView(),
             vm = view.getViewModel(),
             locations = vm.get('locations'),
+            btn = view.down('#filterButton'),
             filter = {
                 types: selection || []
             },
             marker,
             types,
             visible;
+
+        btn[selection.length ? 'addCls' : 'removeCls']('filtered');
 
         // loop through all locations
         locations.each(function(location){
@@ -531,89 +691,5 @@ Ext.define('CB.view.map.MapController', {
 
         },this);
     }
-
-    /*,
-    
-    showFilterMenu: function(btn, e) {
-        var view = this.getView(),
-            viewModel = view.getViewModel(),
-            menu = this.filterMenu;
-
-        if (!menu) {
-            menu = {
-                xtype: 'menu',
-                items: [],
-                listeners: {
-                    click: this.filterMenuItemClick,
-                    scope: this
-                }
-            };
-            viewModel.get('locationTypes').each(function(type){
-                menu.items.push({
-                    xtype: 'menucheckitem',
-                    text: type.get('name'),
-                    type: type,
-                    checked: true
-                });
-            }, this);
-            
-            this.filterMenu = menu = view.add(menu);
-            btn.setMenu(menu);
-        }
-        
-        btn.showMenu();
-    },
-    
-    filterMenuItemClick: function(menu, item, e) {
-        var view = this.getView(),
-            vm = view.getViewModel(),
-            store = vm.get('locations'),
-            filter = [],
-            marker,
-            types,
-            visible;
-
-        // build filter
-        menu.items.each(function(item){
-            if (item.checked) {
-                filter.push(item.type);
-            }
-        }, this);
-
-        // loop through all locations
-        store.each(function(location){
-
-            // dont touch locations without files
-            if (location.files().getCount() <= 0) {
-                return;
-            }
-
-            // prepare vars
-            marker = location.getMarker();
-            types = [];
-            visible = false;
-
-            // loop through location types
-            location.types().each(function(type){
-                if (Ext.Array.contains(filter, type)) {
-
-                    // add type so that we can switch marker icon if necessary
-                    types.push(type.get('type'));
-
-                    // show this marker
-                    visible = true;
-                }
-            },this);
-
-            // switch icon
-            if (types.length) {
-                marker.setIcon(this.getMarkerIconUrl(types[0]));
-            }
-
-            // show/hide marker
-            marker.setVisible(visible);
-
-        },this);
-    }*/
     
 });

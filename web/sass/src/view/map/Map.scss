@@ -1,0 +1,52 @@
+.x-form-text-field-body {
+    .clear {
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        margin-top: -10px;
+        color: #A9A9A9;
+        font-size: 18px;
+        cursor: pointer;
+
+        display: none;
+
+        &:hover {
+            color: #666;
+        }
+    }
+}
+
+.cb-map {
+
+    .filter-button {
+        &.filtered {
+            .x-btn-glyph {
+                color: #007bff;
+                opacity: 0.8;
+            }
+        }
+    }
+
+}
+
+.cb-map-searchmenu {
+
+    .item {
+        cursor: pointer;
+        margin: 1px;
+        padding: 4px 8px;
+
+        @include border-radius(2px);
+
+        &.item-over {
+            background: #f4f4f4;
+        }
+
+        &.item-selected {
+            background: #E2EFF8;
+        }
+
+    }
+
+}

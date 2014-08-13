@@ -8,14 +8,11 @@ Ext.define('CB.view.location.Header', {
     layout: {
         overflowHandler: 'menu'
     },
-    
+
     defaults: {
-        hidden: true,
-        bind: {
-            hidden: '{!location}'
-        }
+        hidden: true
     },
-    
+
     items: [{
         xtype: 'tbtext',
         cls: 'title',
@@ -26,7 +23,7 @@ Ext.define('CB.view.location.Header', {
     },' ',{
         xtype: 'component',
         itemId: 'types',
-        cls: 'types',
+        cls: 'types x-unselectable',
         hidden: false,
         height: 37,
         bind: {
@@ -186,7 +183,7 @@ Ext.define('CB.view.location.Header', {
         overflowText: 'Settings',
         glyph: 'xe60a@climbuddy',
         bind: {
-            hidden: '{!user}'
+            //hidden: '{!user}'
         }
     }]
 

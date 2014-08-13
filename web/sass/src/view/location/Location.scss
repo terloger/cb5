@@ -8,6 +8,10 @@
 
 .cb-paper {
 
+    * {
+        @include no-select;
+    }
+
     &.tool-move {
       cursor: move;
     }
@@ -20,6 +24,8 @@
     
     .cb-canvas {
         position: absolute;
+
+        @include no-select;
     }
     
     .cb-image {
@@ -31,7 +37,7 @@
         -o-transform-origin: 0 0;
         transform-origin: 0 0;
 
-
+        @include no-select;
         
         /*
         -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 1);

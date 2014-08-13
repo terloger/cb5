@@ -165,8 +165,11 @@ Ext.define('CB.paper.Layer', {
                 var child = layer.children[i];
                 switch (child.data.type) {
                     case 'line':
+                        child.strokeColor = color;
+                        break;
                     case 'circle':
                         child.strokeColor = color;
+                        child.fillColor = color;
                         break;
                     case 'icon':
                         break;

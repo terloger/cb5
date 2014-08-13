@@ -342,7 +342,7 @@ Ext.define('CB.view.location.LocationController', {
         } else {
             // show picker
             picker.triggerCt = btn;
-            picker.showBy(btn, 'tl-bl', [0, 10]);
+            picker.showBy(btn, 'tl-bl');
         }
     },
     

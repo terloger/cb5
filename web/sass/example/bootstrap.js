@@ -1358,6 +1358,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.map.Map": [],
   "CB.view.map.MapController": [],
   "CB.view.map.MapModel": [],
+  "CB.view.map.SearchMenu": [],
   "CB.view.user.Home": [],
   "CB.view.user.HomeController": [],
   "CB.view.user.HomeModel": [],
@@ -2534,6 +2535,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.map.MapModel": [
     "viewmodel.cb-map"
+  ],
+  "CB.view.map.SearchMenu": [
+    "widget.cb-map-searchmenu"
   ],
   "CB.view.user.Home": [
     "widget.cb-user-home"

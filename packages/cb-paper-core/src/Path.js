@@ -7,9 +7,10 @@ Ext.define('CB.paper.Path', {
         pathSimplify: 10, // how much to "simplify" paths when user ends drawing a line
         pathWidth: 2,
         pathGhostWidth: 24,
-        pathColorNormal: '#ff0000',
-        pathColorOver: '#18ff00',
-        pathColorActive: '#fff600'//'#18ff00'
+        pathColorNormal: '#ff4f4f',
+        pathColorOver: '#70ff60',
+        pathColorActive: '#fff600',
+        routeNumberColor: '#000'
     },
     
     createPath: function(data) {
@@ -66,7 +67,8 @@ Ext.define('CB.paper.Path', {
                 radius: 9,
                 strokeWidth: 2,
                 strokeColor: this.getPathColorNormal(),
-                fillColor: '#fff',
+                fillColor: this.getPathColorNormal(),
+                //fillColor: '#fff',
                 data: {
                     type: 'circle'
                 }
@@ -75,7 +77,7 @@ Ext.define('CB.paper.Path', {
                 point: new paper.Point(point.x, point.y + 4),
                 justification: 'center',
                 fontSize: 13,
-                fillColor: 'black',
+                fillColor: this.getRouteNumberColor(),
                 content: route.get('pos') + 1,
                 data: {
                     type: 'text'
