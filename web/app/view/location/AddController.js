@@ -31,6 +31,34 @@ Ext.define('CB.view.location.AddController', {
     },
 
     save: function() {
+        var view = this.getView(),
+            session = view.getSession(),
+            changes = session.getChanges(),
+            button = view.down('multifilebutton'),
+            files = button.fileInputEl.dom.files;
+
+        // check types
+        if (!changes || !changes.LocationType || !changes.LocationType.locations) {
+            Ext.Msg.show({
+                title: 'Error',
+                msg: 'Please select some types.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.ERROR
+            });
+            return false;
+        }
+
+        // check files
+        if (!files.length) {
+            Ext.Msg.show({
+                title: 'Error',
+                msg: 'Please select some images.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.ERROR
+            });
+            return false;
+        }
+
         this.operations = [
             'saveLocation',
             'saveTypes',
