@@ -646,9 +646,12 @@ Ext.define('CB.view.map.MapController', {
             vm = view.getViewModel(),
             locations = vm.get('locations'),
             btn = view.down('#filterButton'),
+            mc = this.getMarkerClusterer(),
+            markers = mc.getMarkers(),
             filter = {
                 types: selection || []
             },
+            added,
             marker,
             types,
             visible;
@@ -692,6 +695,17 @@ Ext.define('CB.view.map.MapController', {
 
             // show/hide marker
             marker.setVisible(visible);
+
+            // handle marker clusterer
+            added = markers.indexOf(marker) > -1;
+            
+            if (visible && !added) {
+                mc.addMarker(marker);
+            }
+
+            if (!visible && added) {
+                mc.removeMarker(marker);
+            }
 
         },this);
     }
