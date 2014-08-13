@@ -156,9 +156,13 @@ Ext.define('CB.paper.Path', {
         }
         
         var view = this.getView(),
-            route = path.parent.data.route,
+            layer = path.parent,
+            route = layer.data.route,
             selected = this.getSelectedRoute(),
             color = route === selected ? this.getPathColorActive() : this.getPathColorOver();
+
+        ///layer.bringToFront();
+        //console.log(layer);
 
         this.colorRouteLayer(route, color);
 
