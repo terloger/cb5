@@ -89,8 +89,10 @@ Ext.define('CB.view.map.MapController', {
     
     mapReady: function() {
         var me = this,
-            store = me.getView().getViewModel().get('locations'),
+            vm = me.getViewModel(),
+            store = vm.get('locations'),
             showMarkers = function() {
+                store = vm.get('locations');
                 store.each(function(location, index){
                     var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
