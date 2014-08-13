@@ -571,9 +571,11 @@ Ext.define('CB.view.map.MapController', {
         marker.setPosition(item.get('geometry').location);
         marker.setMap(map);
 
+        var bounds = item.get('geometry').bounds;
+
         // animate map
         map.setCenter(item.get('geometry').location);
-        map.fitBounds(item.get('geometry').bounds);
+        map.fitBounds(bounds);
     },
 
     searchSpecialKey: function(field, e) {
