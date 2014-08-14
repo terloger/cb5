@@ -698,7 +698,7 @@ Ext.define('CB.view.location.LocationController', {
         file.layers = fileLayers;
 
         // remove route
-        paper.removeRoute(route);
+        paper.clearRoute(route);
 
         // trigger data change
         this.routeDataChanged();

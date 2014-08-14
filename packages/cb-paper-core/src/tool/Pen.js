@@ -54,7 +54,7 @@ Ext.define('CB.paper.tool.Pen', {
         this.setSelectedItem(path);
         
         // add point if event withing image box
-        if (this.withinImage(e.event.offsetX, e.event.offsetY)) {
+        if (this.withinImage(e.event.x, e.event.y)) {
             path.add(e.point);
         }
     },
@@ -63,7 +63,7 @@ Ext.define('CB.paper.tool.Pen', {
         var path = this.getSelectedItem();
         
         // no path or not within image
-        if (!path || !this.withinImage(e.event.offsetX, e.event.offsetY)) {
+        if (!path || !this.withinImage(e.event.x, e.event.y)) {
             return;
         }
         

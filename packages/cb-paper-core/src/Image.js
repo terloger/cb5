@@ -78,12 +78,12 @@ Ext.define('CB.paper.Image', {
     getImageScaledHeight: function(scale) {
         return this.getImageHeight() * (scale || this.getScale());
     },
-    
+
     withinImage: function(x, y) {
-        var left = this.getTranslateX(),
-            top = this.getTranslateY(),
-            right = left + this.getImageScaledWidth() + this.getView().getX(),
-            bottom = top + this.getImageScaledHeight() + this.getView().getY();
+        var left = this.getTranslateX() + this.getView().getX(),
+            top = this.getTranslateY() + this.getView().getY(),
+            right = left + this.getImageScaledWidth(),
+            bottom = top + this.getImageScaledHeight();
 
         if (x) {
             if (x < left) {
