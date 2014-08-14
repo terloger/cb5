@@ -68,6 +68,22 @@ Ext.define('CB.view.location.Routes', {
             xtype: 'textfield',
             allowBlank: false
         }
+        /*
+        editor: {
+            xtype: 'combo',
+            store: {
+                fields: ['abbr', 'name'],
+                data : [
+                    {"abbr":"AL", "name":"Alabama"},
+                    {"abbr":"AK", "name":"Alaska"},
+                    {"abbr":"AZ", "name":"Arizona"}
+                ]
+            },
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbr'
+        }
+        */
     },{
         text: 'Grade',
         dataIndex: 'grades',
@@ -75,7 +91,8 @@ Ext.define('CB.view.location.Routes', {
         sortable: false,
         draggable: false,
         editor: {
-            xtype: 'cb-location-gradepickerfield'
+            xtype: 'cb-location-gradepickerfield',
+            shadow: true
         },
         renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
             var grade = record.grades().getAt(0);

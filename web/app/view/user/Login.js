@@ -28,7 +28,10 @@ Ext.define('CB.view.user.Login', {
     defaultType: 'textfield',
     defaults: {
         width: 400,
-        labelWidth: 120
+        labelWidth: 120,
+        listeners: {
+            specialkey: 'specialKey'
+        }
     },
     
     items: [{
@@ -60,7 +63,7 @@ Ext.define('CB.view.user.Login', {
         maxWidth: 400,
         margin: '0 0 0 20',
         items: [{
-            //formBind: true,
+            formBind: true,
             text: 'Sign In',
             handler: 'login'
         }]

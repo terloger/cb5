@@ -62,6 +62,10 @@ Ext.define('CB.paper.Route', {
     },
     
     removeRoute: function(route) {
+        if (route === this.getSelectedRoute()) {
+            this.getViewModel().set('route', null);
+        }
+
         var layer = this.getRouteLayer(route);
         if (layer) {
             this.removeLayer(layer);

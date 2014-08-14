@@ -101,7 +101,7 @@
     
     .x-splitter-horizontal {
         
-        background: #fff;
+        background: #FCFCFC;
         border-bottom: 1px solid #ddd;
         
         .x-collapse-el {
@@ -162,18 +162,24 @@
 
 .cb-location-gradepicker {
 
-    .x-panel-header {
-        padding: 4px 8px;
-
-        .x-title-text {
-            text-align: center;
+    &.x-layer {
+        border: 1px solid #e1e1e1;
+        .x-panel-body {
+            border: none !important;
+            padding: 2px 0;
         }
+    }
+
+    .x-toolbar {
+        padding: 4px;
+        background: #FCFCFC;
+        border: none !important;
     }
 
     .grade {
         cursor: pointer;
         text-align: center;
-        margin: 2px 20px 0 20px;
+        margin: 1px 20px;
         padding: 2px 0px;
 
         @include border-radius(2px);

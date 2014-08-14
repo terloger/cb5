@@ -61,6 +61,7 @@ Ext.define('CB.view.location.GradePicker', {
                 itemId: type.get('type') + 'Picker',
                 minWidth: 100,
                 flex: 1,
+                border: false,
                 items: [{
                     xtype: 'dataview',
                     store: type.grades(),
@@ -85,7 +86,7 @@ Ext.define('CB.view.location.GradePicker', {
 
         }, this);
 
-        this.callParent();
+        this.callParent(arguments);
     },
 
     pickerSelectionChange: function(selModel, selection) {
@@ -131,6 +132,28 @@ Ext.define('CB.view.location.GradePicker', {
         }, this);
 
         return location;
+    },
+
+    afterShow: function() {
+        this.callParent(arguments);
+        var route = this.getRoute(),
+            grade = route.grades().getAt(0);
+
+        this.select(grade);
+    },
+
+    select: function(grade) {
+        if (grade instanceof CB.model.Grade) {
+
+            var picker = this.getTypePicker(grade.getType()),
+                view = picker.down('dataview'),
+                sm = view.getSelectionModel(),
+                node = view.getNode(grade);
+
+            sm.select(grade, false, true);
+
+            node.scrollIntoView(this.body);
+        }
     },
 
     getTypeHeader: function(type) {

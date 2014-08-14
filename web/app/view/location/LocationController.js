@@ -55,11 +55,16 @@ Ext.define('CB.view.location.LocationController', {
     },
 
     doShowLocation: function(location) {
-        var vm = this.getViewModel();
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            paper = view.down('cb-paper'),
+            papervm = paper.getViewModel();
 
         vm.set('location', location);
 
         vm.set('file', location.files().getAt(0));
+
+        papervm.set('route', null);
 
         this.fileDataChanged();
 

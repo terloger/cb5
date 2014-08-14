@@ -20,6 +20,20 @@ Ext.define('CB.Application', {
         'CB.service.File',
         'CB.Config'
     ],
+
+    models: [
+        'Base',
+        'Country',
+        'File',
+        'Grade',
+        'GradeType',
+        'Layer',
+        'Location',
+        'LocationType',
+        'Route',
+        'Sector',
+        'User'
+    ],
     
     views: [
         'main.Main',

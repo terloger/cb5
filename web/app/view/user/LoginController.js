@@ -26,6 +26,14 @@ Ext.define('CB.view.user.LoginController', {
                 loginViewModel.set('error', response.message);
             }
         }, this);
+    },
+
+    specialKey: function(field, e){
+        // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
+        // e.TAB, e.ESC, arrow keys: e.LEFT, e.RIGHT, e.UP, e.DOWN
+        if (e.getKey() == e.ENTER) {
+            this.login();
+        }
     }
     
 });

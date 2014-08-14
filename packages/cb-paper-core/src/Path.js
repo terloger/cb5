@@ -61,13 +61,15 @@ Ext.define('CB.paper.Path', {
     },
 
     createRouteNumber: function(layer, route) {
-        var point = this.getLayerStartPoint(layer),
+        var selected = this.getSelectedRoute(),
+            color = route === selected ? this.getPathColorActive() : this.getPathColorNormal(),
+            point = this.getLayerStartPoint(layer),
             circle = new paper.Path.Circle({
                 center: point,
                 radius: 9,
                 strokeWidth: 2,
-                strokeColor: this.getPathColorNormal(),
-                fillColor: this.getPathColorNormal(),
+                strokeColor: color,
+                fillColor: color,
                 //fillColor: '#fff',
                 data: {
                     type: 'circle'
