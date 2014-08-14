@@ -75,7 +75,7 @@ Ext.define('CB.paper.tool.Pen', {
             path = this.getSelectedItem();
 
         // no path
-        if (!path) {
+        if (!path || !this.withinImage(e.event.x, e.event.y)) {
             return;
         }
         
