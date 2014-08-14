@@ -139,12 +139,16 @@ Ext.define('CB.view.location.GradePicker', {
         var route = this.getRoute(),
             grade = route.grades().getAt(0);
 
-        this.select(grade);
+        if (grade) {
+            this.select(grade);
+        } else {
+            this.deselectAll();
+        }
+
     },
 
     select: function(grade) {
         if (grade instanceof CB.model.Grade) {
-
             var picker = this.getTypePicker(grade.getType()),
                 view = picker.down('dataview'),
                 sm = view.getSelectionModel(),
@@ -154,6 +158,17 @@ Ext.define('CB.view.location.GradePicker', {
 
             node.scrollIntoView(this.body);
         }
+    },
+
+    deselectAll: function() {
+        this.items.each(function(picker){
+            var view = picker.down('dataview'),
+                sm = view.getSelectionModel();
+
+            if (sm.hasSelection()) {
+                sm.deselectAll(true);
+            }
+        }, this);
     },
 
     getTypeHeader: function(type) {

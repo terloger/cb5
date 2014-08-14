@@ -110,7 +110,7 @@ Ext.define('CB.view.location.GradePickerField', {
             preserveScrollOnRefresh: true,
             shadow: 'sides',
             autoScroll: true,
-            maxHeight: 210,
+            maxHeight: 200,
             listeners: {
                 selectionchange: this.pickerSelectionChange,
                 refresh: this.onListRefresh,
@@ -147,7 +147,7 @@ Ext.define('CB.view.location.GradePickerField', {
         if (!this.expanding) {
             this.alignPicker();
         }
-        this.syncSelection();
+        //this.syncSelection();
     },
 
     syncSelection: function() {
