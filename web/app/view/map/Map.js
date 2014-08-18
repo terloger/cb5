@@ -50,19 +50,25 @@ Ext.define('CB.view.map.Map', {
         },{
             xtype: 'textfield',
             name: 'search',
-            margin: '0 -1 0 0',
+            width: 240,
+            //margin: '0 -1 0 0',
             itemId: 'searchField',
             selectOnFocus: true,
-            afterSubTpl: '<span class="clear icon-cross"></span>',
+            cls: 'search-field',
+            afterSubTpl: '<span class="search icon-zoom"></span><span class="clear icon-cross"></span>',
             listeners: {
                 specialkey: 'searchSpecialKey',
                 focus: 'searchFocus',
+                click: {
+                    element: 'el',
+                    fn: 'searchClick'
+                },
                 change: {
                     fn: 'search',
                     buffer: 500
                 }
             }
-        },{
+        },/*{
             xtype: 'button',
             handler: 'searchButtonClick',
             itemId: 'searchButton',
@@ -71,7 +77,7 @@ Ext.define('CB.view.map.Map', {
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0
             }
-        },{
+        },*/{
             xtype: 'button',
             text: 'Filter',
             cls: 'filter-button',

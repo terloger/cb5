@@ -5,7 +5,7 @@ Ext.define('CB.view.map.SearchMenu', {
     
     cls: 'cb-map-searchmenu',
     
-    title: 'Search results',
+    //title: 'Search results',
 
     config: {
         store: null
@@ -17,11 +17,18 @@ Ext.define('CB.view.map.SearchMenu', {
             type: 'json',
             storeId: 'mapSearchResults',
             fields: [
+                'name',
+                'location',
+                'bounds'
+            ]
+            /*
+            fields: [
                 'formatted_address',
                 'address_components',
                 'geometry',
                 'types'
             ]
+            */
         },
         itemSelector: 'div.item',
         overItemCls: 'item-over',
@@ -33,7 +40,7 @@ Ext.define('CB.view.map.SearchMenu', {
         tpl: [
             '<tpl for=".">',
                 '<div class="item">',
-                    '<span>{formatted_address}</span>',
+                    '<span class="icon {iconCls}"></span>{name}',
                 '</div>',
             '</tpl>'
         ]
@@ -55,6 +62,12 @@ Ext.define('CB.view.map.SearchMenu', {
                 scope: this
             });
         }
+    },
+
+    showBy: function(cmp, position, offsets) {
+        this.triggerCt = cmp;
+
+        this.callParent(arguments);
     },
 
     monDoc: function() {

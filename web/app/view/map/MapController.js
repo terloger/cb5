@@ -86,6 +86,129 @@ Ext.define('CB.view.map.MapController', {
             }
         }
     },
+
+    slugify2: function(s, opt) {
+        s = String(s);
+        opt = Object(opt);
+
+        var defaults = {
+            'delimiter': '-',
+            'limit': undefined,
+            'lowercase': true,
+            'replacements': {},
+            'transliterate': (typeof(XRegExp) === 'undefined') ? true : false
+        };
+
+        // Merge options
+        for (var k in defaults) {
+            if (!opt.hasOwnProperty(k)) {
+                opt[k] = defaults[k];
+            }
+        }
+
+        var char_map = {
+            // Latin
+            'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç': 'C',
+            'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E', 'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I',
+            'Ð': 'D', 'Ñ': 'N', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ő': 'O',
+            'Ø': 'O', 'Ù': 'U', 'Ú': 'U', 'Û': 'U', 'Ü': 'U', 'Ű': 'U', 'Ý': 'Y', 'Þ': 'TH',
+            'ß': 'ss',
+            'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
+            'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e', 'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+            'ð': 'd', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o', 'ő': 'o',
+            'ø': 'o', 'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u', 'ű': 'u', 'ý': 'y', 'þ': 'th',
+            'ÿ': 'y',
+
+            // Latin symbols
+            '©': '(c)',
+
+            // Greek
+            'Α': 'A', 'Β': 'B', 'Γ': 'G', 'Δ': 'D', 'Ε': 'E', 'Ζ': 'Z', 'Η': 'H', 'Θ': '8',
+            'Ι': 'I', 'Κ': 'K', 'Λ': 'L', 'Μ': 'M', 'Ν': 'N', 'Ξ': '3', 'Ο': 'O', 'Π': 'P',
+            'Ρ': 'R', 'Σ': 'S', 'Τ': 'T', 'Υ': 'Y', 'Φ': 'F', 'Χ': 'X', 'Ψ': 'PS', 'Ω': 'W',
+            'Ά': 'A', 'Έ': 'E', 'Ί': 'I', 'Ό': 'O', 'Ύ': 'Y', 'Ή': 'H', 'Ώ': 'W', 'Ϊ': 'I',
+            'Ϋ': 'Y',
+            'α': 'a', 'β': 'b', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'h', 'θ': '8',
+            'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': '3', 'ο': 'o', 'π': 'p',
+            'ρ': 'r', 'σ': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'x', 'ψ': 'ps', 'ω': 'w',
+            'ά': 'a', 'έ': 'e', 'ί': 'i', 'ό': 'o', 'ύ': 'y', 'ή': 'h', 'ώ': 'w', 'ς': 's',
+            'ϊ': 'i', 'ΰ': 'y', 'ϋ': 'y', 'ΐ': 'i',
+
+            // Turkish
+            'Ş': 'S', 'İ': 'I', 'Ç': 'C', 'Ü': 'U', 'Ö': 'O', 'Ğ': 'G',
+            'ş': 's', 'ı': 'i', 'ç': 'c', 'ü': 'u', 'ö': 'o', 'ğ': 'g',
+
+            // Russian
+            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh',
+            'З': 'Z', 'И': 'I', 'Й': 'J', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
+            'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'H', 'Ц': 'C',
+            'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Sh', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu',
+            'Я': 'Ya',
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+            'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+            'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c',
+            'ч': 'ch', 'ш': 'sh', 'щ': 'sh', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
+            'я': 'ya',
+
+            // Ukrainian
+            'Є': 'Ye', 'І': 'I', 'Ї': 'Yi', 'Ґ': 'G',
+            'є': 'ye', 'і': 'i', 'ї': 'yi', 'ґ': 'g',
+
+            // Czech
+            'Č': 'C', 'Ď': 'D', 'Ě': 'E', 'Ň': 'N', 'Ř': 'R', 'Š': 'S', 'Ť': 'T', 'Ů': 'U',
+            'Ž': 'Z',
+            'č': 'c', 'ď': 'd', 'ě': 'e', 'ň': 'n', 'ř': 'r', 'š': 's', 'ť': 't', 'ů': 'u',
+            'ž': 'z',
+
+            // Polish
+            'Ą': 'A', 'Ć': 'C', 'Ę': 'e', 'Ł': 'L', 'Ń': 'N', 'Ó': 'o', 'Ś': 'S', 'Ź': 'Z',
+            'Ż': 'Z',
+            'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n', 'ó': 'o', 'ś': 's', 'ź': 'z',
+            'ż': 'z',
+
+            // Latvian
+            'Ā': 'A', 'Č': 'C', 'Ē': 'E', 'Ģ': 'G', 'Ī': 'i', 'Ķ': 'k', 'Ļ': 'L', 'Ņ': 'N',
+            'Š': 'S', 'Ū': 'u', 'Ž': 'Z',
+            'ā': 'a', 'č': 'c', 'ē': 'e', 'ģ': 'g', 'ī': 'i', 'ķ': 'k', 'ļ': 'l', 'ņ': 'n',
+            'š': 's', 'ū': 'u', 'ž': 'z'
+        };
+
+        // Make custom replacements
+        for (var k in opt.replacements) {
+            s = s.replace(RegExp(k, 'g'), opt.replacements[k]);
+        }
+
+        // Transliterate characters to ASCII
+        if (opt.transliterate) {
+            for (var k in char_map) {
+                s = s.replace(RegExp(k, 'g'), char_map[k]);
+            }
+        }
+
+        // Replace non-alphanumeric characters with our delimiter
+        var alnum = (typeof(XRegExp) === 'undefined') ? RegExp('[^a-z0-9]+', 'ig') : XRegExp('[^\\p{L}\\p{N}]+', 'ig');
+        s = s.replace(alnum, opt.delimiter);
+
+        // Remove duplicate delimiters
+        s = s.replace(RegExp('[' + opt.delimiter + ']{2,}', 'g'), opt.delimiter);
+
+        // Truncate slug to max. characters
+        s = s.substring(0, opt.limit);
+
+        // Remove delimiter from ends
+        s = s.replace(RegExp('(^' + opt.delimiter + '|' + opt.delimiter + '$)', 'g'), '');
+
+        return opt.lowercase ? s.toLowerCase() : s;
+    },
+
+    slugify: function (text) {
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/-+$/, '');            // Trim - from end of text
+    },
     
     mapReady: function() {
         var me = this,
@@ -94,6 +217,7 @@ Ext.define('CB.view.map.MapController', {
             showMarkers = function() {
                 store = vm.get('locations');
                 store.each(function(location, index){
+                    //console.log(me.slugify2(location.get('name')));
                     var latLng = new google.maps.LatLng(location.get('lat'), location.get('lng')),
                         type = location.types().getAt(0),
                         icon = type ? type.get('type') : 'default',
@@ -346,8 +470,7 @@ Ext.define('CB.view.map.MapController', {
             lat: location.get('lat'),
             lng: location.get('lng'),
             title: location.get('name'),
-            icon: this.getMarkerIconUrl(icon),
-            shadow: this.getMarkerShadowUrl()
+            icon: this.getMarkerIconUrl(icon)
         });
         
         // create marker location getter
@@ -450,24 +573,14 @@ Ext.define('CB.view.map.MapController', {
         return 'resources/types/' + icon + '.png';
     },
 
-    getMarkerShadowUrl: function() {
-        return 'resources/types/shadow.png';
-    },
-    
     /**
      * Search
      */
-    
+
     search: function(field, value, oldValue) {
         // no google or value not string
         if (typeof google === 'undefined' || typeof value !== 'string') {
             return false;
-        }
-
-        // user cleared search before buffer
-        if (this.searchCleared) {
-            this.searchCleared = false;
-            return;
         }
 
         // clear the search
@@ -476,61 +589,111 @@ Ext.define('CB.view.map.MapController', {
             return;
         }
 
-        var geocoder = new google.maps.Geocoder(),
-            menu = this.searchMenu;
+        field.getEl().down('.clear').show();
 
-        // create menu
-        if (!menu) {
-            menu = this.searchMenu = Ext.create('CB.view.map.SearchMenu', {
-                floating: true,
-                hidden: true,
-                closable: true,
-                closeAction: 'hide',
-                width: 320,
-                bodyPadding: 5,
-                maxHeight: 300,
-                autoScroll: true,
-                listeners: {
-                    selectionchange: this.searchItemClick,
-                    scope: this
-                }
-            });
-        }
+        this.searchLocations(field, value);
 
+        this.searchMap(field, value);
+
+        /*
         // mask menu if rendered
         if (menu.rendered) {
-            //menu.getStore().removeAll();
-            //menu.setHeight(100);
+            menu.getStore().removeAll();
+            menu.setHeight(100);
             menu.mask('Searching ...');
         }
+
+        // unmask menu
+        if (menu.rendered) {
+            menu.setHeight(null);
+            menu.unmask();
+        }
+        */
+    },
+
+    searchLocations: function(field, value) {
+        var locations = this.getViewModel().get('locations'),
+            menu = this.getSearchMenu(),
+            results = [];
+
+        locations.each(function(location){
+            var result = false,
+                regex = new RegExp(value, 'gi');
+
+            if (location.get('name').search(regex) > -1) {
+                result = true;
+            }
+
+            if (location.get('description').search(regex) > -1) {
+                result = true;
+            }
+
+            if (result === true) {
+                results.push({
+                    name: location.get('name'),
+                    iconCls: 'icon-climbuddy',
+                    location: new google.maps.LatLng(location.get('lat'), location.get('lng')),
+                    bounds: null,
+                    record: location
+                });
+            }
+
+        },this);
+
+        // load data into menu store
+        menu.getStore().loadData(results);
+
+        // show menu
+        menu.showBy(field, 'tl-bl');
+        field.focus();
+    },
+
+    searchMap: function(field, value) {
+        var geocoder = new google.maps.Geocoder(),
+            menu = this.getSearchMenu(),
+            results = [];
 
         // if user clears the search during callback
         this.searchCleared = false;
 
         // ask google for some data
-        geocoder.geocode({ 'address': value }, Ext.bind(function(results, status) {
+        geocoder.geocode({ 'address': value }, Ext.bind(function(response, status) {
 
             // geocoding successful and search not cleared
             if (status === google.maps.GeocoderStatus.OK && !this.searchCleared) {
 
-                // unmask menu
-                if (menu.rendered) {
-                    //menu.setHeight(null);
-                    menu.unmask();
-                }
+                Ext.each(response, function(result){
+                    results.push({
+                        name: result.formatted_address,
+                        iconCls: 'icon-google',
+                        location: result.geometry.location,
+                        bounds: result.geometry.bounds,
+                        record: result
+                    });
+                });
 
-                // load data into menu store
-                menu.getStore().loadData(results);
+                // append data into menu store
+                menu.getStore().loadData(results, true);
 
                 // show menu
-                menu.triggerCt = field;
                 menu.showBy(field, 'tl-bl');
-
-                // re-focus search field
                 field.focus();
             }
         }, this));
+    },
 
+    searchClick: function(e, target) {
+        var fly = Ext.fly(target);
+
+        if (fly.is('.search')) {
+            this.doSearch();
+            return;
+        }
+
+        if (fly.is('.clear')) {
+            this.clearSearch();
+            return;
+        }
     },
 
     clearSearch: function() {
@@ -551,7 +714,16 @@ Ext.define('CB.view.map.MapController', {
             marker.setMap(null);
         }
 
+        field.getEl().down('.clear').hide();
+
         this.searchCleared = true;
+    },
+
+    doSearch: function() {
+        var view = this.getView(),
+            field = view.down('#searchField');
+
+        this.search(field, field.getValue());
     },
 
     searchItemClick: function(sm, selection) {
@@ -563,26 +735,29 @@ Ext.define('CB.view.map.MapController', {
             map = this.getMap(),
             marker = this.searchMarker;
 
-        if (!marker) {
-            marker = this.searchMarker = new google.maps.Marker();
+        if (item.get('record') instanceof CB.model.Location) {
+            if (marker) marker.setMap(null);
+        } else {
+            if (!marker) {
+                marker = this.searchMarker = new google.maps.Marker();
+            }
+            // show marker
+            marker.setPosition(item.get('location'));
+            marker.setMap(map);
         }
 
-        // show marker
-        marker.setPosition(item.get('geometry').location);
-        marker.setMap(map);
-
-        var bounds = item.get('geometry').bounds;
-
-        // animate map
-        map.setCenter(item.get('geometry').location);
-        map.fitBounds(bounds);
+        // center map
+        map.setCenter(item.get('location'));
+        if (item.get('bounds')) {
+            map.fitBounds(item.get('bounds'));
+        }
     },
 
     searchSpecialKey: function(field, e) {
         if (e.getKey() === e.ENTER) {
-            this.search(field, field.getValue());
+            this.doSearch();
         } else if (e.getKey() === e.ESC) {
-            this.search(field, '');
+            this.clearSearch();
         }
     },
 
@@ -600,11 +775,28 @@ Ext.define('CB.view.map.MapController', {
         }
     },
 
-    searchButtonClick: function(btn, e) {
-        var view = this.getView(),
-            field = view.down('#searchField');
+    getSearchMenu: function() {
+        var menu = this.searchMenu;
 
-        this.search(field, field.getValue());
+        // create menu
+        if (!menu) {
+            menu = this.searchMenu = Ext.create('CB.view.map.SearchMenu', {
+                floating: true,
+                hidden: true,
+                //closable: true,
+                closeAction: 'hide',
+                bodyPadding: 5,
+                maxWidth: 400,
+                maxHeight: 300,
+                autoScroll: true,
+                listeners: {
+                    selectionchange: this.searchItemClick,
+                    scope: this
+                }
+            });
+        }
+
+        return menu;
     },
 
     /**

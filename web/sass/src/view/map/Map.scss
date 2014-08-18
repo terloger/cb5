@@ -1,18 +1,43 @@
-.x-form-text-field-body {
-    .clear {
-        display: inline-block;
+.search-field {
+
+    .x-form-field {
+        padding-left: 26px;
+        padding-right: 26px;
+    }
+
+    .search {
         position: absolute;
         top: 50%;
-        right: 8px;
+        left: 6px;
+        display: inline-block;
         margin-top: -10px;
         color: #A9A9A9;
         font-size: 18px;
         cursor: pointer;
 
+        &:hover {
+            color: #666;
+        }
+    }
+
+    .clear {
         display: none;
+        position: absolute;
+        top: 50%;
+        right: 6px;
+        margin-top: -10px;
+        color: #A9A9A9;
+        font-size: 18px;
+        cursor: pointer;
 
         &:hover {
             color: #666;
+        }
+    }
+
+    .x-form-dirty {
+        .clear {
+            display: inline-block;
         }
     }
 }
@@ -45,6 +70,18 @@
 
         &.item-selected {
             background: #E2EFF8;
+        }
+
+        .icon {
+            margin: 0 5px 0 0;
+        }
+
+        .icon-climbuddy {
+            color: #C9C54E;
+        }
+
+        .icon-google {
+            color: #2358CC;
         }
 
     }
