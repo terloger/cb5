@@ -6,7 +6,7 @@ require_once __DIR__ . '/../CB/Core.php';
 spl_autoload_register('\CB\autoLoader');
 setlocale(LC_ALL, 'en_US.UTF8');
 
-class MoveFiles extends AbstractMigration
+class MoveImages extends AbstractMigration
 {
     /**
      * All files listed by file id
