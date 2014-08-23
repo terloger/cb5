@@ -1,8 +1,8 @@
 # production
-#<Limit PUT DELETE>
-#order deny,allow
-#allow from all
-#</Limit>
+<Limit PUT DELETE>
+order deny,allow
+allow from all
+</Limit>
 
 RewriteEngine on
 RewriteRule ^docs/(.*)$ - [L]
