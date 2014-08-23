@@ -156,8 +156,6 @@ class MoveImages extends AbstractMigration
             $slug,
             $location['id']
         ));
-
-        print_r(['generate slug',$slug]);
     }
 
     /**
@@ -209,16 +207,11 @@ class MoveImages extends AbstractMigration
      */
     private function moveFile($from, $to)
     {
-        print_r(['move file', $from, $to]);
         if (file_exists($from))
         {
             if (!rename($from, $to))
             {
                 die('Unable to move file from ' . $from . ' to ' . $to);
-            }
-            else
-            {
-                print_r(['successfully moved',$from,$to]);
             }
         }
     }
