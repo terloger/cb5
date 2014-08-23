@@ -12,6 +12,9 @@ set_error_handler('\CB\errorHandler');
 // register climbuddy autoloader
 spl_autoload_register('\CB\autoLoader');
 
+// set locale
+setlocale(LC_ALL, 'en_US.UTF8');
+
 // setup development environment
 if (\CB\Config::get('cb.environment') === 'development')
 {
@@ -21,8 +24,8 @@ if (\CB\Config::get('cb.environment') === 'development')
     /**
      * Dump object
      *
-     * @param type $data
-     * @param type $simple
+     * @param $data
+     * @param $simple
      */
     function dump($data, $simple = true)
     {
@@ -85,6 +88,7 @@ try
         case \CB\Config::get('folder.root') . '/api/info':
             new \CB\Controller\Info();
             break;
+
     }
 }
 catch (\Exception $e)

@@ -87,6 +87,31 @@ Ext.define('CB.Application', {
         
         // fire application event
         this.fireEvent('dataready');
+
+        /*
+        var wnd = Ext.create('Ext.window.Window', {
+            title: 'captcha',
+            width: 460,
+            height: 164,
+            bodyPadding: 10,
+            autoShow: true,
+            items: [{
+                xtype: 'component',
+                id: 'captcha'
+            }],
+            listeners: {
+                afterrender: function() {
+                    Recaptcha.create("6Lej8PgSAAAAAOuN3DxUg4NYCC0d-HkQafT8CB9E",
+                        "captcha",
+                        {
+                            theme: "clean",
+                            callback: Recaptcha.focus_response_field
+                        }
+                    );
+                }
+            }
+        });
+        */
     },
     
     onDirectEvent: function(e, provider) {

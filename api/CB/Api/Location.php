@@ -130,6 +130,7 @@ class Location extends AbstractController
      * @param integer $id Location ID
      * @access private
      * @return array
+     * @throw \Exception
      */
     private function readById($id)
     {
@@ -238,7 +239,16 @@ class Location extends AbstractController
                     return $this->error('Invalid location clientId!');
                 }
                 $clientId = $location['id'];
-                
+
+                // load parent?
+                if (isset($location['parentId']) && !empty($location['parentId']))
+                {
+                    if (null === $Parent = $em->getRepository('\CB\Entity\Location')->find($location['parentId']))
+                    {
+                        return $this->error('Unable to set location parent!');
+                    }
+                }
+
                 // load country
                 $countryId = isset($location['countryId']) ? $location['countryId'] : 0;
                 if (null === $Country = $em->getRepository('\CB\Entity\Country')->find($countryId))
@@ -246,11 +256,22 @@ class Location extends AbstractController
                     return $this->error('Unable to set location country!');
                 }
 
+                // create slug
+                if (!isset($location['name']) || empty($location['name']))
+                {
+                    return $this->error('Invalid location name!');
+                }
+                $location['slug'] = $this->getSlug($location['name']);
+
                 // create new location
                 $Location = new \CB\Entity\Location();
                 $Location->setValues($location);
                 $Location->setUser($User);
                 $Location->setCountry($Country);
+                if (isset($Parent))
+                {
+                    $Location->setParent($Parent);
+                }
 
                 // save it
                 $em->persist($Location);
@@ -279,12 +300,11 @@ class Location extends AbstractController
             return $this->error($e->getMessage());
         }
     }
-    
+
     /**
-     * Update location
-	 *
-     * @access public
-     * @param  array $location
+     * Update locations
+     *
+     * @param $locations
      * @return array
      */
     public function update($locations)
@@ -315,6 +335,25 @@ class Location extends AbstractController
 
                 // update location
                 $Location->setValues($location);
+
+                // handle parent
+                if (isset($location['parentId']) && !empty($location['parentId']))
+                {
+                    if (null === $Parent = $em->getRepository('\CB\Entity\Location')->find($location['parentId']))
+                    {
+                        return $this->error('Unable to set location parent!');
+                    }
+                }
+                if (isset($Parent) && $Parent !== $Location->getParent())
+                {
+                    // set new parent
+                    $Location->setParent($Parent);
+                }
+                else if (!isset($Parent) && $Location->getParent())
+                {
+                    // clear parent
+                    $Location->setParent(null);
+                }
 
                 // do we need to change country?
                 if (isset($location['countryId']))
@@ -665,6 +704,44 @@ class Location extends AbstractController
         {
             return $this->error($e->getMessage());
         }
+    }
+
+    /**
+     * Get slug from location name
+     *
+     * @param $name
+     * @return mixed|string
+     */
+    public function getSlug($name)
+    {
+        $slug = \CB\slug($name);
+
+        $exists = $this->slugExists($slug);
+
+        if ($exists)
+        {
+            $original = $slug;
+            $num = 2;
+            while ($exists)
+            {
+                $slug = $original . '-' . $num;
+                $exists = $this->slugExists($slug);
+                $num++;
+            }
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Check if slug exists
+     *
+     * @param $slug
+     * @return mixed
+     */
+    private function slugExists($slug)
+    {
+        return $this->getEntityManager()->getRepository('\CB\Entity\Location')->findBy(array('slug' => $slug));
     }
 
 }

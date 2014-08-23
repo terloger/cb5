@@ -19,9 +19,12 @@ Ext.define('CB.model.Location', {
         {name: 'countryId', reference: 'Country', unique: true},
         {name: 'name', type: 'string'},
         {name: 'description', type: 'string'},
+        {name: 'slug', type: 'string'},
         {name: 'lat', type: 'float'},
         {name: 'lng', type: 'float'},
-        {name: 'created', type: 'date'}
+        {name: 'created', type: 'date'},
+        {name: 'confirmed', type: 'boolean'},
+        {name: 'deleted', type: 'boolean'}
     ],
     
     manyToMany: {

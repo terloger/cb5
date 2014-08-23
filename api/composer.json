@@ -1,6 +1,7 @@
 {
     "require": {
         "doctrine/orm": "*",
-        "lastcraft/simpletest": "dev-master"
+        "lastcraft/simpletest": "dev-master",
+        "robmorgan/phinx": "dev-master"
     }
 }

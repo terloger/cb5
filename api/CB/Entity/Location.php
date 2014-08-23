@@ -25,6 +25,11 @@ class Location extends AbstractEntity
      * @GeneratedValue
      */
     protected $id;
+
+    /**
+     * @Column(name="parent_id", type="integer", nullable=true)
+     */
+    protected $parentId;
     
     /**
      * @Column(name="user_id", type="integer")
@@ -47,6 +52,11 @@ class Location extends AbstractEntity
     protected $description;
 
     /**
+     * @Column(type="text")
+     */
+    protected $slug;
+
+    /**
      * @Column(type="float")
      */
     protected $lat;
@@ -60,6 +70,27 @@ class Location extends AbstractEntity
      * @Column(type="datetime")
      */
     protected $created;
+
+    /**
+     * @Column(type="boolean")
+     */
+    protected $confirmed;
+
+    /**
+     * @Column(type="boolean")
+     */
+    protected $deleted;
+
+    /**
+     * @OneToMany(targetEntity="Location", mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * @ManyToOne(targetEntity="Location", inversedBy="children")
+     * @JoinColumn(name="parent_id", referencedColumnName="id", nullable=true)
+     */
+    private $parent;
 
     /**
      * @ManyToOne(targetEntity="User", inversedBy="locations")
@@ -95,6 +126,7 @@ class Location extends AbstractEntity
      */
     public function __construct()
     {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->types = new \Doctrine\Common\Collections\ArrayCollection();
         $this->routes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
@@ -115,6 +147,11 @@ class Location extends AbstractEntity
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getParentId()
+    {
+        return $this->parentId;
     }
     
     public function getUserId()
@@ -137,6 +174,11 @@ class Location extends AbstractEntity
         return $this->description;
     }
 
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
     public function getLat()
     {
         return $this->lat;
@@ -152,9 +194,29 @@ class Location extends AbstractEntity
         return $this->created;
     }
 
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    public function getDeleted()
+    {
+        return $this->deleted;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getChildren()
+    {
+        return $this->country;
     }
 
     public function getCountry()
@@ -181,13 +243,17 @@ class Location extends AbstractEntity
     {
         return [
             'id'          => $this->id,
+            'parentId'    => $this->parentId,
             'userId'      => $this->userId,
             'countryId'   => $this->countryId,
             'name'        => $this->name,
             'description' => $this->description,
+            'slug'        => $this->slug,
             'lat'         => $this->lat,
             'lng'         => $this->lng,
             'created'     => $this->created->format('Y-m-d H:i:s'),
+            'confirmed'   => $this->confirmed,
+            'deleted'     => $this->deleted,
         ];
     }
 
@@ -205,6 +271,11 @@ class Location extends AbstractEntity
         $this->description = $description;
     }
 
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
     public function setLat($lat)
     {
         $this->lat = $lat;
@@ -213,6 +284,22 @@ class Location extends AbstractEntity
     public function setLng($lng)
     {
         $this->lng = $lng;
+    }
+
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+    }
+
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+    }
+
+    public function setParent($Location)
+    {
+        $this->parent = $Location;
+        $this->parentId = $Location->getId();
     }
 
     public function setUser($User)
@@ -233,8 +320,11 @@ class Location extends AbstractEntity
         {
             if(isset($location['name']))        $this->name        = $location['name'];
             if(isset($location['description'])) $this->description = $location['description'];
+            if(isset($location['slug']))        $this->slug        = $location['slug'];
             if(isset($location['lat']))         $this->lat         = $location['lat'];
             if(isset($location['lng']))         $this->lng         = $location['lng'];
+            if(isset($location['confirmed']))   $this->confirmed   = $location['confirmed'];
+            if(isset($location['deleted']))     $this->deleted     = $location['deleted'];
         }
     }
 

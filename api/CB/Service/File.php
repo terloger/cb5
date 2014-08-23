@@ -26,6 +26,14 @@ class File extends AbstractService
     private $_created;
 
     /**
+     * Location slug.
+     *
+     * @access private
+     * @var    string
+     */
+    private $_slug;
+
+    /**
      * Upload file.
      *
      * @access public
@@ -38,7 +46,8 @@ class File extends AbstractService
     public function uploadFromStream($User, $Location, $name)
     {
         // set tmp file
-        $file = \CB\Config::get('path.uploads') . '/' . $this->_toAscii($name) . time() . '.tmp';
+        $fileName = \CB\slug(substr($name, 0, strrpos($name, '.')));
+        $file = \CB\Config::get('path.uploads') . '/' . $fileName . time() . '.tmp';
         if (false === $target = fopen($file, 'w'))
         {
             throw new \CB\Service\Exception('Unable to write file!');
@@ -73,20 +82,19 @@ class File extends AbstractService
     }
 
     /**
-     * Upload file.
-     *
-     * @access public
-     * @param  \CB\Entity\User $User
-     * @param  \CB\Entity\Location $Location
-     * @param  string $name
-     * @param  string $file
+     * @param $User
+     * @param $Location
+     * @param $name
+     * @param $file
      * @return \CB\Entity\File
-     * @throws \CB\Service\Exception
+     * @throws Exception
+     * @throws \Exception
      */
     public function upload($User, $Location, $name, $file)
     {
         // set created date
-        $this->_created = new \DateTime();
+        $this->_created = $Location->getCreated();
+        $this->_slug = $Location->getSlug();
 
         // check file size
         $fileSize = filesize($file);
@@ -112,7 +120,7 @@ class File extends AbstractService
         }
 
         // prepare file variables
-        $fileName = $this->_toAscii(substr($name, 0, strrpos($name, '.')));
+        $fileName = \CB\slug(substr($name, 0, strrpos($name, '.')));
         $extension = \CB\Config::get('upload.mimetypes')[$mimeType];
         $name = $fileName . '.' . $extension;
         $dir = $this->_getFileDir();
@@ -125,7 +133,7 @@ class File extends AbstractService
             $j = 2;
             do
             {
-                $fileName = $originalName.'_'.$j;
+                $fileName = $originalName.'-'.$j;
                 $name = $fileName . '.' .$extension;
                 $target = $this->_getFilePath($name);
                 $j++;
@@ -134,10 +142,14 @@ class File extends AbstractService
         }
 
         // create destination folder
+        //print_r(['dir', $dir]);
+
         if ( !is_dir($dir) && !mkdir($dir, 0777, true) )
         {
             throw new \CB\Service\Exception('Unable create upload path!');
         }
+
+        //print_r([$file, $target]);die;
 
         // move file
         if (!copy($file, $target))
@@ -252,7 +264,7 @@ class File extends AbstractService
      */
     private function _getFileDir()
     {
-        return \CB\Config::get('path.uploads') . '/' . $this->_created->format('Y/m/d');
+        return \CB\Config::get('path.uploads') . '/' . $this->_created->format('Y/m/d') . '/' . $this->_slug;
     }
 
     /**
