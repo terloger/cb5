@@ -1,6 +1,7 @@
 # CB
 api/config.ini
 api/composer.lock
+api/phinx.yml
 api/vendor
 backup
 uploads
