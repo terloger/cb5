@@ -180,11 +180,6 @@ class MoveImages extends AbstractMigration
             {
                 die('Unable to create ' . $newLocationPath);
             }
-
-            if (!chmod($newLocationPath, 0777))
-            {
-                die('Unable to chmod folder ' . $newLocationPath);
-            }
         }
 
         $files = $this->locationFiles[$location['id']];
@@ -224,11 +219,6 @@ class MoveImages extends AbstractMigration
             else
             {
                 print_r(['successfully moved',$from,$to]);
-            }
-
-            if (!chmod($to, 0777))
-            {
-                die('Unable to chmod file ' . $to);
             }
         }
     }
