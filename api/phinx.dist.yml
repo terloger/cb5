@@ -9,7 +9,7 @@ environments:
         host: localhost
         name: climbuddy
         user: root
-        pass: sql123
+        pass: ''
         port: 3306
         charset: utf8
 
@@ -18,14 +18,14 @@ environments:
         host: localhost
         name: climbuddy
         user: root
-        pass: sql123
+        pass: ''
         port: 3306
         charset: utf8
 
     testing:
         adapter: mysql
         host: localhost
-        name: testing_db
+        name: climbuddy
         user: root
         pass: ''
         port: 3306
