@@ -105,7 +105,11 @@ Ext.define('CB.view.location.Routes', {
         sortable: false,
         draggable: false,
         editor: {
-            xtype: 'numberfield'
+            xtype: 'numberfield',
+            hideTrigger: true,
+            maxValue: 8864,
+            minValue: 0,
+            maskRe: /[0-9]/
         },
         renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
             return value ? value + 'm' : '';

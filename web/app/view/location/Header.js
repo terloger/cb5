@@ -19,6 +19,12 @@ Ext.define('CB.view.location.Header', {
         bind: {
             hidden: '{!location}',
             text: '{location.name}'
+        },
+        listeners: {
+            click: {
+                element: 'el',
+                fn: 'switchCard'
+            }
         }
     },' ',{
         xtype: 'component',

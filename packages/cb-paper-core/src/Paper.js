@@ -22,6 +22,8 @@ Ext.define('CB.paper.Paper', {
         
         // fit canvas to parent container
         this.resizePaper(w, h);
+
+        this.getView().relayEvents(this.getCanvas(), ['contextmenu']);
     },
     
     resizePaper: function(a, b, c) {

@@ -85,6 +85,15 @@ Ext.define('CB.view.location.LocationController', {
         this.destroySession(location);
     },
 
+    switchCard: function() {
+        var view = this.getView(),
+            card = view.down('#card'),
+            paper = view.down('cb-paper'),
+            overview = view.down('cb-location-overview');
+
+        //card.setActiveItem(overview.isVisible() ? paper : overview);
+    },
+
     /**
      * Session handling
      */
@@ -558,6 +567,25 @@ Ext.define('CB.view.location.LocationController', {
     /**
      * Paper
      */
+
+    getPaperContextMenu: function(scope) {
+        var menu = this.imageMenu;
+
+        if (!menu) {
+            menu = this.menu = Ext.create('Ext.menu.Menu', {
+                renderTo: Ext.getBody(),
+                items: [{
+                    xtype: 'menuitem',
+                    text: 'Remove image',
+                    glyph: 'xe61f@climbuddy',
+                    handler: this.removeFile,
+                    scope: this
+                }]
+            });
+        }
+
+        return menu;
+    },
     
     setPaperTool: function(btn) {
         var view = this.getView(),
@@ -569,7 +597,13 @@ Ext.define('CB.view.location.LocationController', {
     paperChanged: function(paper, item) {
         this.getViewModel().set('dirty', true);
     },
-    
+
+    paperContextMenu: function(e, dom) {
+        this.getPaperContextMenu().showAt(e.getXY());
+        e.stopEvent();
+        return false;
+    },
+
     paperRouteSelectionChange: function(paper, route, oldRoute, e) {
         var view = this.getView(),
             vm = view.getViewModel();
@@ -868,6 +902,14 @@ Ext.define('CB.view.location.LocationController', {
     /**
      * File
      */
+
+    setFile: function(file) {
+        var vm = this.getViewModel(),
+            location = vm.get('location');
+
+        vm.set('file', file);
+        vm.set('fileIndex', location.files().indexOf(file) + 1);
+    },
     
     prevFile: function() {
         var view = this.getView(),
@@ -985,7 +1027,9 @@ Ext.define('CB.view.location.LocationController', {
                 view.mask(Ext.String.format(message, index + 1, this.fileCount, percent));
             },
             success: function(result) {
-                location.files().add(Ext.create('CB.model.File', result.data));
+                var f = location.files().add(Ext.create('CB.model.File', result.data));
+
+                f[0].setLocation(location);
 
                 this.fileDataChanged();
 
@@ -1030,11 +1074,58 @@ Ext.define('CB.view.location.LocationController', {
             buttons: Ext.MessageBox.OK
         });
     },
-    
+
     removeFile: function() {
-        
+        var vm = this.getViewModel(),
+            location = vm.get('location'),
+            file = vm.get('file');
+
+        if (!file) {
+            return;
+        }
+
+        if (location.files().getCount() < 2) {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'You can\' delete the only image!',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.MessageBox.OK
+            });
+        }
+
+        Ext.MessageBox.confirm('Delete file?', 'Are you sure you want to delete this file?', function(btn) {
+            if (btn === 'yes') {
+                this.doRemoveFile(file);
+            }
+        }, this);
     },
-    
+
+    doRemoveFile: function(file) {
+        var location = this.getViewModel().get('location'),
+            locationFiles = location.files,
+            nextFile = this.getNextFile();
+
+        file.erase({
+            success: function(record, operation) {
+                // fix extjs bug
+                location.files = locationFiles;
+                this.setFile(nextFile);
+                this.fileDataChanged();
+            },
+            failure: function(record, operation) {
+                file.reject();
+
+                Ext.MessageBox.show({
+                    title: 'Server Exception',
+                    msg: operation.getError(),
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.MessageBox.OK
+                });
+            },
+            scope: this
+        });
+    },
+
     fileDataChanged: function() {
         var vm = this.getViewModel(),
             location = vm.get('location'),

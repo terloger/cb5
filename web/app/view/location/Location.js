@@ -6,6 +6,7 @@ Ext.define('CB.view.location.Location', {
     
     requires: [
         'Ext.layout.container.Border',
+        'Ext.layout.container.Card',
         'Ext.grid.plugin.CellEditing',
         'Ext.grid.plugin.DragDrop',
         'Ext.toolbar.Spacer',
@@ -14,6 +15,7 @@ Ext.define('CB.view.location.Location', {
         'CB.view.location.Sidebar',
         'CB.view.location.GradePickerField',
         'CB.view.location.TypePicker',
+        'CB.view.location.Overview',
         'CB.paper.Panel'
     ],
     
@@ -67,21 +69,29 @@ Ext.define('CB.view.location.Location', {
                 }
             }];
         }
-        
+
+        var items = [];
+
         // paper
-        this.items = [{
+        items.push({
             xtype: 'cb-paper',
             cls: 'loading',
             listeners: {
+                contextmenu: 'paperContextMenu',
                 routeselectionchange: 'paperRouteSelectionChange',
                 routemouseenter: 'paperRouteMouseEnter',
                 routemouseleave: 'paperRouteMouseLeave'
             }
-        }];
-        
+        });
+
+        // overview
+        items.push({
+            xtype: 'cb-location-overview'
+        });
+
         // route tip for touch devices
         if (Ext.os.deviceType !== 'Desktop') {
-            this.items.push({
+            items.push({
                 xtype: 'window',
                 itemId: 'routeTip',
                 minWidth: 200,
@@ -96,7 +106,7 @@ Ext.define('CB.view.location.Location', {
         }
         
         // type picker
-        this.items.push({
+        items.push({
             xtype: 'cb-location-typepicker',
             floating: true,
             hidden: true,
@@ -113,6 +123,15 @@ Ext.define('CB.view.location.Location', {
                 selectionchange: 'typeChange'
             }
         });
+
+        this.items = [{
+            xtype: 'panel',
+            itemId: 'card',
+            layout: {
+                type: 'card'
+            },
+            items: items
+        }];
         
         this.callParent();
     },
@@ -122,5 +141,5 @@ Ext.define('CB.view.location.Location', {
             this.getViewModel().set('location', location);
         }
     }
-    
+
 });

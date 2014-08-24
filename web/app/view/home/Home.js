@@ -19,7 +19,7 @@ Ext.define('CB.view.home.Home', {
         height: 46,
         items: [{
             xtype: 'tbtext',
-            text: 'Wellcome to CLIMBuddy beta',
+            text: 'Wellcome to CLIMBuddy BETA',
             cls: 'title'
         }]
     },

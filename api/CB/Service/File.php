@@ -93,8 +93,8 @@ class File extends AbstractService
     public function upload($User, $Location, $name, $file)
     {
         // set created date
-        $this->_created = $Location->getCreated();
         $this->_slug = $Location->getSlug();
+        $this->_created = $Location->getCreated();
 
         // check file size
         $fileSize = filesize($file);
@@ -216,9 +216,14 @@ class File extends AbstractService
      */
     public function remove($File)
     {
-        $this->_created = $File->getCreated();
+        $Location = $File->getLocation();
+
+        $this->_slug = $Location->getSlug();
+        $this->_created = $Location->getCreated();
 
         $this->_deleteFiles($File->getFileName(), $File->getExtension());
+
+        $this->_deleteDirIfEmpty($this->_getFileDir());
 
         foreach ($File->getLayers() as $Layer)
         {
@@ -254,6 +259,46 @@ class File extends AbstractService
                 unlink($file);
             }
         }
+    }
+
+    /**
+     * Delete directory if empty
+     *
+     * @param $dir
+     * @throws Exception
+     */
+    private function _deleteDirIfEmpty($dir)
+    {
+        if ($this->_isEmptyDir($dir))
+        {
+            if (!rmdir($dir))
+            {
+                throw new \CB\Service\Exception('Unable to remove directory ' . $dir);
+            }
+        }
+    }
+
+    /**
+     * Check if directory is empty
+     *
+     * @param $dir
+     * @return bool
+     */
+    private function _isEmptyDir($dir)
+    {
+        if (!is_dir($dir))
+        {
+            return false;
+        }
+
+        $files = scandir($dir);
+
+        if (is_array($files))
+        {
+            return count($files) <= 2;
+        }
+
+        return false;
     }
 
     /**
