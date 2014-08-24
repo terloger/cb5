@@ -1,6 +1,8 @@
-cb5
-===
+CLIMBuddy BETA
+==============
 
-CLIMBuddy ExtJS 5
+Prototype at http://cb.dev.a2o.si/
 
-http://cb.dev.a2o.si/
+More info climbuddy@gmail.com
+
+Please don't steal our code :)
