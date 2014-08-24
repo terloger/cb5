@@ -1087,10 +1087,11 @@ Ext.define('CB.view.location.LocationController', {
         if (location.files().getCount() < 2) {
             Ext.MessageBox.show({
                 title: 'Error',
-                msg: 'You can\' delete the only image!',
+                msg: 'Sorry, but you can\'t delete the only image. Add some more, then remove it.',
                 icon: Ext.MessageBox.ERROR,
                 buttons: Ext.MessageBox.OK
             });
+            return;
         }
 
         Ext.MessageBox.confirm('Delete file?', 'Are you sure you want to delete this file?', function(btn) {
@@ -1102,26 +1103,35 @@ Ext.define('CB.view.location.LocationController', {
 
     doRemoveFile: function(file) {
         var location = this.getViewModel().get('location'),
-            locationFiles = location.files,
-            nextFile = this.getNextFile();
+            files = location.files(),
+            nextFile = this.getNextFile(),
+            locationFiles = location.files;
 
-        file.erase({
-            success: function(record, operation) {
+        files.remove(file);
+
+        files.sync({
+            success: function(batch) {
                 location.files = locationFiles; // fix extjs bug
 
                 this.setFile(nextFile);
 
                 this.fileDataChanged();
             },
-            failure: function(record, operation) {
+            failure: function(batch) {
                 location.files = locationFiles; // fix extjs bug
+
                 location.files().rejectChanges();
 
-                file.reject();
+                var exceptions = batch.getExceptions(),
+                    msg = [];
+
+                Ext.each(exceptions, function(exception){
+                    msg.push(exception.getError());
+                }, this);
 
                 Ext.MessageBox.show({
                     title: 'Server Exception',
-                    msg: operation.getError(),
+                    msg: msg.length ? msg.join('<br />') : 'Unable to remove file!',
                     icon: Ext.MessageBox.ERROR,
                     buttons: Ext.MessageBox.OK
                 });

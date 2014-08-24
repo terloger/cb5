@@ -502,6 +502,8 @@ class Location extends AbstractController
      */
     public function removeFile($file)
     {
+        return $this->error('Unable to delete file!');
+
         // must be logged in
         if (null === $User = $this->getSessionUser())
         {

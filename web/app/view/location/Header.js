@@ -191,6 +191,26 @@ Ext.define('CB.view.location.Header', {
         bind: {
             //hidden: '{!user}'
         }
+    },{
+        xtype: 'button',
+        ui: 'blank',
+        text: 'Login',
+        overflowText: 'Login',
+        glyph: 'xe60f@climbuddy',
+        hidden: false,
+        bind: {
+            user: '{user}'
+        },
+        handler: function(btn, e){
+            this.fireEvent('headeruserbuttonclick', btn, e);
+        },
+        setUser: function(user) {
+            if (user instanceof CB.model.User) {
+                this.setText(user.get('username'))
+            } else {
+                this.setText('Login');
+            }
+        }
     }]
 
 });

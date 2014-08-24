@@ -7,23 +7,20 @@ Ext.define('CB.view.user.LoginController', {
     alias: 'controller.cb-user-login',
     
     login: function(btn, e) {
-        var loginView = this.getView(),
-            loginViewModel = loginView.getViewModel(),
-            userView = loginView.up('cb-user'),
-            mainViewModel = userView.getViewModel().getParent(),
-            userData = loginView.getValues(),
+        var view = this.getView(),
+            vm = view.getViewModel(),
+            mainvm = vm.getParent(),
+            userData = view.getValues(),
             user;
-    
-        loginViewModel.set('loading', true);
-    
+
         CB.api.User.login(userData, function(response) {
-            loginViewModel.set('loading', false);
             if (response.success) {
                 user = Ext.create('CB.model.User', response.data);
-                mainViewModel.set('user', user);
-                userView.showHome();
+                mainvm.set('user', user);
+
+
             } else {
-                loginViewModel.set('error', response.message);
+                vm.set('error', response.message);
             }
         }, this);
     },

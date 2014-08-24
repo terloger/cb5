@@ -12,22 +12,11 @@ Ext.define('CB.view.user.Login', {
         type: 'cb-user-login'
     },
     
-    tbar: {
-        ui: 'header',
-        height: 46,
-        items: [{
-            xtype: 'tbtext',
-            text: 'Sign In',
-            cls: 'title'
-        }]
-    },
-    
     cls: 'cb-user-login',
-    bodyPadding: '20 0 0 20',
-    
+
     defaultType: 'textfield',
+
     defaults: {
-        width: 400,
         labelWidth: 120,
         listeners: {
             specialkey: 'specialKey'
@@ -51,8 +40,10 @@ Ext.define('CB.view.user.Login', {
         name: 'autologin'
     },{
         xtype: 'displayfield',
+        hidden: true,
         bind: {
-            value: '{error}'
+            value: '{error}',
+            hidden: '{!error}'
         },
         fieldStyle: {
             color: 'red'
@@ -60,8 +51,6 @@ Ext.define('CB.view.user.Login', {
     }],
 
     buttons: {
-        maxWidth: 400,
-        margin: '0 0 0 20',
         items: [{
             formBind: true,
             text: 'Sign In',

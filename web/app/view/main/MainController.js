@@ -32,6 +32,11 @@ Ext.define('CB.view.main.MainController', {
     },
     
     listen: {
+        component: {
+            'button': {
+                headeruserbuttonclick: 'headerUserButtonClick'
+            }
+        },
         controller: {
             '#': {
                 unmatchedroute : 'unmatchedRoute'
@@ -41,7 +46,55 @@ Ext.define('CB.view.main.MainController', {
             }
         }
     },
-    
+
+    /**
+     * Handle user
+     */
+
+    headerUserButtonClick: function(btn, e) {
+        var user = this.getViewModel().get('user');
+
+        if (user instanceof CB.model.User) {
+            this.showHeaderUserMenu(btn);
+        } else {
+            this.showHeaderUserLogin(btn);
+        }
+    },
+
+    showHeaderUserLogin: function(btn) {
+        var wnd = Ext.create('Ext.window.Window', {
+            renderTo: Ext.getBody(),
+            resizable: false,
+            layout: {
+                type: 'fit'
+            },
+            items: [{
+                xtype: 'cb-user-login',
+                bodyPadding: 20
+            }]
+        });
+
+        wnd.showBy(btn, 'tl-bl');
+    },
+
+    showHeaderUserMenu: function(btn) {
+        var menu = this.userMenu;
+
+        if (!menu) {
+            menu = this.userMenu = Ext.create('Ext.menu.Menu', {
+                renderTo: Ext.getBody(),
+                items: [{
+                    text: 'Logout',
+                    handler: function() {
+                        console.log('logout');
+                    }
+                }]
+            });
+        }
+
+        menu.showBy(btn, 'tl-bl');
+    },
+
     /**
      * Core
      */
