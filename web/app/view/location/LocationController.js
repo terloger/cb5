@@ -871,11 +871,12 @@ Ext.define('CB.view.location.LocationController', {
     
     prevFile: function() {
         var view = this.getView(),
+            paper = view.down('cb-paper'),
             vm = view.getViewModel(),
             location = vm.get('location'),
             file = this.getPrevFile();
-        
-        if (!file) {
+
+        if (!file || paper.hasCls('loading')) {
             return;
         }
         
@@ -885,11 +886,12 @@ Ext.define('CB.view.location.LocationController', {
     
     nextFile: function() {
         var view = this.getView(),
+            paper = view.down('cb-paper'),
             vm = view.getViewModel(),
             location = vm.get('location'),
             file = this.getNextFile();
-        
-        if (!file) {
+
+        if (!file || paper.hasCls('loading')) {
             return;
         }
         
