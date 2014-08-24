@@ -98,6 +98,18 @@ Ext.define('CB.view.location.Routes', {
             var grade = record.grades().getAt(0);
             return grade ? grade.get('grade') : '';
         }
+    },{
+        text: 'Height',
+        dataIndex: 'height',
+        flex: 1,
+        sortable: false,
+        draggable: false,
+        editor: {
+            xtype: 'numberfield'
+        },
+        renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+            return value ? value + 'm' : '';
+        }
     }],
     
     listeners: {

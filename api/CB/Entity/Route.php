@@ -41,6 +41,11 @@ class Route extends AbstractEntity
     protected $name;
 
     /**
+     * @Column(type="integer")
+     */
+    protected $height;
+
+    /**
      * @Column(name="file_id", type="integer")
      */
     protected $fileId;
@@ -115,6 +120,11 @@ class Route extends AbstractEntity
         return $this->name;
     }
 
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
     public function getFileId()
     {
         return $this->fileId;
@@ -152,6 +162,7 @@ class Route extends AbstractEntity
             'locationId' => $this->locationId,
             'pos'        => $this->pos,
             'name'       => $this->name,
+            'height'     => $this->height,
             'fileId'     => $this->fileId,
             'created'    => $this->created->format('Y-m-d H:i:s'),
         ];
@@ -176,6 +187,11 @@ class Route extends AbstractEntity
         $this->name = $name;
     }
 
+    public function setHeight($height)
+    {
+        $this->height = $height;
+    }
+
     public function setUser($user)
     {
         $this->user = $user;
@@ -193,6 +209,7 @@ class Route extends AbstractEntity
         {
             if (isset($route['pos']))    $this->pos    =  $route['pos'];
             if (isset($route['name']))   $this->name   =  $route['name'];
+            if (isset($route['height'])) $this->height =  $route['height'];
             if (isset($route['fileId'])) $this->fileId =  $route['fileId'];
         }
     }

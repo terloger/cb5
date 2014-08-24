@@ -7,6 +7,7 @@ Ext.define('CB.model.Route', {
         {name: 'locationId', reference: 'Location'},
         {name: 'pos', type: 'int'},
         {name: 'name', type: 'string'},
+        {name: 'height', type: 'int'},
         {name: 'created', type: 'date'},
         {name: 'fileId', type: 'int'}
     ],
