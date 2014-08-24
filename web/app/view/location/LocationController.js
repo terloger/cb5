@@ -1107,12 +1107,15 @@ Ext.define('CB.view.location.LocationController', {
 
         file.erase({
             success: function(record, operation) {
-                // fix extjs bug
-                location.files = locationFiles;
+                location.files = locationFiles; // fix extjs bug
+
                 this.setFile(nextFile);
+                
                 this.fileDataChanged();
             },
             failure: function(record, operation) {
+                location.files = locationFiles; // fix extjs bug
+
                 file.reject();
 
                 Ext.MessageBox.show({
