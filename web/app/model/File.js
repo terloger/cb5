@@ -25,14 +25,14 @@ Ext.define('CB.model.File', {
 
     getFolder: function(size) {
         return CB.Config.get('folder.uploads') + '/' +
-            Ext.Date.format(this.get('created'), 'Y/m/d') + '/' +
+            Ext.Date.format(this.getLocation().get('created'), 'Y/m/d') + '/' +
             this.getLocation().get('slug') + '/' +
             this.get('fileName') + (size ? '_' + size : '') + '.' + this.get('extension');
     },
 
     getUrl: function(size) {
         return CB.Config.get('url.uploads') + '/' +
-            Ext.Date.format(this.get('created'), 'Y/m/d') + '/' +
+            Ext.Date.format(this.getLocation().get('created'), 'Y/m/d') + '/' +
             this.getLocation().get('slug') + '/' +
             this.get('fileName') + (size ? '_' + size : '') + '.' + this.get('extension');
     },
