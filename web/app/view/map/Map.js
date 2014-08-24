@@ -85,6 +85,8 @@ Ext.define('CB.view.map.Map', {
             glyph: 'xe646@climbuddy',
             handler: 'typePicker',
             menu: []
+        },'->',{
+            xtype: 'cb-user-headerbutton'
         }]
     },
     
@@ -100,11 +102,11 @@ Ext.define('CB.view.map.Map', {
             text: 'Map',
             baseCls: 'x-menu-title',
             hideOnClick: false
-        },{
+        },/*{
             text: 'Refresh',
             handler: 'refreshMap',
             glyph: 'xe61d@climbuddy'
-        },'-',{
+        },'-',*/{
             text: 'Add location',
             handler: 'addLocation',
             glyph: 'xe618@climbuddy'

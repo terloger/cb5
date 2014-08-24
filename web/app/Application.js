@@ -44,7 +44,8 @@ Ext.define('CB.Application', {
         'location.Add',
         'user.User',
         'user.Login',
-        'user.Home'
+        'user.Home',
+        'user.HeaderButton'
     ],
     
     waitFor: [

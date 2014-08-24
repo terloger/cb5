@@ -49,6 +49,8 @@ Ext.define('CB.view.location.Add', {
                 text: 'Add location {location.name}'
             },
             cls: 'title'
+        },'->',{
+            xtype: 'cb-user-headerbutton'
         }]
     },
     

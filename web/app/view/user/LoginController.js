@@ -9,16 +9,14 @@ Ext.define('CB.view.user.LoginController', {
     login: function(btn, e) {
         var view = this.getView(),
             vm = view.getViewModel(),
-            mainvm = vm.getParent(),
             userData = view.getValues(),
             user;
 
         CB.api.User.login(userData, function(response) {
             if (response.success) {
                 user = Ext.create('CB.model.User', response.data);
-                mainvm.set('user', user);
-
-
+                vm.getParent().set('user', user);
+                view.up('window').close(); // TODO: move to a better place
             } else {
                 vm.set('error', response.message);
             }

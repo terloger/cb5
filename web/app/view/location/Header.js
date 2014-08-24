@@ -4,7 +4,7 @@ Ext.define('CB.view.location.Header', {
     xtype: 'cb-location-header',
 
     ui: 'header',
-            
+
     layout: {
         overflowHandler: 'menu'
     },
@@ -182,7 +182,10 @@ Ext.define('CB.view.location.Header', {
         bind: {
             hidden: '{!dirty}'
         }
-    },'->',{
+    },{
+        xtype: 'tbfill',
+        hidden: false
+    },{
         xtype: 'button',
         ui: 'blank',
         tooltip: 'Settings',

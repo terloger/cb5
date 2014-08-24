@@ -131,6 +131,11 @@
         }
         background-color: darken($cb-dark-background, 10%) !important;
     }
+
+    .x-tab-navigation-top {
+        padding-left: 12px;
+        padding-right: 10px;
+    }
 }
 
 .cb-navigation-menu {

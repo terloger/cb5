@@ -66,7 +66,8 @@ Ext.define('CB.view.location.Routes', {
         menuDisabled: true,
         editor: {
             xtype: 'textfield',
-            allowBlank: false
+            allowBlank: false,
+            selectOnFocus: true
         }
         /*
         editor: {
@@ -106,10 +107,11 @@ Ext.define('CB.view.location.Routes', {
         draggable: false,
         editor: {
             xtype: 'numberfield',
-            hideTrigger: true,
             maxValue: 8864,
             minValue: 0,
-            maskRe: /[0-9]/
+            maskRe: /[0-9]/,
+            hideTrigger: true,
+            selectOnFocus: true
         },
         renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
             return value ? value + 'm' : '';

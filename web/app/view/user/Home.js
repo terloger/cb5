@@ -25,22 +25,24 @@ Ext.define('CB.view.user.Home', {
                 text: 'Wellcome {user.username}'
             }
         },'->',{
-            xtype: 'button',
-            text: 'Sign Out',
-            glyph: 'xe60b@climbuddy',
-            handler: 'logoutClick'
+            xtype: 'cb-user-headerbutton'
         }]
     },
     
     items: [{
         xtype: 'panel',
         bodyPadding: 20,
-        setHtml: function(user) {
-            var data = JSON.stringify(JSON.parse(Ext.encode(user.data)),null,2);
-            this.update('<pre>' + data + '</pre>');
-        },
         bind: {
             html: '{user}'
+        },
+        setHtml: function(user) {
+            if (user instanceof CB.model.User) {
+                var data = JSON.stringify(JSON.parse(Ext.encode(user.data)),null,2);
+                this.update('<pre>' + data + '</pre>');
+            } else {
+                this.update('');
+            }
+
         }
     }]
     

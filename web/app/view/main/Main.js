@@ -37,7 +37,7 @@ Ext.define('CB.view.main.Main', {
             flex: 0
         },
         listeners: {
-            afterrender: 'headerAfterRender'
+            afterrender: 'navigationAfterRender'
         },
         tools: [{
             type: 'gear',
@@ -46,12 +46,13 @@ Ext.define('CB.view.main.Main', {
             margin: '0 0 0 0',
             handler: 'showNavigationMenu',
             plugins: 'responsive',
+            hidden: true,
             responsiveConfig: {
                 'width < 566 && tall': {
-                    visible: true
+                    hidden: false
                 },
                 'width >= 566': {
-                    visible: false
+                    hidden: true
                 }
             }
         }]
@@ -62,20 +63,29 @@ Ext.define('CB.view.main.Main', {
         cls: 'cb-navigation-menu',
         items: [{
             text: 'Home',
+            route: 'home',
             glyph: 'xe602@climbuddy',
             height: 46
         },{
             text: 'Map',
+            route: 'map',
             glyph: 'xe603@climbuddy',
             height: 46
         },{
             text: 'Locations',
+            route: 'locations',
             glyph: 'xe605@climbuddy',
-            height: 46
+            height: 46,
+            hidden: true
         },{
-            text: 'Sign In',
+            text: 'User',
+            route: 'user',
             glyph: 'xe60f@climbuddy',
-            height: 46
+            height: 46,
+            hidden: true,
+            bind: {
+                hidden: '{!user}'
+            }
         }],
         listeners: {
             click: 'navigationMenuClick'
@@ -118,7 +128,7 @@ Ext.define('CB.view.main.Main', {
                 },
                 tall: {
                     flex: 0,
-                    height: 'auto'
+                    height: 46
                 },
                 'width < 566 && tall': {
                     visible: false
@@ -148,36 +158,7 @@ Ext.define('CB.view.main.Main', {
         title: 'Home',
         xtype: 'cb-home',
         glyph: 'xe602@climbuddy',
-        route: 'home',
-        tabConfig: {
-            plugins: 'responsive',
-            iconAlign: 'left',
-            textAlign: 'left',
-            responsiveConfig: {
-                wide: {
-                    flex: 0,
-                    height: 52,
-                    style: {
-                        'box-shadow': 'inset 0px 5px 4px -2px rgba(0, 0, 0, 0.35)'
-                    }
-                },
-                tall: {
-                    flex: 0,
-                    style: {
-                        'box-shadow': 'none'
-                    }
-                },
-                'width < 566 && tall': {
-                    visible: false
-                },
-                'width >= 566': {
-                    visible: true
-                }
-            },
-            style: {
-                
-            }
-        }
+        route: 'home'
     },{
         title: 'Map',
         xtype: 'cb-map',

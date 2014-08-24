@@ -162,6 +162,10 @@ Ext.define('CB.view.location.LocationController', {
     },
 
     destroySession: function(location) {
+        if (!(location instanceof CB.model.Location)) {
+            return;
+        }
+
         var view = this.getView(),
             session = view.getSession();
 
@@ -215,6 +219,10 @@ Ext.define('CB.view.location.LocationController', {
     },
 
     removeSessionAssociations: function(model, associationName) {
+        if (!(model instanceof CB.model.Base) || !model.schema) {
+            return;
+        }
+
         var association = model.schema.getAssociation(associationName),
             manyToMany = association.isManyToMany,
             left = association.left,
@@ -464,10 +472,10 @@ Ext.define('CB.view.location.LocationController', {
         if (!miniMap) {
             return;
         }
-
+        
         if (miniMap.getCollapsed()) {
             miniMap.on({
-                expand: Ext.bind(this.showMiniMap, this, [location]),
+                resize: Ext.bind(this.showMiniMap, this, [location]),
                 single: true
             });
         } else {

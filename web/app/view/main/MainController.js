@@ -21,22 +21,17 @@ Ext.define('CB.view.main.MainController', {
             conditions: {
                 ':id': '([0-9]+)'
             }
-        }/*,
+        },
         ':slug': {
             action: 'slugRoute',
             before: 'beforeSlugRoute',
             conditions: {
                 ':id': '([0-9]+)'
             }
-        }*/
+        }
     },
     
     listen: {
-        component: {
-            'button': {
-                headeruserbuttonclick: 'headerUserButtonClick'
-            }
-        },
         controller: {
             '#': {
                 unmatchedroute : 'unmatchedRoute'
@@ -44,55 +39,12 @@ Ext.define('CB.view.main.MainController', {
             '*': {
                 addlocation: 'showLocationAdd'
             }
+        },
+        component: {
+            'button': {
+                headeruserbuttonclick: 'userButtonClick'
+            }
         }
-    },
-
-    /**
-     * Handle user
-     */
-
-    headerUserButtonClick: function(btn, e) {
-        var user = this.getViewModel().get('user');
-
-        if (user instanceof CB.model.User) {
-            this.showHeaderUserMenu(btn);
-        } else {
-            this.showHeaderUserLogin(btn);
-        }
-    },
-
-    showHeaderUserLogin: function(btn) {
-        var wnd = Ext.create('Ext.window.Window', {
-            renderTo: Ext.getBody(),
-            resizable: false,
-            layout: {
-                type: 'fit'
-            },
-            items: [{
-                xtype: 'cb-user-login',
-                bodyPadding: 20
-            }]
-        });
-
-        wnd.showBy(btn, 'tl-bl');
-    },
-
-    showHeaderUserMenu: function(btn) {
-        var menu = this.userMenu;
-
-        if (!menu) {
-            menu = this.userMenu = Ext.create('Ext.menu.Menu', {
-                renderTo: Ext.getBody(),
-                items: [{
-                    text: 'Logout',
-                    handler: function() {
-                        console.log('logout');
-                    }
-                }]
-            });
-        }
-
-        menu.showBy(btn, 'tl-bl');
     },
 
     /**
@@ -110,12 +62,12 @@ Ext.define('CB.view.main.MainController', {
     },
     
     destroy: function () {
-        Ext.destroyMembers(this, 'addLocationView', 'navigationMenu', 'collapseButton');
+        Ext.destroyMembers(this, 'addLocationView', 'navigationMenu', 'collapseButton', 'userMenu');
         this.callParent(arguments);
     },
     
     /**
-     * Routes
+     * Routing
      */
     
     homeRoute: function() {
@@ -182,30 +134,55 @@ Ext.define('CB.view.main.MainController', {
     },
 
     beforeSlugRoute: function(slug, action) {
-        //console.log('slug', slug);
-        if (true) {
-            action.stop(true);
+        var view = this.getView(),
+            locationView = view.down('cb-location'),
+            vm = locationView.getViewModel(),
+            store = vm.get('locations'),
+            storeLoaded = store.isLoaded(),
+            checkLocation = function() {
+                var location = store.findRecord('slug', slug);
+                if (location) {
+                    action.resume();
+                } else {
+                    action.stop();
+                }
+            };
+
+        if (storeLoaded) {
+            checkLocation.apply(this);
         } else {
-            action.resume();
+            store.on({
+                load: checkLocation,
+                single: true,
+                scope: this
+            });
         }
     },
 
-    slugRoute: function(slug) {
-
-    },
-    
     locationRoute: function(id) {
         var view = this.getView(),
             locationView = view.down('cb-location'),
             vm = locationView.getViewModel(),
             store = vm.get('locations'),
             location = store.getById(id);
-        
+
         view.setActiveTab(locationView);
         locationView.showLocation(location);
         this.redirectTo('location/' + id);
     },
-    
+
+    slugRoute: function(slug) {
+        var view = this.getView(),
+            locationView = view.down('cb-location'),
+            vm = locationView.getViewModel(),
+            store = vm.get('locations'),
+            location = store.findRecord('slug', slug);
+
+        view.setActiveTab(locationView);
+        locationView.showLocation(location);
+        this.redirectTo(slug);
+    },
+
     unmatchedRoute: function(hash) {
         this.showError('Unable to find route ' + hash);
     },
@@ -219,8 +196,8 @@ Ext.define('CB.view.main.MainController', {
             this.redirectTo(tab.route);
         }
     },
-    
-    headerAfterRender: function(header) {
+
+    navigationAfterRender: function(header) {
         var collapseGlyph = 'xe61b@climbuddy',
             expandGlyph = 'xe61c@climbuddy',
             collapseText = 'Collapse menu',
@@ -229,7 +206,7 @@ Ext.define('CB.view.main.MainController', {
         this.collapseButton = Ext.create('Ext.button.Button', {
             renderTo: header.el,
             cls: 'cb-collapser',
-            handler: 'collapseClick',
+            handler: 'navigationCollapseClick',
             glyph: header.isCollapsed ? expandGlyph : collapseGlyph,
             text: header.isCollapsed ? expandText : collapseText,
             collapseGlyph: collapseGlyph,
@@ -249,7 +226,7 @@ Ext.define('CB.view.main.MainController', {
         });
     },
     
-    collapseClick: function() {
+    navigationCollapseClick: function() {
         var header = this.getView().getHeader(),
             btn = this.collapseButton;
     
@@ -315,7 +292,74 @@ Ext.define('CB.view.main.MainController', {
     },
     
     navigationMenuClick: function (menu, item) {
-        this.getView().setActiveTab(menu.items.indexOf(item) + 1); // +1 for invisible first tab
+        console.log(item.route);
+        this.redirectTo(item.route);
+    },
+
+    /**
+     * User
+     */
+
+    userButtonClick: function(btn, e) {
+        var user = this.getViewModel().get('user');
+
+        if (user instanceof CB.model.User) {
+            this.showUserMenu(btn);
+        } else {
+            this.showUserLogin(btn);
+        }
+    },
+
+    showUserLogin: function(btn) {
+        var wnd = Ext.create('Ext.window.Window', {
+            renderTo: Ext.getBody(),
+            title: 'Login',
+            resizable: false,
+            layout: {
+                type: 'fit'
+            },
+            items: [{
+                xtype: 'cb-user-login',
+                bodyPadding: 20
+            }]
+        });
+
+        wnd.showBy(btn, 'tr-br');
+
+        wnd.down('field[name=username]').focus();
+    },
+
+    showUserMenu: function(btn) {
+        var menu = this.userMenu;
+
+        if (!menu) {
+            menu = this.userMenu = Ext.create('Ext.menu.Menu', {
+                renderTo: Ext.getBody(),
+                items: [{
+                    text: 'Logout',
+                    handler: this.logoutUser,
+                    scope: this
+                }]
+            });
+        }
+
+        menu.showBy(btn, 'tr-br');
+    },
+
+    logoutUser: function() {
+        var view = this.getView(),
+            vm = view.getViewModel();
+
+        CB.api.User.logout(function(response) {
+            if (response.success) {
+                vm.set('user', null);
+
+                this.redirectTo('home');
+
+            } else {
+                Ext.Msg.alert('Server Error', response.message);
+            }
+        }, this);
     }
     
 });

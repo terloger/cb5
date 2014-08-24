@@ -24,8 +24,33 @@ Ext.define('CB.view.location.List', {
         height: 46,
         items: [{
             xtype: 'tbtext',
-            text: 'Locations',
+            text: 'Search:',
             cls: 'title'
+        },{
+            xtype: 'textfield',
+            name: 'search',
+            width: 240,
+            itemId: 'searchField',
+            selectOnFocus: true,
+            cls: 'search-field',
+            afterSubTpl: '<span class="search icon-zoom"></span><span class="clear icon-cross"></span>',
+            listeners: {
+                specialkey: 'searchSpecialKey',
+                change: {
+                    fn: 'search',
+                    buffer: 350
+                }
+            }
+        },{
+            xtype: 'button',
+            text: 'Filter',
+            cls: 'filter-button',
+            itemId: 'filterButton',
+            glyph: 'xe646@climbuddy',
+            handler: 'typePicker',
+            menu: []
+        },'->',{
+            xtype: 'cb-user-headerbutton'
         }]
     },    
     
@@ -36,6 +61,7 @@ Ext.define('CB.view.location.List', {
         listeners: {
             itemdblclick: 'gridItemDblClick'
         },
+        emptyText: 'No locations',
         columns: [{
             text: 'Name',
             dataIndex: 'name',

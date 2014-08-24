@@ -7,6 +7,14 @@
  */
 namespace CB\Api;
 
+/*
+SELECT t.type, COUNT( lt.type_id )
+FROM location_types lt
+INNER JOIN location_type t ON lt.type_id = t.id
+GROUP BY lt.type_id
+LIMIT 0 , 30
+*/
+
 /**
  * API location controller
  *
