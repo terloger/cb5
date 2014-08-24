@@ -1110,11 +1110,12 @@ Ext.define('CB.view.location.LocationController', {
                 location.files = locationFiles; // fix extjs bug
 
                 this.setFile(nextFile);
-                
+
                 this.fileDataChanged();
             },
             failure: function(record, operation) {
                 location.files = locationFiles; // fix extjs bug
+                location.files().rejectChanges();
 
                 file.reject();
 
