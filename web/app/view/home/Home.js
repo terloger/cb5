@@ -43,7 +43,8 @@ Ext.define('CB.view.home.Home', {
 
     items: [{
         xtype: 'container',
-        html: '<iframe id="demoVideo" src="//player.vimeo.com/video/73101095?byline=0&amp;portrait=0&amp;color=ffffff" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+        //html: '<iframe id="demoVideo" src="//player.vimeo.com/video/73101095?byline=0&amp;portrait=0&amp;color=ffffff" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+        html: '<iframe id="demoVideo" src="//player.vimeo.com/video/104265260?byline=0&amp;portrait=0&amp;color=ffffff" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
     }],
 
     listeners: {

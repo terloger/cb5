@@ -49,8 +49,8 @@ Ext.define('CB.view.user.Home', {
         xtype: 'panel',
         bodyPadding: '0 20',
         html: [
-            '<p>Registration will be available in the future, I promise ;)</p>',
-            '<p>For now, if you wish to participate in the beta testing, write an email to <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a>.</p>'
+            '<p>Registration will be available in the future ;)</p>',
+            '<p>If you wish to participate in beta testing, write an email to <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a>.</p>'
         ].join(''),
         bind: {
             user: '{user}'

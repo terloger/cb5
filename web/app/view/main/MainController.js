@@ -155,10 +155,9 @@ Ext.define('CB.view.main.MainController', {
 
     beforeSlugRoute: function(slug, action) {
         var view = this.getView(),
-            locationView = view.down('cb-location'),
-            vm = locationView.getViewModel(),
+            vm = view.getViewModel(),
             store = vm.get('locations'),
-            storeLoaded = store.isLoaded(),
+            storeLoaded = store && store.isLoaded(),
             checkLocation = function() {
                 var location = store.findRecord('slug', slug);
                 if (location) {
@@ -168,7 +167,12 @@ Ext.define('CB.view.main.MainController', {
                 }
             };
 
-        if (storeLoaded) {
+        if (store) {
+            vm.bind({
+                bindTo: '{x}',
+                single: true
+            }, checkLocation);
+        } else if (storeLoaded) {
             checkLocation.apply(this);
         } else {
             store.on({

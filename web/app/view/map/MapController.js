@@ -418,6 +418,9 @@ Ext.define('CB.view.map.MapController', {
             // remove from collection
             this.getMarkers().remove(marker);
 
+            // remove from marker clusterer
+            this.getMarkerClusterer().removeMarker(marker);
+
             // remove from map
             marker.setMap(null);
         }
