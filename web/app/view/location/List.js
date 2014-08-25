@@ -5,7 +5,8 @@ Ext.define('CB.view.location.List', {
     extend: 'Ext.panel.Panel',
     
     requires: [
-        'Ext.grid.Panel'
+        'Ext.grid.Panel',
+        'Ext.toolbar.Paging'
     ],
     
     xtype: 'cb-location-list',
@@ -25,7 +26,16 @@ Ext.define('CB.view.location.List', {
         items: [{
             xtype: 'tbtext',
             text: 'Search:',
-            cls: 'title'
+            cls: 'title',
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 500': {
+                    hidden: true
+                },
+                'width >= 500': {
+                    hidden: false
+                }
+            }
         },{
             xtype: 'textfield',
             name: 'search',
@@ -39,6 +49,15 @@ Ext.define('CB.view.location.List', {
                 change: {
                     fn: 'search',
                     buffer: 350
+                }
+            },
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 500': {
+                    width: 140
+                },
+                'width >= 500': {
+                    width: 240
                 }
             }
         },{
@@ -58,10 +77,20 @@ Ext.define('CB.view.location.List', {
         xtype: 'grid',
         frame: true,
         bind: '{locations}',
+        emptyText: 'No locations',
         listeners: {
             itemdblclick: 'gridItemDblClick'
         },
-        emptyText: 'No locations',
+        /*
+        tbar: {
+            xtype: 'pagingtoolbar',
+            bind: {
+                store: '{locations}'
+            },
+            dock: 'bottom',
+            displayInfo: true
+        },
+        */
         columns: [{
             text: 'Name',
             dataIndex: 'name',

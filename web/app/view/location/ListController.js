@@ -97,9 +97,12 @@ Ext.define('CB.view.location.ListController', {
 
     typeChange: function(sm, selection) {
         var view = this.getView(),
+            btn = view.down('#filterButton'),
             grid = view.down('grid'),
             store = grid.getStore(),
             filter = this.typeFilter;
+
+        btn[selection.length ? 'addCls' : 'removeCls']('filtered');
 
         if (filter) {
             store.removeFilter(filter);

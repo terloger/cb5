@@ -42,11 +42,23 @@ Ext.define('CB.view.map.Map', {
     tbar: {
         ui: 'header',
         height: 46,
+        layout: {
+            overflowHandler: 'scroller'
+        },
         items: [{
             xtype: 'tbtext',
             text: 'Search: ',
             cls: 'title',
-            margin: '0 5 0 0'
+            margin: '0 5 0 0',
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 500': {
+                    hidden: true
+                },
+                'width >= 500': {
+                    hidden: false
+                }
+            }
         },{
             xtype: 'textfield',
             name: 'search',
@@ -66,6 +78,15 @@ Ext.define('CB.view.map.Map', {
                 change: {
                     fn: 'search',
                     buffer: 500
+                }
+            },
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 500': {
+                    width: 140
+                },
+                'width >= 500': {
+                    width: 240
                 }
             }
         },/*{

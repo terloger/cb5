@@ -10,7 +10,7 @@ Ext.define('CB.view.main.MainModel', {
     ],
 
     alias: 'viewmodel.cb-main',
-    
+
     stores: {
         countries: {
             model: 'Country',

@@ -75,17 +75,12 @@ Ext.define('CB.view.main.Main', {
             text: 'Locations',
             route: 'locations',
             glyph: 'xe605@climbuddy',
-            height: 46,
-            hidden: true
+            height: 46
         },{
             text: 'User',
             route: 'user',
             glyph: 'xe60f@climbuddy',
-            height: 46,
-            hidden: true,
-            bind: {
-                hidden: '{!user}'
-            }
+            height: 46
         }],
         listeners: {
             click: 'navigationMenuClick'
@@ -121,13 +116,12 @@ Ext.define('CB.view.main.Main', {
             plugins: 'responsive',
             iconAlign: 'left',
             textAlign: 'left',
+            flex: 0,
             responsiveConfig: {
                 wide: {
-                    flex: 0,
                     height: 52
                 },
                 tall: {
-                    flex: 0,
                     height: 46
                 },
                 'width < 566 && tall': {
@@ -177,6 +171,7 @@ Ext.define('CB.view.main.Main', {
         glyph: 'xe605@climbuddy',
         route: 'locations'
     },{
+        title: 'User',
         xtype: 'cb-user',
         glyph: 'xe60f@climbuddy',
         route: 'user'

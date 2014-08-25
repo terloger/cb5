@@ -5,6 +5,12 @@ Ext.define('CB.view.home.Home', {
     extend: 'Ext.panel.Panel',
     
     xtype: 'cb-home',
+
+    controller: 'cb-home',
+
+    viewModel: {
+        type: 'cb-home'
+    },
     
     layout: {
         type: 'fit'
@@ -20,7 +26,16 @@ Ext.define('CB.view.home.Home', {
         items: [{
             xtype: 'tbtext',
             text: 'Wellcome to CLIMBuddy BETA',
-            cls: 'title'
+            cls: 'title',
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 400': {
+                    text: 'Home'
+                },
+                'width >= 400': {
+                    text: 'Wellcome to CLIMBuddy BETA'
+                }
+            }
         },'->',{
             xtype: 'cb-user-headerbutton'
         }]
@@ -33,34 +48,7 @@ Ext.define('CB.view.home.Home', {
 
     listeners: {
         resize: 'resizeVideo',
-        scope: 'this'
-    },
-
-    resizeVideo: function() {
-        console.log('resizeVideo');
-        var pad = this.bodyPadding * 2,
-
-            video = Ext.get('demoVideo'),
-            videoW = video.getWidth(),
-            videoH = video.getHeight(),
-
-            bodyW = this.body.getWidth(),
-            bodyH = this.body.getHeight(),
-
-            newW = bodyW - pad,
-            newH = bodyH - pad,
-
-            wr = newW / videoW,
-            hr = newH / videoH;
-
-        if (wr < hr) {
-            newH = videoH * wr;
-        } else {
-            newW = videoW * hr;
-        }
-
-        video.setWidth(newW);
-        video.setHeight(newH);
+        scope: 'controller'
     }
-    
+
 });

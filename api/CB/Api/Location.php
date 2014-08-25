@@ -43,7 +43,8 @@ class Location extends AbstractController
             }
             else
             {
-                return $this->success('Successfully read all locations.', $this->readAll());
+                $all = $this->readAll();
+                return $this->success('Successfully read all locations.', $all, count($all));
             }
         }
         catch (\Exception $e)

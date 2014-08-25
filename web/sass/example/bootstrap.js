@@ -1585,6 +1585,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.store.Routes": [],
   "CB.store.Sectors": [],
   "CB.view.home.Home": [],
+  "CB.view.home.HomeController": [],
+  "CB.view.home.HomeModel": [],
   "CB.view.location.Add": [],
   "CB.view.location.AddController": [],
   "CB.view.location.AddModel": [],
@@ -1610,6 +1612,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "CB.view.map.MapController": [],
   "CB.view.map.MapModel": [],
   "CB.view.map.SearchMenu": [],
+  "CB.view.user.HeaderButton": [],
   "CB.view.user.Home": [],
   "CB.view.user.HomeController": [],
   "CB.view.user.HomeModel": [],
@@ -2280,6 +2283,12 @@ Ext.ClassManager.addNameAliasMappings({
   "CB.view.home.Home": [
     "widget.cb-home"
   ],
+  "CB.view.home.HomeController": [
+    "controller.cb-home"
+  ],
+  "CB.view.home.HomeModel": [
+    "viewmodel.cb-home"
+  ],
   "CB.view.location.Add": [
     "widget.cb-location-add"
   ],
@@ -2354,6 +2363,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "CB.view.map.SearchMenu": [
     "widget.cb-map-searchmenu"
+  ],
+  "CB.view.user.HeaderButton": [
+    "widget.cb-user-headerbutton"
   ],
   "CB.view.user.Home": [
     "widget.cb-user-home"

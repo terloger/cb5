@@ -19,10 +19,26 @@ Ext.define('CB.view.user.Home', {
         height: 46,
         items: [{
             xtype: 'tbtext',
-            text: 'Wellcome',
+            text: 'Wellcome anonymous',
             cls: 'title',
             bind: {
-                text: 'Wellcome {user.username}'
+                user: '{user}'
+            },
+            setUser: function(user) {
+                if (user instanceof CB.model.User) {
+                    this.setText('Wellcome ' + user.get('username'));
+                } else {
+                    this.setText('Wellcome anonymous');
+                }
+            },
+            plugins: 'responsive',
+            responsiveConfig: {
+                'width < 500': {
+                    width: 140
+                },
+                'width >= 500': {
+                    width: 240
+                }
             }
         },'->',{
             xtype: 'cb-user-headerbutton'
@@ -32,16 +48,28 @@ Ext.define('CB.view.user.Home', {
     items: [{
         xtype: 'panel',
         bodyPadding: 20,
+        html: [
+            '<p>The registration process has not been implemented yet.</p>',
+            '<p>If you really wish to participate, write us at <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a></p>'
+        ].join(''),
         bind: {
-            html: '{user}'
+            user: '{user}'
         },
-        setHtml: function(user) {
+        setUser: function(user) {
+            var html;
+
             if (user instanceof CB.model.User) {
-                var data = JSON.stringify(JSON.parse(Ext.encode(user.data)),null,2);
-                this.update('<pre>' + data + '</pre>');
+                html = [
+                    '<pre>' + JSON.stringify(JSON.parse(Ext.encode(user.data)),null,2) + '</pre>'
+                ];
             } else {
-                this.update('');
+                html = [
+                    '<p>The registration process has not been implemented yet.</p>',
+                    '<p>If you really wish to participate, write us at <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a></p>'
+                ];
             }
+
+            this.update(html.join(''));
 
         }
     }]

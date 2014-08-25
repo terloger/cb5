@@ -112,11 +112,12 @@ abstract class AbstractController
      * @access protected
      * @param  string $message
      * @param  mixed  $data
+     * @param  mixed  $total
      * @return array
      */
-    protected function success($message = null, $data = null)
+    protected function success($message = null, $data = null, $total = null)
     {
-        return $this->_response(true, $message, $data);
+        return $this->_response(true, $message, $data, $total);
     }
 
     /**
@@ -129,7 +130,7 @@ abstract class AbstractController
      */
     protected function error($message = null, $data = null)
     {
-        return $this->_response(false, $message, $data);
+        return $this->_response(false, $message, $data, null);
     }
 
     /**
@@ -138,9 +139,10 @@ abstract class AbstractController
      * @param  boolean $success
      * @param  string  $message
      * @param  mixed   $data
+     * @param  mixed   $total
      * @return array
      */
-    private function _response($success, $message, $data)
+    private function _response($success, $message, $data, $total)
     {
         $response['success'] = (bool)$success;
         if (!is_null($message))
@@ -150,6 +152,10 @@ abstract class AbstractController
         if (!is_null($data))
         {
             $response['data'] = $data;
+        }
+        if (!is_null($total))
+        {
+            $response['total'] = $total;
         }
         return $response;
     }

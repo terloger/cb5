@@ -11,20 +11,29 @@ Ext.define('CB.view.main.MainController', {
     alias: 'controller.cb-main',
     
     routes: {
-        'home': 'homeRoute',
-        'map': 'mapRoute',
-        'user': 'userRoute',
-        'locations': 'locationsRoute',
+        'home': {
+            action: 'homeRoute'
+        },
+        'map': {
+            action: 'mapRoute'
+        },
+        'locations': {
+            action: 'locationsRoute'
+        },
+        'user': {
+            //before: 'beforeUserRoute',
+            action: 'userRoute'
+        },
         'location/:id': {
-            action: 'locationRoute',
             before: 'beforeLocationRoute',
+            action: 'locationRoute',
             conditions: {
                 ':id': '([0-9]+)'
             }
         },
         ':slug': {
-            action: 'slugRoute',
             before: 'beforeSlugRoute',
+            action: 'slugRoute',
             conditions: {
                 ':id': '([0-9]+)'
             }
@@ -85,6 +94,17 @@ Ext.define('CB.view.main.MainController', {
     
         if (tab) {
             this.redirectTo('map');
+        }
+    },
+
+    beforeUserRoute: function(action) {
+        var user = this.getViewModel().get('user');
+
+        if (user instanceof CB.model.User) {
+            action.resume();
+        } else {
+            action.stop(true);
+            this.showError('You must be logged in to access this page!');
         }
     },
     
@@ -292,7 +312,6 @@ Ext.define('CB.view.main.MainController', {
     },
     
     navigationMenuClick: function (menu, item) {
-        console.log(item.route);
         this.redirectTo(item.route);
     },
 

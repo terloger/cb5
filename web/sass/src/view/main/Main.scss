@@ -35,6 +35,15 @@
     }
 }
 
+.filter-button {
+    &.filtered {
+        .x-btn-glyph {
+            color: #007bff;
+            opacity: 0.8;
+        }
+    }
+}
+
 .cb-spinner {
     background: transparent url(images/tree/loading.gif) no-repeat center center;
 }
