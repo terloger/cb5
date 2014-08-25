@@ -52,10 +52,10 @@ Ext.define('CB.view.map.Map', {
             margin: '0 5 0 0',
             plugins: 'responsive',
             responsiveConfig: {
-                'width < 500': {
+                'width < 540': {
                     hidden: true
                 },
-                'width >= 500': {
+                'width >= 540': {
                     hidden: false
                 }
             }
@@ -82,10 +82,10 @@ Ext.define('CB.view.map.Map', {
             },
             plugins: 'responsive',
             responsiveConfig: {
-                'width < 500': {
+                'width < 540': {
                     width: 140
                 },
-                'width >= 500': {
+                'width >= 540': {
                     width: 240
                 }
             }

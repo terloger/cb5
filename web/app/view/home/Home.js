@@ -30,7 +30,7 @@ Ext.define('CB.view.home.Home', {
             plugins: 'responsive',
             responsiveConfig: {
                 'width < 400': {
-                    text: 'Home'
+                    text: 'Wellcome'
                 },
                 'width >= 400': {
                     text: 'Wellcome to CLIMBuddy BETA'

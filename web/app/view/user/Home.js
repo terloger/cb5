@@ -19,7 +19,7 @@ Ext.define('CB.view.user.Home', {
         height: 46,
         items: [{
             xtype: 'tbtext',
-            text: 'Wellcome anonymous',
+            text: 'Login required',
             cls: 'title',
             bind: {
                 user: '{user}'
@@ -28,7 +28,7 @@ Ext.define('CB.view.user.Home', {
                 if (user instanceof CB.model.User) {
                     this.setText('Wellcome ' + user.get('username'));
                 } else {
-                    this.setText('Wellcome anonymous');
+                    this.setText('Login required');
                 }
             },
             plugins: 'responsive',
@@ -47,10 +47,10 @@ Ext.define('CB.view.user.Home', {
     
     items: [{
         xtype: 'panel',
-        bodyPadding: 20,
+        bodyPadding: '0 20',
         html: [
-            '<p>The registration process has not been implemented yet.</p>',
-            '<p>If you really wish to participate, write us at <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a></p>'
+            '<p>Registration will be available in the future, I promise ;)</p>',
+            '<p>For now, if you wish to participate in the beta testing, write an email to <a href="mailto:climbuddy@gmail.com">climbuddy@gmail.com</a>.</p>'
         ].join(''),
         bind: {
             user: '{user}'

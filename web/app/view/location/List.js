@@ -29,10 +29,10 @@ Ext.define('CB.view.location.List', {
             cls: 'title',
             plugins: 'responsive',
             responsiveConfig: {
-                'width < 500': {
+                'width < 540': {
                     hidden: true
                 },
-                'width >= 500': {
+                'width >= 540': {
                     hidden: false
                 }
             }
@@ -53,10 +53,10 @@ Ext.define('CB.view.location.List', {
             },
             plugins: 'responsive',
             responsiveConfig: {
-                'width < 500': {
+                'width < 540': {
                     width: 140
                 },
-                'width >= 500': {
+                'width >= 540': {
                     width: 240
                 }
             }
