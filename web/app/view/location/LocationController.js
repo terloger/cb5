@@ -199,9 +199,11 @@ Ext.define('CB.view.location.LocationController', {
         // attach matrix to the store
         if (manyToMany) {
             matrix = session.getMatrixSlice(role, model.get('id'));
-            matrix.attach(store);
-            matrix.notify = role.onMatrixUpdate;
-            matrix.scope = role;
+            if (!matrix.store) {
+                matrix.attach(store);
+                matrix.notify = role.onMatrixUpdate;
+                matrix.scope = role;
+            }
         }
 
         // bind role event handlers to store
