@@ -218,7 +218,7 @@ Ext.define('CB.view.map.MapController', {
             return;
         }
         
-        this.redirectTo(location.get('slug'));
+        this.redirectTo('location/' + location.get('slug'));
         //this.redirectTo('location/' + location.get('id'));
     },
     
@@ -429,7 +429,7 @@ Ext.define('CB.view.map.MapController', {
     markerClick: function(e, marker) {
         var location = marker.getLocation();
         if (location) {
-            this.redirectTo(location.get('slug'));
+            this.redirectTo('location/' + location.get('slug'));
             //this.redirectTo('location/' + location.get('id'));
             //this.fireEvent('markerclick', marker, location, e);
         }

@@ -31,11 +31,11 @@ Ext.define('CB.view.main.MainController', {
                 ':id': '([0-9]+)'
             }
         },
-        ':slug': {
+        'location/:slug': {
             before: 'beforeSlugRoute',
             action: 'slugRoute',
             conditions: {
-                ':id': '([0-9]+)'
+                ':slug': '([a-z0-9-]+)'
             }
         }
     },
@@ -153,6 +153,18 @@ Ext.define('CB.view.main.MainController', {
         }
     },
 
+    locationRoute: function(id) {
+        var view = this.getView(),
+            locationView = view.down('cb-location'),
+            vm = locationView.getViewModel(),
+            store = vm.get('locations'),
+            location = store.getById(id);
+
+        view.setActiveTab(locationView);
+        locationView.showLocation(location);
+        this.redirectTo('location/' + id);
+    },
+
     beforeSlugRoute: function(slug, action) {
         var view = this.getView(),
             vm = view.getViewModel(),
@@ -167,7 +179,7 @@ Ext.define('CB.view.main.MainController', {
                 }
             };
 
-        if (store) {
+        if (!store) {
             vm.bind({
                 bindTo: '{x}',
                 single: true
@@ -183,18 +195,6 @@ Ext.define('CB.view.main.MainController', {
         }
     },
 
-    locationRoute: function(id) {
-        var view = this.getView(),
-            locationView = view.down('cb-location'),
-            vm = locationView.getViewModel(),
-            store = vm.get('locations'),
-            location = store.getById(id);
-
-        view.setActiveTab(locationView);
-        locationView.showLocation(location);
-        this.redirectTo('location/' + id);
-    },
-
     slugRoute: function(slug) {
         var view = this.getView(),
             locationView = view.down('cb-location'),
@@ -204,7 +204,7 @@ Ext.define('CB.view.main.MainController', {
 
         view.setActiveTab(locationView);
         locationView.showLocation(location);
-        this.redirectTo(slug);
+        this.redirectTo('location/' + slug);
     },
 
     unmatchedRoute: function(hash) {
